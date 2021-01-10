@@ -36,22 +36,22 @@ void ShowDirString(char *connect)
 		{
 			switch(i)
 			{
-			case EAST:
+			case DO_EAST:
 				_cprintf("het oosten");
 				break;
-			case WEST:
+			case DO_WEST:
 				_cprintf("het westen");
 				break;
-			case NORTH:
+			case DO_NORTH:
 				_cprintf("het noorden");
 				break;
-			case SOUTH:
+			case DO_SOUTH:
 				_cprintf("het zuiden");
 				break;
-			case UP:
+			case DO_UP:
 				_cprintf("boven");
 				break;
-			case DOWN:
+			case DO_DOWN:
 				_cprintf("beneden");
 				break;
 			}
@@ -109,59 +109,59 @@ void ShowItems(Progdata &progdata)
 }
 
 
-bool BeastStatus(Progdata &progdata)
+bool LivingStatus(Progdata &progdata)
 {
-	int beastfound = -1;
+	int livingfound = -1;
 	int i;
 
-	for (i = 0; i < 21 && beastfound == -1; i++)
+	for (i = 0; i < 21 && livingfound == -1; i++)
 		if (progdata.living[i].room == progdata.status.curroom)
-			beastfound = i;
+			livingfound = i;
 
-	switch (beastfound)
+	switch (livingfound)
 	{
-	case HELLEHOND:
+	case LIVING_HELLEHOND:
 		HellehondStatus(progdata);
 		break;
-	case RODETROL:
+	case LIVING_RODETROL:
 		RodeTrolStatus(progdata);
 		break;
-	case PLANT:
+	case LIVING_PLANT:
 		PlantStatus(progdata);
 		break;
-	case GNOE:
+	case LIVING_GNOE:
 		GnoeStatus(progdata);
 		break;
-	case DRAAK:
+	case LIVING_DRAAK:
 		DraakStatus(progdata);
 		break;
-	case GEZWEL:
+	case LIVING_GEZWEL:
 		GezwelStatus(progdata);
 		break;
-	case DEUR:
+	case LIVING_DEUR:
 		DeurStatus(progdata);
 		break;
-	case STEMMEN:
+	case LIVING_STEMMEN:
 		StemmenStatus(progdata);
 		break;
-	case BARBECUE:
+	case LIVING_BARBECUE:
 		BarbecueStatus(progdata);
 		break;
-	case BOOM:
+	case LIVING_BOOM:
 		BoomStatus(progdata);
 		break;
-	case DIAMANT:
+	case LIVING_DIAMANT:
 		DiamantStatus(progdata);
 		break;
-	case COMPUTER:
+	case LIVING_COMPUTER:
 		ComputerStatus(progdata);
 		break;
-	case DRAKEKOP:
+	case LIVING_DRAKEKOP:
 		DrakeKopStatus(progdata);
 		break;
-	case LAVA:
+	case LIVING_LAVA:
 		return LavaStatus(progdata);
-	case VACUUM:
+	case LIVING_VACUUM:
 		_cprintf("Doordat er in deze grot geen lucht is, klappen allebei je longen dicht. Een\r\n"
 				 "verschrikkelijke pijn kraakt als een bliksem door je lijf. Je valt naar achte-\r\n"
 				 "ren de grot uit, en daar val je even flauw.\r\n\r\n");
@@ -169,12 +169,12 @@ bool BeastStatus(Progdata &progdata)
 		progdata.status.lifepoints -= 4; //   Levenswond
 		progdata.status.curroom = 76; //   Grot terug
 		return false;
-	case PAPIER:
+	case LIVING_PAPIER:
 		PapierStatus(progdata);
 		break;
-	case NOORDMOERAS:
-	case MIDDENMOERAS:
-	case ZUIDMOERAS:
+	case LIVING_NOORDMOERAS:
+	case LIVING_MIDDENMOERAS:
+	case LIVING_ZUIDMOERAS:
 		_cprintf("Met de eerste stap die je in het moeras zet, voel je dat je geen vaste grond\r\n"
 				  "onder de voeten hebt. Ondanks je wilde pogingen boven te blijven zak je\r\n"
 				  "langzaam het moeras in. Als je tot je nek in de pruttelende, modderige massa\r\n"
@@ -195,7 +195,7 @@ bool BeastStatus(Progdata &progdata)
 			break;
 		}
 		return false;
-	case MISTGROT:
+	case LIVING_MISTGROT:
 		_cprintf("In deze grot hangt een vreemde, dichte mist, waardoor je geen hand voor ogen\r\n"
               "ziet. Je verliest je or‹entatiegevoel en stommelt paniekerig door de grot, op\r\n"
 				  "zoek naar een uitgang.\r\n"
@@ -215,7 +215,7 @@ bool BeastStatus(Progdata &progdata)
 			break;
 		}
 		return false;
-	case TELEPORT:
+	case LIVING_TELEPORT:
 		_cprintf("Als je deze grot binnenloopt zie je een aantal pulserende lampen aan het\r\n"
 				  "plafond en tegen een van de wanden een enorm apparaat met een aantal\r\n"
 				  "bedieningspanelen en beeldschermen.\r\n"
@@ -235,7 +235,7 @@ bool BeastStatus(Progdata &progdata)
 
 void HellehondStatus(Progdata &progdata)
 {
-	switch (progdata.living[HELLEHOND].status)
+	switch (progdata.living[LIVING_HELLEHOND].status)
 	{
 	case 0:
 		_cprintf("Er staat hier een reusachtige hellehond die je de weg verspert. Zijn scherpe\r\n"
@@ -243,7 +243,7 @@ void HellehondStatus(Progdata &progdata)
 				 "Hij kijkt je dreigend aan met zijn bloeddoorlopen ogen, en uit zijn keel\r\n"
 				 "klinkt een diep gegrom.\r\n\r\n");
 
-		progdata.living[HELLEHOND].status = 1;
+		progdata.living[LIVING_HELLEHOND].status = 1;
 		break;
 	case 1:
 		_cprintf("De hellehond zet zich af tegen de grond, en hij spring boven op je lijf. Zijn\r\n"
@@ -252,20 +252,20 @@ void HellehondStatus(Progdata &progdata)
 				 "hond laat je los, en hij kijkt je grommend aan.\r\n\r\n");
 
 		progdata.status.lifepoints--; //  Wond
-		progdata.living[HELLEHOND].status = 2;
+		progdata.living[LIVING_HELLEHOND].status = 2;
 		break;
 	case 2:
 		_cprintf("De honger van de hellehond is nog niet gestild. Een diep gegrom komt uit zijn\r\n"
 				 "keel, en hij staat klaar om opnieuw aan te vallen.\r\n\r\n");
 
-		progdata.living[HELLEHOND].status = random(2) + 1;
+		progdata.living[LIVING_HELLEHOND].status = random(2) + 1;
 		break;
 	case 3:
 		_cprintf("Door de wonden aangericht met je zwaard sterft de hevig bloedende hellehond. Je\r\n"
 				 "deelt nog een slag uit, en een stuk vlees van de hond laat los.\r\n\r\n");
 
-		progdata.items[HONDVLEES].room = progdata.status.curroom;
-		progdata.living[HELLEHOND].status = 4;
+		progdata.items[ITEM_HONDVLEES].room = progdata.status.curroom;
+		progdata.living[LIVING_HELLEHOND].status = 4;
 		break;
 	case 4:
 		_cprintf("De dode hellehond ligt in een bad van dampend bloed.\r\n\r\n");
@@ -275,30 +275,30 @@ void HellehondStatus(Progdata &progdata)
 
 void RodeTrolStatus(Progdata &progdata)
 {
-	switch (progdata.living[RODETROL].status)
+	switch (progdata.living[LIVING_RODETROL].status)
 	{
 	case 0:
       _cprintf("Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar ge‰rgerd.\r\n\r\n");
 
-		progdata.living[RODETROL].status = 1;
+		progdata.living[LIVING_RODETROL].status = 1;
 		break;
 	case 1:
 		_cprintf("Nu is de trol pas echt goed wakker. Hij pakt zijn zweep en komt dreigend op je\r\n"
 				 "af.\r\n\r\n");
 
-		progdata.living[RODETROL].status = 2;
+		progdata.living[LIVING_RODETROL].status = 2;
 		break;
 	case 2:
 		_cprintf("De trol deelt je een harde klap uit met z'n zweep. Je voelt de brandende pijn\r\n"
 				 "tot je botten doordringen.\r\n\r\n");
 
 		progdata.status.lifepoints--; //   Wond
-		progdata.living[RODETROL].status = 3;
+		progdata.living[LIVING_RODETROL].status = 3;
 		break;
 	case 3:
 		_cprintf("Het schuim loopt uit de trol z'n bek. Hij heft opnieuw zijn zweep.\r\n\r\n");
 
-		progdata.living[RODETROL].status = random(2) + 2;
+		progdata.living[LIVING_RODETROL].status = random(2) + 2;
 		break;
 	case 4:
 		_cprintf("Opgewonden grijpt de trol het boekje. Hij bladert het door, en wordt roder en\r\n"
@@ -307,8 +307,8 @@ void RodeTrolStatus(Progdata &progdata)
 				 "langzaam naar beneden.\r\n"
 				 "Opeens zie je iets glinsteren.\r\n\r\n");
 
-		progdata.items[ROODKRISTAL].room = progdata.status.curroom;
-		progdata.living[RODETROL].status = 5;
+		progdata.items[ITEM_ROODKRISTAL].room = progdata.status.curroom;
+		progdata.living[LIVING_RODETROL].status = 5;
 		break;
 	case 5:
 		_cprintf("Overal in de grot liggen stukken van de verscheurde trol verspreid. Het slijm\r\n"
@@ -320,7 +320,7 @@ void RodeTrolStatus(Progdata &progdata)
 
 void PlantStatus(Progdata &progdata)
 {
-	switch (progdata.living[PLANT].status)
+	switch (progdata.living[LIVING_PLANT].status)
 	{
 	case 0:
 		_cprintf("In deze grot leeft een vleesetende plant. Zijn dikke groene stengel loopt uit\r\n"
@@ -330,14 +330,14 @@ void PlantStatus(Progdata &progdata)
 				 "nek.\r\n\r\n");
 
 		progdata.status.lifepoints--; //   Wond
-		progdata.living[PLANT].status = random(2) + 1;
+		progdata.living[LIVING_PLANT].status = random(2) + 1;
 		break;
 	case 1:
 		_cprintf("De plant likt met zijn kleine schurfterige tongetje je bloed van zijn bek.\r\n"
 				 "Met zijn groene oogjes kijkt hij je weer aan, en hij maakt aanstalten zijn\r\n"
 				 "tanden opnieuw in je nek te zetten.\r\n\r\n");
 
-		progdata.living[PLANT].status = 2;
+		progdata.living[LIVING_PLANT].status = 2;
 		break;
 	case 2:
 		_cprintf("Opnieuw omsluit de bek van de plant je hals. Een warme stroom bloed loopt via\r\n"
@@ -345,7 +345,7 @@ void PlantStatus(Progdata &progdata)
 				 "je weer los.\r\n\r\n");
 
 		progdata.status.lifepoints--; //   Wond
-		progdata.living[PLANT].status = random(2) + 1;
+		progdata.living[LIVING_PLANT].status = random(2) + 1;
 		break;
 	case 3:
 		_cprintf("De resten van wat eerst een vleesetende plant was liggen nu op de grond van\r\n"
@@ -353,8 +353,8 @@ void PlantStatus(Progdata &progdata)
 				 "sen. Uit zijn stengel druipt langzaam het bloed van zijn slachtoffers.\r\n"
 				 "Op de plek waar vroeger zijn beschimmelde wortels waren zit nu een opening.\r\n\r\n");
 
-		progdata.rooms[25].connect[NORTH] = 20; //	Maak verbinding met slijmgrot
-		progdata.living[PLANT].status = 4;
+		progdata.rooms[25].connect[DO_NORTH] = 20; //	Maak verbinding met slijmgrot
+		progdata.living[LIVING_PLANT].status = 4;
 		break;
 	case 4:
 		_cprintf("De vleesetende plant is niet veel meer dan een berg stinkend tuinafval.\r\n\r\n");
@@ -365,7 +365,7 @@ void PlantStatus(Progdata &progdata)
 
 void GnoeStatus(Progdata &progdata)
 {
-	switch (progdata.living[GNOE].status)
+	switch (progdata.living[LIVING_GNOE].status)
 	{
 	case 0:
 		_cprintf("Er staat hier een grote behaarde gnoe die je met twee geniepige oogjes aan-\r\n"
@@ -373,7 +373,7 @@ void GnoeStatus(Progdata &progdata)
 				 "beestjes, die je nog nooit eerder gezien hebt. Het beest verspreidt een\r\n"
 				 "afschuwelijke lucht. Kweilend en zwaar snuivend komt hij langzaam naar je toe.\r\n\r\n");
 
-		progdata.living[GNOE].status = 1;
+		progdata.living[LIVING_GNOE].status = 1;
 		break;
 	case 1:
 		_cprintf("De gnoe neemt een sprong, en stoot met zijn grote kop hard in je maag. Je\r\n"
@@ -387,7 +387,7 @@ void GnoeStatus(Progdata &progdata)
 				 "Je ziet hem langzaam opzwellen en zijn hersens komen door zijn oogkassen naar\r\n"
 				 "buiten. Hij zakt in elkaar en blijft roerloos liggen.\r\n\r\n");
 
-		progdata.living[GNOE].status = 3;
+		progdata.living[LIVING_GNOE].status = 3;
 		break;
 	case 3:
 		_cprintf("Het bultachtige lichaam van de gnoe ligt op de grond en de hersens liggen er\r\n"
@@ -399,7 +399,7 @@ void GnoeStatus(Progdata &progdata)
 
 void DraakStatus(Progdata &progdata)
 {
-	switch (progdata.living[DRAAK].status)
+	switch (progdata.living[LIVING_DRAAK].status)
 	{
 	case 0:
 		_cprintf("In deze grot bevindt zich een grote draak. Hij heeft meerdere koppen, die je\r\n"
@@ -408,7 +408,7 @@ void DraakStatus(Progdata &progdata)
 				 "pelt. Opeens komt uit een van de bekken een rommelend geluid. Met moeite\r\n"
 				 "versta je \"Ben jij een koekie?\".\r\n\r\n");
 
-		progdata.living[DRAAK].status = 1;
+		progdata.living[LIVING_DRAAK].status = 1;
 		break;
 	case 1:
 		_cprintf("De koppen van de draak bewegen nu agressiever heen en weer en beginnen hevig\r\n"
@@ -417,7 +417,7 @@ void DraakStatus(Progdata &progdata)
 				 "walging. Een van de bekken spert zich wijd open, en harder dan eerst klinkt\r\n"
 				 "\"BEN JIJ EEN KOEKIE?!?\".\r\n\r\n");
 
-		progdata.living[DRAAK].status = 2;
+		progdata.living[LIVING_DRAAK].status = 2;
 		break;
 	case 2:
 		_cprintf("De draak heft langzaam een van zijn gore poten op, en geeft opeens een ontzet-\r\n"
@@ -432,7 +432,7 @@ void DraakStatus(Progdata &progdata)
 				 "Uit de bek waar juist het koekje in verdween druipt wat kwijl. De draak\r\n"
 				 "slaapt.\r\n\r\n");
 
-		progdata.living[DRAAK].status = 4;
+		progdata.living[LIVING_DRAAK].status = 4;
 		break;
 	case 4:
 		_cprintf("De draak slaapt onrustig. Soms beweegt een van zijn koppen iets, en uit zijn\r\n"
@@ -444,8 +444,8 @@ void DraakStatus(Progdata &progdata)
 				 "steken af tegen de beschimmelde huid, en de muts zakt iets scheef. Op een ge-\r\n"
 				 "geven moment valt er iets, en het klettert tegen de harde rotsvloer.\r\n\r\n");
 
-		progdata.items[GASPATROON].room = progdata.status.curroom;
-		progdata.living[DRAAK].status = 6;
+		progdata.items[ITEM_GASPATROON].room = progdata.status.curroom;
+		progdata.living[LIVING_DRAAK].status = 6;
 		break;
 	case 6:
 		_cprintf("De draak slaapt rustig.\r\n\r\n");
@@ -456,7 +456,7 @@ void DraakStatus(Progdata &progdata)
 
 void GezwelStatus(Progdata &progdata)
 {
-	switch (progdata.living[GEZWEL].status)
+	switch (progdata.living[LIVING_GEZWEL].status)
 	{
 	case 0:
 		_cprintf("Er staat hier een wezen dat nog het meest lijkt op een gezwel. Het kijkt je\r\n"
@@ -464,14 +464,14 @@ void GezwelStatus(Progdata &progdata)
 				 "mondhoeken groeien algen. Met zijn lange, glibberige tentakels houdt het zich\r\n"
 				 "vast aan alle wanden van de grot en verspert zo je weg.\r\n\r\n");
 
-		progdata.living[GEZWEL].status = 1;
+		progdata.living[LIVING_GEZWEL].status = 1;
 		break;
 	case 1:
 		_cprintf("Het gezwel zit nog steeds aan de grotwanden vastgezogen, en het trilt licht.\r\n\r\n");
 
 		break;
 	case 2:
-		if (progdata.items[GASMASKER].room == -2)
+		if (progdata.items[ITEM_GASMASKER].room == -2)
 		// gasmasker op
 		{
 			_cprintf("Als je op de hendel drukt, zie je een bruingrijs gas uit het patroon spuiten.\r\n"
@@ -490,8 +490,8 @@ void GezwelStatus(Progdata &progdata)
 
 			progdata.status.lifepoints -= 4; //    Grote wond
 		}
-		progdata.rooms[75].connect[NORTH] = 70;
-		progdata.living[GEZWEL].status = 4;
+		progdata.rooms[75].connect[DO_NORTH] = 70;
+		progdata.living[LIVING_GEZWEL].status = 4;
 		break;
 	case 4:
 		_cprintf("Op het gescheurde lichaam van het gezwel zitten allemaal schimmels. Uit zijn\r\n"
@@ -504,7 +504,7 @@ void GezwelStatus(Progdata &progdata)
 
 void DeurStatus(Progdata &progdata)
 {
-	switch (progdata.living[DEUR].status)
+	switch (progdata.living[LIVING_DEUR].status)
 	{
 	case 0:
 		_cprintf("In het noorden zit een grote, vastgeroeste deur. Hij is met blote handen niet\r\n"
@@ -516,8 +516,8 @@ void DeurStatus(Progdata &progdata)
 				 "Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een\r\n"
 				 "kier. Je geeft nog een duw, en langzaam draait de deur open.\r\n\r\n");
 
-		progdata.rooms[45].connect[NORTH] = 40;
-		progdata.living[DEUR].status = 2;
+		progdata.rooms[45].connect[DO_NORTH] = 40;
+		progdata.living[LIVING_DEUR].status = 2;
 		break;
 	case 2:
 		_cprintf("De deur is nu open, en geeft toegang tot een grot.\r\n\r\n");
@@ -528,14 +528,14 @@ void DeurStatus(Progdata &progdata)
 
 void StemmenStatus(Progdata &progdata)
 {
-	switch (progdata.living[STEMMEN].status)
+	switch (progdata.living[LIVING_STEMMEN].status)
 	{
 	case 0:
 		_cprintf("Uit het niets hoor je opeens een paar stemmen. Met moeite kun je ze verstaan:\r\n"
 				 "\"Wat schreeuwt is in z'n hart nog een kind\".\r\n"
 				 "Dan is het weer stil.\r\n\r\n");
 
-		progdata.living[STEMMEN].status = 1;
+		progdata.living[LIVING_STEMMEN].status = 1;
 		break;
 	case 1:
 		_cprintf("Vanuit de verte hoor je zachte, lachende stemmetjes.\r\n\r\n");
@@ -546,7 +546,7 @@ void StemmenStatus(Progdata &progdata)
 
 void BarbecueStatus(Progdata &progdata)
 {
-	switch (progdata.living[BARBECUE].status)
+	switch (progdata.living[LIVING_BARBECUE].status)
 	{
 	case 0:
 		_cprintf("Op deze open plek staat een barbecue gezellig te branden.\r\n\r\n");
@@ -556,13 +556,13 @@ void BarbecueStatus(Progdata &progdata)
 		_cprintf("Als je de hasj op de barbecue gooit verschiet de vlam van kleur. Verder gebeurt\r\n"
 				  "er niets.\r\n\r\n");
 
-		progdata.living[BARBECUE].status = 3;
+		progdata.living[LIVING_BARBECUE].status = 3;
 		break;
 	case 2:
 		_cprintf("Als je het vlees op de barbecue gooit verschiet de vlam van kleur. Verder\r\n"
 				  "gebeurt er niets.\r\n\r\n");
 
-		progdata.living[BARBECUE].status = 3;
+		progdata.living[LIVING_BARBECUE].status = 3;
 		break;
 	case 3:
 		_cprintf("De barbecue brandt nog steeds, alleen iets onrustiger dan eerst.\r\n\r\n");
@@ -573,8 +573,8 @@ void BarbecueStatus(Progdata &progdata)
 				  "barbecue belandt.\r\n"
              "Knetterend smelten de 2 ingredi‰nten om tot een koekje.\r\n\r\n");
 
-		progdata.items[KOEKJE].room = progdata.status.curroom;
-		progdata.living[BARBECUE].status = 0;
+		progdata.items[ITEM_KOEKJE].room = progdata.status.curroom;
+		progdata.living[LIVING_BARBECUE].status = 0;
 		break;
 	}
 }
@@ -584,7 +584,7 @@ void BoomStatus(Progdata &progdata)
 	static const char *smeulendbos = "Om je heen zie je de smeulende resten van wat eens bos was.";
 	int i, j;
 
-	switch (progdata.living[BOOM].status)
+	switch (progdata.living[LIVING_BOOM].status)
 	{
 	case 0:
 		_cprintf("In een kleine open plek staat een grote, kurkdroge, dode boom. Op de stam zit\r\n"
@@ -597,7 +597,7 @@ void BoomStatus(Progdata &progdata)
 				 "en het hele bos begint mee te branden. Je bent omringd door een enorme vuurzee,\r\n"
 				 "en de hitte is enorm.\r\n\r\n");
 
-		if (progdata.items[HITTEPAK].room != -2)
+		if (progdata.items[ITEM_HITTEPAK].room != -2)
 		{
 			_cprintf("Je hebt niets om je te beschermen tegen de hitte, en je loopt flinke brandwon-\r\n"
 					 "den op.\r\n\r\n");
@@ -613,9 +613,9 @@ void BoomStatus(Progdata &progdata)
 		progdata.rooms[4].descript = smeulendbos;
 		progdata.rooms[7].descript = smeulendbos;
 
-		progdata.items[GROENKRISTAL].room = 4;
-		progdata.living[DIAMANT].status = 1;
-		progdata.living[BOOM].status = 2;
+		progdata.items[ITEM_GROENKRISTAL].room = 4;
+		progdata.living[LIVING_DIAMANT].status = 1;
+		progdata.living[LIVING_BOOM].status = 2;
 		break;
 	case 2:
 		_cprintf("Uit de grond steken nog een paar wortels, en er naast ligt een verkoold stuk\r\n"
@@ -627,7 +627,7 @@ void BoomStatus(Progdata &progdata)
 
 void DiamantStatus(Progdata &progdata)
 {
-	switch (progdata.living[DIAMANT].status)
+	switch (progdata.living[LIVING_DIAMANT].status)
 	{
 	case 0:
       _cprintf("Je struikelt over iets. Door de begroe‹ing zie je niet wat het is.\r\n\r\n");
@@ -638,14 +638,14 @@ void DiamantStatus(Progdata &progdata)
 
 void ComputerStatus(Progdata &progdata)
 {
-	switch (progdata.living[COMPUTER].status)
+	switch (progdata.living[LIVING_COMPUTER].status)
 	{
 	case 0:
 		_cprintf("Er staat een computer van het merk Beull die bestaat bestaat uit een kast met\r\n"
 				 "een 3.5-inch drive en een monitor. Op de monitor staat: \"Datadisk invoeren\r\n"
 				 "a.u.b.\".\r\n\r\n");
 
-		progdata.living[COMPUTER].status = 1;
+		progdata.living[LIVING_COMPUTER].status = 1;
 		break;
 	case 1:
 		_cprintf("De computer wacht nog steeds.\r\n\r\n");
@@ -657,7 +657,7 @@ void ComputerStatus(Progdata &progdata)
 				 "route volgen die resulteert in de naam van het te vinden voorwerp.\".\r\n"
 				 "Na even wordt het scherm zwart.\r\n\r\n");
 
-		progdata.living[COMPUTER].status = 3;
+		progdata.living[LIVING_COMPUTER].status = 3;
 		break;
 	case 3:
 		_cprintf("Er valt niets te zien op de monitor en de computer is stil.\r\n\r\n");
@@ -668,7 +668,7 @@ void ComputerStatus(Progdata &progdata)
 
 void DrakeKopStatus(Progdata &progdata)
 {
-	switch (progdata.living[DRAKEKOP].status)
+	switch (progdata.living[LIVING_DRAKEKOP].status)
 	{
 	case 0:
 		_cprintf("Er zit in het noorden een zware, dichte deur met daarnaast een drakekop met een\r\n"
@@ -680,7 +680,7 @@ void DrakeKopStatus(Progdata &progdata)
 				 "opengaat. Het kristal is nu verdwenen, en de ogen van de kop beginnen licht te\r\n"
 				 "gloeien.\r\n\r\n");
 
-		progdata.living[DRAKEKOP].status = 2;
+		progdata.living[LIVING_DRAKEKOP].status = 2;
 		break;
 	case 2:
 		_cprintf("De ogen van de draak blijven licht gloeien.\r\n\r\n");
@@ -690,7 +690,7 @@ void DrakeKopStatus(Progdata &progdata)
 		_cprintf("Je stopt nog een kristal in de muil. Weer sluit en opent deze, en weer is het\r\n"
 				 "kristal verdwenen. Het schijnsel uit de ogen wordt nu sterker.\r\n\r\n");
 
-		progdata.living[DRAKEKOP].status = 4;
+		progdata.living[LIVING_DRAKEKOP].status = 4;
 		break;
 	case 4:
 		_cprintf("De ogen van de draak blijven gloeien.\r\n\r\n");
@@ -704,8 +704,8 @@ void DrakeKopStatus(Progdata &progdata)
 				 "licht met akelige precisie op het zware slot dat door de enorme hitte verdampt.\r\n"
 				 "Daarna zwaait de deur langzaam met veel gepiep open.\r\n\r\n");
 
-		progdata.rooms[32].connect[NORTH] = 27;
-		progdata.living[DRAKEKOP].status = 6;
+		progdata.rooms[32].connect[DO_NORTH] = 27;
+		progdata.living[LIVING_DRAKEKOP].status = 6;
 		break;
 	case 6:
 		_cprintf("De zware deur is nu open en geeft toegang tot een ruimte.\r\n\r\n");
@@ -716,10 +716,10 @@ void DrakeKopStatus(Progdata &progdata)
 
 bool LavaStatus(Progdata &progdata)
 {
-	switch (progdata.living[LAVA].status)
+	switch (progdata.living[LIVING_LAVA].status)
 	{
 	case 0:
-		if (progdata.items[HITTEPAK].room == -2)
+		if (progdata.items[ITEM_HITTEPAK].room == -2)
 			_cprintf("Voor je zie je een krater waarin lava opborrelt. Van het lava komt een dikke\r\n"
 					 "damp, en een rode gloed verlicht de omtrek. De hitte is enorm, maar het hitte-\r\n"
 					 "pak beschermt je tegen verbranding.\r\n\r\n");
@@ -750,7 +750,7 @@ bool LavaStatus(Progdata &progdata)
 
 void PapierStatus(Progdata &progdata)
 {
-	switch (progdata.living[PAPIER].status)
+	switch (progdata.living[LIVING_PAPIER].status)
 	{
 	case 0:
 		_cprintf("Er zit een dicht, houten luik in het plafond. Je kunt er niet bij.\r\n\r\n");
@@ -759,8 +759,8 @@ void PapierStatus(Progdata &progdata)
 	case 1:
 		_cprintf("Het luik in het plafond gaat open en er dwarrelt een vel papier naar beneden.\r\n\r\n");
 
-		progdata.items[PAPIERITEM].room = 66;
-		progdata.living[PAPIER].status = 2;
+		progdata.items[ITEM_PAPIERITEM].room = 66;
+		progdata.living[LIVING_PAPIER].status = 2;
 		break;
 	case 2:
 		_cprintf("Het luik aan het plafond hangt nu open. Er zit een leeg gat.\r\n\r\n");

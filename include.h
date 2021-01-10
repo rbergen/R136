@@ -66,70 +66,73 @@ struct Parsedata
 /*
   defines
 */
+#define CURSOR_NORMAL		0
+#define CURSOR_FULL			1
+#define CURSOR_UNDEFINED	-1
 
-#define EAST		0
-#define WEST		1
-#define NORTH		2
-#define SOUTH		3
-#define UP			4
-#define DOWN		5
-#define GEBRUIK	6
-#define COMBINEER	7
-#define PAK			8
-#define LEG			9
-#define BEKIJK		10
-#define AFWACHTEN	11
-#define EINDE		12
-#define STATUS		13
-#define HELP		14
+#define DO_EAST			0
+#define DO_WEST			1
+#define DO_NORTH		2
+#define DO_SOUTH		3
+#define DO_UP			4
+#define DO_DOWN			5
+#define DO_GEBRUIK		6
+#define DO_COMBINEER	7
+#define DO_PAK			8
+#define DO_LEG			9
+#define DO_BEKIJK		10
+#define DO_AFWACHTEN	11
+#define DO_EINDE		12
+#define DO_STATUS		13
+#define DO_HELP			14
 
-#define HELLEHOND		0
-#define RODETROL		1
-#define PLANT			2
-#define GNOE			3
-#define DRAAK			4
-#define GEZWEL			5
-#define DEUR			6
-#define STEMMEN		7
-#define BARBECUE		8
-#define BOOM			9
-#define DIAMANT		10
-#define COMPUTER		11
-#define DRAKEKOP		12
-#define LAVA			13
-#define VACUUM			14
-#define PAPIER			15
-#define NOORDMOERAS	16
-#define MIDDENMOERAS	17
-#define ZUIDMOERAS	18
-#define MISTGROT		19
-#define TELEPORT		20
+#define LIVING_HELLEHOND	0
+#define LIVING_RODETROL		1
+#define LIVING_PLANT		2
+#define LIVING_GNOE			3
+#define LIVING_DRAAK		4
+#define LIVING_GEZWEL		5
+#define LIVING_DEUR			6
+#define LIVING_STEMMEN		7
+#define LIVING_BARBECUE		8
+#define LIVING_BOOM			9
+#define LIVING_DIAMANT		10
+#define LIVING_COMPUTER		11
+#define LIVING_DRAKEKOP		12
+#define LIVING_LAVA			13
+#define LIVING_VACUUM		14
+#define LIVING_PAPIER		15
+#define LIVING_NOORDMOERAS	16
+#define LIVING_MIDDENMOERAS	17
+#define LIVING_ZUIDMOERAS	18
+#define LIVING_MISTGROT		19
+#define LIVING_TELEPORT		20
 
-#define HONDVLEES			0
-#define HITTEPAK			1
-#define GROENKRISTAL		2
-#define ZWAARD				3
-#define BOT					4
-#define DISKETTE			5
-#define HASJ				6
-#define ROODKRISTAL		7
-#define SLAAPMUTS			8
-#define BOM					9
-#define ZAKLAMP			10
-#define VERBAND			11
-#define VLAMMENWERPER	12
-#define KOOKBOEK			13
-#define TNT					14
-#define GASPATROON		15
-#define GIFTIGVLEES		16
-#define ONTSTEKING		17
-#define BATTERIJEN		18
-#define GASMASKER			19
-#define PAPIERITEM		20
-#define BOEKJE				21
-#define BLAUWKRISTAL		22
-#define KOEKJE				23
-#define GASGRANAAT		24
+#define ITEM_HONDVLEES		0
+#define ITEM_HITTEPAK		1
+#define ITEM_GROENKRISTAL	2
+#define ITEM_ZWAARD			3
+#define ITEM_BOT			4
+#define ITEM_DISKETTE		5
+#define ITEM_HASJ			6
+#define ITEM_ROODKRISTAL	7
+#define ITEM_SLAAPMUTS		8
+#define ITEM_BOM			9
+#define ITEM_ZAKLAMP		10
+#define ITEM_VERBAND		11
+#define ITEM_VLAMMENWERPER	12
+#define ITEM_KOOKBOEK		13
+#define ITEM_TNT			14
+#define ITEM_GASPATROON		15
+#define ITEM_GIFTIGVLEES	16
+#define ITEM_ONTSTEKING		17
+#define ITEM_BATTERIJEN		18
+#define ITEM_GASMASKER		19
+#define ITEM_PAPIERITEM		20
+#define ITEM_BOEKJE			21
+#define ITEM_BLAUWKRISTAL	22
+#define ITEM_KOEKJE			23
+#define ITEM_GASGRANAAT		24
 
 int random(int max);
 
@@ -137,6 +140,7 @@ void clrscr();
 int wherex();
 int wherey();
 void gotoxy(int x, int y);
+void setcursor(int mode);
 int agetchar(const char *allowed);
 int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
 int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
@@ -170,7 +174,7 @@ void ForceExit(void);
 void RoomStatus(Progdata &progdata);
 void ShowDirString(char *connect);
 void ShowItems(Progdata &progdata);
-bool BeastStatus(Progdata &progdata);
+bool LivingStatus(Progdata &progdata);
 void HellehondStatus(Progdata &progdata);
 void RodeTrolStatus(Progdata &progdata);
 void PlantStatus(Progdata &progdata);

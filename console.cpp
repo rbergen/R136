@@ -51,6 +51,10 @@ int agetchar(const char *allowed);
 int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
 int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
+#define CURSOR_NORMAL		0
+#define CURSOR_FULL			1
+#define CURSOR_UNDEFINED	-1
+
 void clrscr()
 {
 	COORD topLeft = { 0, 0 };
@@ -89,6 +93,32 @@ void gotoxy(int x, int y)
 	COORD position = { (SHORT)x - 1, (SHORT)y - 1};
 
 	SetConsoleCursorPosition(console, position);
+}
+
+void setcursor(int mode)
+{
+	static int normalcursorheight = CURSOR_UNDEFINED;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO cursor;
+
+	GetConsoleCursorInfo(console, &cursor);
+
+	if (normalcursorheight == CURSOR_UNDEFINED)
+	{
+		normalcursorheight = cursor.dwSize;
+	}
+
+	switch (mode)
+	{
+	case CURSOR_NORMAL:
+		cursor.dwSize = normalcursorheight;
+		SetConsoleCursorInfo(console, &cursor);
+		break;
+	case CURSOR_FULL:
+		cursor.dwSize = 100;
+		SetConsoleCursorInfo(console, &cursor);
+		break;
+	}
 }
 
 /*-------------------------------------------------------------------------*
@@ -250,6 +280,13 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 	if (L_INPEND)
 		_putch(L_INPEND);
 
+	ins = L_INSFLAG & 1;
+
+	if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
+		setcursor(CURSOR_NORMAL);
+	else
+		setcursor(CURSOR_FULL);
+
 	do
 	{  gotoxy(inpx + ipos, inpy);
 		switch (ichar = _getch())
@@ -277,6 +314,10 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 				break;
 			case 82: /* Insert */
 				ins = ins ? 0 : 1;
+				if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
+					setcursor(CURSOR_NORMAL);
+				else
+					setcursor(CURSOR_FULL);
 				break;
 			case 83: /* Delete */
 				memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
@@ -335,6 +376,7 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 		}
 	}
 	while (!toret);
+	setcursor(CURSOR_NORMAL);
 	gotoxy(curx, cury);
 	return toret;
 }

@@ -49,5 +49,6 @@
     <None Include="Original\R136.zip">
       <Filter>Original</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

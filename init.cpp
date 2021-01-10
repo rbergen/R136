@@ -105,39 +105,39 @@ const char *roomdesc[80] = { "Je bevindt je in een uithoek van een donker bos. O
 							  "Je glijdt bijna uit over de zeepachtige prut die overal in de grot ligt. Tus-\r\nsen de glibberige massa steekt een paal omhoog met daarop een pijl die naar\r\nhet oosten wijst.",
 							  NULL};
 
-char levelcon[11][3] = {{6, DOWN, 34},
-								{19, DOWN, 21},
-								{21, UP, 19},
-								{28, DOWN, 58},
-								{36, DOWN, 46},
-								{38, DOWN, 56},
-								{46, UP, 36},
-								{56, UP, 38},
-								{56, DOWN, 68},
-								{58, UP, 28},
-								{68, UP, 56}};
+char levelcon[11][3] = {{6, DO_DOWN, 34},
+								{19, DO_DOWN, 21},
+								{21, DO_UP, 19},
+								{28, DO_DOWN, 58},
+								{36, DO_DOWN, 46},
+								{38, DO_DOWN, 56},
+								{46, DO_UP, 36},
+								{56, DO_UP, 38},
+								{56, DO_DOWN, 68},
+								{58, DO_UP, 28},
+								{68, DO_UP, 56}};
 
-char blocked[83][2] = {{3, WEST}, {3, EAST}, {3, SOUTH}, {8, WEST},
-							  {8, EAST}, {8, NORTH}, {8, SOUTH}, {5, EAST},
-							  {6, WEST}, {11, EAST}, {12, WEST}, {18, WEST},
-							  {18, EAST}, {18, NORTH}, {19, WEST}, {20, EAST},
-							  {21, WEST}, {22, EAST}, {22, SOUTH}, {27, NORTH},
-							  {23, WEST}, {23, EAST}, {24, WEST}, {25, EAST},
-							  {25, NORTH}, {26, WEST}, {26, EAST}, {27, EAST},
-							  {27, WEST}, {28, WEST}, {32, NORTH}, {33, EAST},
-							  {34, WEST}, {31, SOUTH}, {36, NORTH}, {34, SOUTH},
-							  {37, WEST}, {37, NORTH}, {37, EAST}, {39, NORTH},
-							  {40, EAST}, {41, WEST}, {41, EAST}, {42, WEST},
-							  {42, EAST}, {43, WEST},  {43, EAST}, {44, WEST},
-							  {45, NORTH}, {46, EAST}, {47, WEST}, {52, EAST},
-							  {48, SOUTH}, {53, NORTH}, {53, EAST}, {54, WEST},
-							  {55, EAST}, {56, WEST}, {52, SOUTH}, {57, NORTH},
-							  {53, SOUTH}, {58, EAST}, {59, WEST}, {60, EAST},
-							  {61, WEST}, {61, SOUTH}, {66, NORTH}, {65, SOUTH},
-							  {70, NORTH}, {70, EAST}, {71, WEST}, {66, SOUTH},
-							  {71, NORTH}, {71, EAST}, {72, WEST}, {67, SOUTH},
-							  {72, NORTH}, {72, EAST}, {73, WEST}, {79, WEST},
-							  {74, SOUTH}, {75, NORTH}, {79, NORTH}};
+char blocked[83][2] = {{3, DO_WEST}, {3, DO_EAST}, {3, DO_SOUTH}, {8, DO_WEST},
+							  {8, DO_EAST}, {8, DO_NORTH}, {8, DO_SOUTH}, {5, DO_EAST},
+							  {6, DO_WEST}, {11, DO_EAST}, {12, DO_WEST}, {18, DO_WEST},
+							  {18, DO_EAST}, {18, DO_NORTH}, {19, DO_WEST}, {20, DO_EAST},
+							  {21, DO_WEST}, {22, DO_EAST}, {22, DO_SOUTH}, {27, DO_NORTH},
+							  {23, DO_WEST}, {23, DO_EAST}, {24, DO_WEST}, {25, DO_EAST},
+							  {25, DO_NORTH}, {26, DO_WEST}, {26, DO_EAST}, {27, DO_EAST},
+							  {27, DO_WEST}, {28, DO_WEST}, {32, DO_NORTH}, {33, DO_EAST},
+							  {34, DO_WEST}, {31, DO_SOUTH}, {36, DO_NORTH}, {34, DO_SOUTH},
+							  {37, DO_WEST}, {37, DO_NORTH}, {37, DO_EAST}, {39, DO_NORTH},
+							  {40, DO_EAST}, {41, DO_WEST}, {41, DO_EAST}, {42, DO_WEST},
+							  {42, DO_EAST}, {43, DO_WEST},  {43, DO_EAST}, {44, DO_WEST},
+							  {45, DO_NORTH}, {46, DO_EAST}, {47, DO_WEST}, {52, DO_EAST},
+							  {48, DO_SOUTH}, {53, DO_NORTH}, {53, DO_EAST}, {54, DO_WEST},
+							  {55, DO_EAST}, {56, DO_WEST}, {52, DO_SOUTH}, {57, DO_NORTH},
+							  {53, DO_SOUTH}, {58, DO_EAST}, {59, DO_WEST}, {60, DO_EAST},
+							  {61, DO_WEST}, {61, DO_SOUTH}, {66, DO_NORTH}, {65, DO_SOUTH},
+							  {70, DO_NORTH}, {70, DO_EAST}, {71, DO_WEST}, {66, DO_SOUTH},
+							  {71, DO_NORTH}, {71, DO_EAST}, {72, DO_WEST}, {67, DO_SOUTH},
+							  {72, DO_NORTH}, {72, DO_EAST}, {73, DO_WEST}, {79, DO_WEST},
+							  {74, DO_SOUTH}, {75, DO_NORTH}, {79, DO_NORTH}};
 
 char beginroom[21] = {2, 23, 25, 44, 50, 75, 45, 58, 17, 10, 4, 41, 32, 59, 71, 66, 3, 8, 18, 37, 79};
 char killhits[21] = {4, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -178,9 +178,9 @@ const char *itemdesc[25] = {"Het is een goor stuk vlees dat naar kots ruikt.",
 
 char itemroom[25] = {-1, 4, -1, 5, 13, 20, 22, -1, 24, 27, 31, 39, 40, 43, 51, -1, 52, 60, 61, 62, -1, 70, 72, -1, -1};
 
-char workon[25] = {BARBECUE, -1, DRAKEKOP, -1, DEUR, COMPUTER, BARBECUE,
-							 DRAKEKOP, DRAAK, LAVA, -20, -1, BOOM, -1, -1, -19, GNOE, -17,
-							 -12, -1, -1, RODETROL, DRAKEKOP, DRAAK, GEZWEL};
+char workon[25] = {LIVING_BARBECUE, -1, LIVING_DRAKEKOP, -1, LIVING_DEUR, LIVING_COMPUTER, LIVING_BARBECUE,
+							 LIVING_DRAKEKOP, LIVING_DRAAK, LIVING_LAVA, -20, -1, LIVING_BOOM, -1, -1, -19, LIVING_GNOE, -17,
+							 -12, -1, -1, LIVING_RODETROL, LIVING_DRAKEKOP, LIVING_DRAAK, LIVING_GEZWEL};
 
 bool Initialize(Progdata &progdata)
 {
@@ -223,11 +223,11 @@ bool SetRooms(Room *rooms)
 	{
 		rooms[i].name = roomnames[i];
 		rooms[i].descript = roomdesc[i];
-		rooms[i].connect[EAST] = i + 1;
-		rooms[i].connect[WEST] = i - 1;
-		rooms[i].connect[NORTH] = i - 5;
-		rooms[i].connect[SOUTH] = i + 5;
-		rooms[i].connect[UP] = rooms[i].connect[DOWN] = -1;
+		rooms[i].connect[DO_EAST] = i + 1;
+		rooms[i].connect[DO_WEST] = i - 1;
+		rooms[i].connect[DO_NORTH] = i - 5;
+		rooms[i].connect[DO_SOUTH] = i + 5;
+		rooms[i].connect[DO_UP] = rooms[i].connect[DO_DOWN] = -1;
 	}
 
 	// Seperate layers
@@ -235,13 +235,13 @@ bool SetRooms(Room *rooms)
 	{
 		for (j = 0; j < 16; j += 5)
 		{
-			rooms[i + j + 4].connect[EAST] = -1;
-			rooms[i + j].connect[WEST] = -1;
+			rooms[i + j + 4].connect[DO_EAST] = -1;
+			rooms[i + j].connect[DO_WEST] = -1;
 		}
 		for (j = 0; j < 5; j++)
 		{
-			rooms[i + j].connect[NORTH] = -1;
-			rooms[i + j + 15].connect[SOUTH] = -1;
+			rooms[i + j].connect[DO_NORTH] = -1;
+			rooms[i + j + 15].connect[DO_SOUTH] = -1;
 		}
 	}
 	// Connect layers

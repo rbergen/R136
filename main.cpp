@@ -14,7 +14,7 @@ int main()
 	while (true)
 	{
 		RoomStatus(progdata);
-		if (BeastStatus(progdata))
+		if (LivingStatus(progdata))
 			if (!DoAction(progdata))
 				break;
 	}
