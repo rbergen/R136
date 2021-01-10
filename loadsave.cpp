@@ -1,5 +1,8 @@
 #include "include.h"
 
+const char* LOADSAVEDATAPATH = "r136data.rip";
+
+
 void SaveStatus(Progdata &progdata)
 {
 	FILE *fp;

@@ -131,7 +131,12 @@ struct Parsedata
 #define KOEKJE				23
 #define GASGRANAAT		24
 
+int random(int max);
+
 void clrscr();
+int wherex();
+int wherey();
+void gotoxy(int x, int y);
 int agetchar(const char *allowed);
 int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
 int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
@@ -182,7 +187,7 @@ void DrakeKopStatus(Progdata &progdata);
 bool LavaStatus(Progdata &progdata);
 void PapierStatus(Progdata &progdata);
 
-const char* LOADSAVEDATAPATH = "r136data.rip";
+extern const char* LOADSAVEDATAPATH;
 
 #endif // !R136_INCLUDE
 

@@ -1,23 +1,4 @@
 /***************************************************************************
- * File:        STRINP.C
- * Description: Three functions for input from the keyboard on MS-DOS
- *              computers. These routines are meant to be used with Borland
- *              Turbo C++ or compatible compilers, but can possibly be used
- *              with other compilers as well.
- * Author:      Rutger van Bergen
- *
- * This code may be spread and altered free of charge.
- * The author can not be held responsible for any damage that may occur by
- * the use of (parts of) this code, altered or not, even if the author has
- * been informed of the possibility of such damage.
- * If any changes to this code are made and the code is spread with those
- * changes, you are kindly requested to report the changes made to the
- * original author.
- *
- * (C) Copyright 1996, Rutger van Bergen
- ***************************************************************************/
-
-/***************************************************************************
  * Includes necessary for functions to work
  ***************************************************************************/
 #include <conio.h>
@@ -26,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <Windows.h>
+#include <windows.h>
 
 /***************************************************************************
  * #defines of constants used by the functions
@@ -62,9 +43,13 @@
 /***************************************************************************
  * Declarations of the functions
  ***************************************************************************/
-//int agetchar(const char *allowed);
-//int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
-//int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+void clrscr();
+int wherex();
+int wherey();
+void gotoxy(int x, int y);
+int agetchar(const char *allowed);
+int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
+int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
 void clrscr()
 {
@@ -74,17 +59,37 @@ void clrscr()
 	DWORD written;
 
 	GetConsoleScreenBufferInfo(console, &screen);
-	FillConsoleOutputCharacterA(
-		console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
-	);
-	FillConsoleOutputAttribute(
-		console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
-	screen.dwSize.X * screen.dwSize.Y, topLeft, &written
-	);
+	FillConsoleOutputCharacterA(console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
+	FillConsoleOutputAttribute(console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE, screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
 	
 	SetConsoleCursorPosition(console, topLeft);
 }
 
+int wherex()
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO screen;
+
+	GetConsoleScreenBufferInfo(console, &screen);
+	return screen.dwCursorPosition.X;
+}
+
+int wherey()
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO screen;
+
+	GetConsoleScreenBufferInfo(console, &screen);
+	return screen.dwCursorPosition.Y;
+}
+
+void gotoxy(int x, int y)
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD position = { (SHORT)x, (SHORT)y };
+
+	SetConsoleCursorPosition(console, position);
+}
 
 /*-------------------------------------------------------------------------*
  * Remarks: 1. to create a header file for the  functions, the code shown
@@ -119,7 +124,7 @@ void clrscr()
  * example: y_or_n = agetchar("yYnN");
  *=========================================================================*/
 int agetchar(const char *allowed)
-{  char input;
+{  char input = 0;
 
 	do
 	{  if (ascanf(0, 1, allowed, "%c", &input) == L_ESC)
@@ -162,9 +167,12 @@ int agetchar(const char *allowed)
 int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...)
 {  va_list argp;
 	char *inpstr;
-	int toret;
+	int toret = 0;
 
-	inpstr = (char *) calloc(length + 1, sizeof(char));
+	inpstr = (char *) calloc((size_t)length + 1, sizeof(char));
+	if (!inpstr)
+		return L_ESC;
+
 	do
 	{  memset(inpstr, ' ', length);
 		if (!((toret = strinp(allowed, inpstr, wherex(), wherey(), 0, 1, 0)) == L_ESC))
@@ -225,10 +233,12 @@ int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...
  * example: whyreturn = strinp("1234567890.", myinp, 10, 12, 0, 1, 1);
  *=========================================================================*/
 int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm)
-{  int ins, ilen, ipos = 0, toret = 0, curx, cury;
+{
+	static int ins = 0;
+	int ilen, ipos = 0, toret = 0, curx, cury;
 	char ichar;
 
-	ilen = strlen(input) - 1;
+	ilen = (int)strlen(input) - 1;
 	curx = wherex();
 	cury = wherey();
 	gotoxy(inpx, inpy);
@@ -266,7 +276,7 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 						ins = ins ? 0 : 1;
 					break;
 					case 83: /* Delete */
-						memmove(input + ipos, input + ipos + 1, ilen - ipos);
+						memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
 						input[ilen] = ' ';
 						_cputs(input + ipos);
 					break;
@@ -286,7 +296,7 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 			break;
 			case 8: /* Backspace */
 				if (ipos)
-				{  memmove(input + ipos - 1, input + ipos, ilen - ipos + 1);
+				{  memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
 					input[ilen] = ' ';
 					gotoxy(inpx + --ipos, inpy);
 					_cputs(input + ipos);
@@ -311,7 +321,7 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 				if (strchr(allowed, ichar))
 				{  _putch(ichar);
 					if (ins)
-					{  memmove(input + ipos + 1, input + ipos, ilen - ipos);
+					{  memmove(input + ipos + 1, input + ipos, (size_t)ilen - ipos);
 						_cputs(input + ipos + 1);
 					}
 					input[ipos] = ichar;

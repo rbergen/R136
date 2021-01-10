@@ -1,4 +1,5 @@
 #include "include.h"
+#include <time.h>
 
 const char *roomnames[80] = {"in het bos", "in het bos", "in het bos", "in het moeras", "in het bos",
 							  "in het bos", "op de begraafplaats", "in het bos", "in het moeras", "op de open plek",
@@ -203,7 +204,7 @@ bool Initialize(Progdata &progdata)
 	printf("**** Missiecode: _R136_ ****");
 //	window(1, 3, 80, 25);
 
-	randomize();
+	srand((int)time(NULL));
 
 	for (i = 0; i < 10; i++)
 		progdata.owneditems[i] = -1;

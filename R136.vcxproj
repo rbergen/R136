@@ -145,6 +145,7 @@
     <ClCompile Include="init.cpp" />
     <ClCompile Include="loadsave.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="random.cpp" />
     <ClCompile Include="status.cpp" />
     <ClCompile Include="console.cpp" />
     <ClCompile Include="use.cpp" />

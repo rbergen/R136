@@ -7,7 +7,7 @@ char const *cmds[15] = {"oost", "west", "noord", "zuid", "klim", "daal", "gebrui
 bool DoAction(Progdata &progdata)
 {
 	char inpstr[65];
-	Parsedata parsedata;
+	Parsedata parsedata{};
 	int cury;
 
 	if (progdata.status.lifepoints <= 0)
@@ -178,7 +178,7 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 			progdata.living[i].status = 3;
 			BeastStatus(progdata);
 		}
-		_getch();
+		(void)_getch();
 		break;
 	case ZAKLAMP:
 		if (progdata.status.lamp)
@@ -207,14 +207,14 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 		progdata.status.lifepoints = 20;
 		progdata.items[VERBAND].room = -1;
 		progdata.owneditems[parsedata.object1] = -1;
-		_getch();
+		(void)_getch();
 		break;
 	case TNT:
 		_cprintf("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\r\n"
 				 "gaat met een harde knal. Je wordt even verblind door de flits van de ontplof-\r\n"
 				 "fing. Door de klap val je even flauw.\r\n");
 		progdata.status.lifepoints--;
-		_getch();
+		(void)_getch();
 		break;
 	case HITTEPAK:
 		_cprintf("Je hebt het pak al aan.\r\n");
@@ -276,7 +276,7 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 			break;
 		}
 		BeastStatus(progdata);
-		_getch();
+		(void)_getch();
 		break;
 	}
 	return true;
@@ -459,7 +459,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 
 	strcpy_s(workstr, inpstr);
 
-	for (i = strlen(workstr) - 1; i >= 0 && workstr[i] == ' '; i--);
+	for (i = (int)strlen(workstr) - 1; i >= 0 && workstr[i] == ' '; i--);
 	workstr[i + 1] = 0;
 	for (curp = workstr; curp < (workstr + strlen(workstr)) && *curp == ' '; curp++);
 
@@ -475,7 +475,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 			_cprintf("%s\r< geen commando gegeven", spaces);
 		else
 			_cprintf("%s\r< ongeldig commando gegeven", spaces);
-		_getch();
+		(void)_getch();
 		return;
 	}
 
@@ -492,14 +492,14 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 	case -1:
 		_cprintf("%s\r< ongeldig commando gegeven", spaces);
 		parsedata.parseerror = true;
-		_getch();
+		(void)_getch();
 		return;
 	case GEBRUIK:
 		if (*eoword != ' ')
 		{
 			_cprintf("%s\r< syntax: gebruik <voorwerp>", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
@@ -508,12 +508,12 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		break;
@@ -522,7 +522,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		{
 			_cprintf("%s\r< syntax: leg <voorwerp>", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
@@ -531,12 +531,12 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		break;
@@ -545,7 +545,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		{
 			_cprintf("%s\r< syntax: bekijk <voorwerp>", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
@@ -554,12 +554,12 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		break;
@@ -568,7 +568,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		{
 			_cprintf("%s\r< syntax: combineer <voorwerp> en/met <voorwerp>", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 
@@ -585,12 +585,12 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, itemname);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, itemname);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 
@@ -609,20 +609,20 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, itemname);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, itemname);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 
 		if (parsedata.object1 == parsedata.object2)
 		{
-			_cprintf("%s\r< je kunt een voorwerp niet met zichzelf combineren", spaces, eoword + 1);
+			_cprintf("%s\r< je kunt een voorwerp niet met zichzelf combineren", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		break;
@@ -631,7 +631,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		{
 			_cprintf("%s\r< syntax: pak <voorwerp>", spaces);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		parsedata.object1 = FindLayingItemNum(progdata, eoword + 1);
@@ -640,12 +640,12 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		case -1:
 			_cprintf("%s\r< je ziet hier geen \"%s\" die je kunt meenemen", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		case -2:
 			_cprintf("%s\r< de afkorting \"%s\" is dubbelzinnig", spaces, eoword + 1);
 			parsedata.parseerror = true;
-			_getch();
+			(void)_getch();
 			return;
 		}
 		break;
