@@ -2,7 +2,6 @@
 
 const char* LOADSAVEDATAPATH = "r136data.rip";
 
-
 void SaveStatus(Progdata &progdata)
 {
 	FILE *fp;
@@ -15,7 +14,7 @@ void SaveStatus(Progdata &progdata)
 		return;
 	}
 
-	while (!fopen_s(&fp, LOADSAVEDATAPATH, "wb"))
+	while (fopen_s(&fp, LOADSAVEDATAPATH, "wb"))
 	{
 		_cprintf("\r\n\r\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 		if (tolower(agetchar("jJnN")) != 'j')
@@ -84,7 +83,7 @@ bool LoadStatus(Progdata &progdata)
 	FILE *fp;
 	int i;
 
-	if (!fopen_s(&fp, LOADSAVEDATAPATH, "rb"))
+	if (fopen_s(&fp, LOADSAVEDATAPATH, "rb"))
 	{
 		printf("                      Druk op een toets om te beginnen");
 		(void)_getch();

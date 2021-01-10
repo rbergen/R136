@@ -71,7 +71,7 @@ int wherex()
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 
 	GetConsoleScreenBufferInfo(console, &screen);
-	return screen.dwCursorPosition.X;
+	return screen.dwCursorPosition.X + 1;
 }
 
 int wherey()
@@ -80,13 +80,13 @@ int wherey()
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 
 	GetConsoleScreenBufferInfo(console, &screen);
-	return screen.dwCursorPosition.Y;
+	return screen.dwCursorPosition.Y + 1;
 }
 
 void gotoxy(int x, int y)
 {
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD position = { (SHORT)x, (SHORT)y };
+	COORD position = { (SHORT)x - 1, (SHORT)y - 1};
 
 	SetConsoleCursorPosition(console, position);
 }
@@ -236,7 +236,7 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 {
 	static int ins = 0;
 	int ilen, ipos = 0, toret = 0, curx, cury;
-	char ichar;
+	int ichar;
 
 	ilen = (int)strlen(input) - 1;
 	curx = wherex();
@@ -253,81 +253,84 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 	do
 	{  gotoxy(inpx + ipos, inpy);
 		switch (ichar = _getch())
-		{  case 0:
-				switch (_getch())
-				{  case 75: /* Arrow left */
-						if (ipos)
-							ipos--;
-					break;
-					case 77: /* Arrow right */
-						if (ipos < ilen)
-							ipos++;
-					break;
-					case 71: /* Home */
-						ipos = 0;
-					break;
-					case 79: /* End */
-						ipos = ilen;
-						if (input[ipos] == ' ')
-							while (ipos && input[ipos - 1] == ' ')
-								ipos--;
-					break;
-					case 82: /* Insert */
-						ins = ins ? 0 : 1;
-					break;
-					case 83: /* Delete */
-						memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
-						input[ilen] = ' ';
-						_cputs(input + ipos);
-					break;
-					case 72: /* Arrow up */
-						if (curm)
-							toret = L_UP;
-					break;
-					case 80: /* Arrow down */
-						if (curm)
-							toret = L_DOWN;
-					break;
-					case 15: /* Shift-Tab */
-						if (curm)
-							toret = L_STAB;
-					break;
-				}
-			break;
-			case 8: /* Backspace */
+		{  
+		case 0:
+		case 0xE0:
+			switch (_getch())
+			{  
+			case 75: /* Arrow left */
 				if (ipos)
-				{  memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
-					input[ilen] = ' ';
-					gotoxy(inpx + --ipos, inpy);
-					_cputs(input + ipos);
-				}
-			break;
-			case 9: /* Tab */
+					ipos--;
+				break;
+			case 77: /* Arrow right */
+				if (ipos < ilen)
+					ipos++;
+				break;
+			case 71: /* Home */
+				ipos = 0;
+				break;
+			case 79: /* End */
+				ipos = ilen;
+				if (input[ipos] == ' ')
+					while (ipos && input[ipos - 1] == ' ')
+						ipos--;
+				break;
+			case 82: /* Insert */
+				ins = ins ? 0 : 1;
+				break;
+			case 83: /* Delete */
+				memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
+				input[ilen] = ' ';
+				_cputs(input + ipos);
+				break;
+			case 72: /* Arrow up */
 				if (curm)
-					toret = L_TAB;
+					toret = L_UP;
+				break;
+			case 80: /* Arrow down */
+				if (curm)
+					toret = L_DOWN;
+				break;
+			case 15: /* Shift-Tab */
+				if (curm)
+					toret = L_STAB;
+				break;
+			}
 			break;
-			case 13: /* Enter */
-				toret = L_ENTER;
+		case 8: /* Backspace */
+			if (ipos)
+			{  memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
+				input[ilen] = ' ';
+				gotoxy(inpx + --ipos, inpy);
+				_cputs(input + ipos);
+			}
 			break;
-			case 27: /* Escape */
-				if (esc)
-					toret = L_ESC;
+		case 9: /* Tab */
+			if (curm)
+				toret = L_TAB;
 			break;
-			default:
-				if (caps > 0)
-					ichar = toupper(ichar);
-				else if (caps < 0)
-					ichar = tolower(ichar);
-				if (strchr(allowed, ichar))
-				{  _putch(ichar);
-					if (ins)
-					{  memmove(input + ipos + 1, input + ipos, (size_t)ilen - ipos);
-						_cputs(input + ipos + 1);
-					}
-					input[ipos] = ichar;
-					if (ipos < ilen)
-						ipos++;
+		case 13: /* Enter */
+			toret = L_ENTER;
+			break;
+		case 27: /* Escape */
+			if (esc)
+				toret = L_ESC;
+			break;
+		default:
+			if (caps > 0)
+				ichar = toupper(ichar);
+			else if (caps < 0)
+				ichar = tolower(ichar);
+			if (strchr(allowed, ichar))
+			{  _putch(ichar);
+				if (ins)
+				{  memmove(input + ipos + 1, input + ipos, (size_t)ilen - ipos);
+					_cputs(input + ipos + 1);
 				}
+				input[ipos] = ichar;
+				if (ipos < ilen)
+					ipos++;
+			}
 			break;
 		}
 	}

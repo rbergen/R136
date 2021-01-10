@@ -21,7 +21,7 @@ int main()
 
 	SaveStatus(progdata);
 
-	_getch();
+	(void)_getch();
 
 //	window(1, 1, 80, 25);
 	clrscr();
@@ -66,7 +66,7 @@ void ShowStartMessage(void)
 			 "De wetenschapper die aan de straling was blootgesteld hield zich niet aan de\r\n"
 			 "afspraak en stal wat van de agressieve stof. Hij bouwde een bom, de posi-\r\n"
 			 "tronenbom genaamd.\r\n");
-	_getch();
+	(void)_getch();
 	clrscr();
 	_cprintf("Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de\r\n"
 			 "wereld daarvoor laten boeten. Daarom verborg hij de bom, met een tijdmecha-\r\n"
@@ -85,7 +85,7 @@ void ShowStartMessage(void)
 			 "Je staat op de trap die naar de vallei leidt. Rechts van je staat een ver-\r\n"
 			 "weerd bordje: \"Betreden op eigen risico\". Je kijkt nog een keer achterom,\r\n"
 			 "en met trillende benen loop je naar beneden...\r\n");
-	_getch();
+	(void)_getch();
 	clrscr();
 	_cprintf("Type h voor help.\r\n\r\n");
 }
@@ -93,7 +93,7 @@ void ShowStartMessage(void)
 void ForceExit(void)
 {
 
-	_getch();
+	(void)_getch();
 
 	remove(LOADSAVEDATAPATH);
 
