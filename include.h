@@ -16,9 +16,9 @@
 
 struct Room
 {
-	char connect[6];
 	const char *name;
 	const char *descript;
+	char connect[6];
 };
 
 struct Living
@@ -47,11 +47,11 @@ struct Status
 
 struct Progdata
 {
-	Room rooms[80];
-	Living living[21];
+	Room *rooms;
+	Living *living;
 	Item items[25];
 	char owneditems[10];
-	char paperroute[6];
+	char *paperroute;
 	Status status;
 };
 
@@ -86,6 +86,7 @@ struct Parsedata
 #define DO_STATUS		13
 #define DO_HELP			14
 
+#define LIVING_COUNT		21
 #define LIVING_HELLEHOND	0
 #define LIVING_RODETROL		1
 #define LIVING_PLANT		2
@@ -108,6 +109,7 @@ struct Parsedata
 #define LIVING_MISTGROT		19
 #define LIVING_TELEPORT		20
 
+#define ITEM_COUNT			25
 #define ITEM_HONDVLEES		0
 #define ITEM_HITTEPAK		1
 #define ITEM_GROENKRISTAL	2
@@ -134,6 +136,8 @@ struct Parsedata
 #define ITEM_KOEKJE			23
 #define ITEM_GASGRANAAT		24
 
+#define ROOM_COUNT			80
+
 int random(int max);
 
 void clrscr();
@@ -149,7 +153,7 @@ void SaveStatus(Progdata &progdata);
 bool LoadStatus(Progdata &progdata);
 
 bool Initialize(Progdata &progdata);
-bool SetRooms(Room *rooms);
+bool SetRoomConnections(Room *rooms);
 bool SetLivings(Living *living);
 bool SetItems(Item *items);
 
