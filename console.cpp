@@ -54,7 +54,8 @@ int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int 
 
 #define CURSOR_NORMAL		0
 #define CURSOR_FULL			1
-#define CURSOR_UNDEFINED	-1
+
+#define UNDEFINED	-1
 
 /*-------------------------------------------------------------------------*
  * Remarks: 1. to create a header file for the  functions, the code shown
@@ -115,13 +116,13 @@ void gotoxy(int x, int y)
 
 void setcursor(int mode)
 {
-	static int normalcursorheight = CURSOR_UNDEFINED;
+	static int normalcursorheight = UNDEFINED;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cursor;
 
 	GetConsoleCursorInfo(console, &cursor);
 
-	if (normalcursorheight == CURSOR_UNDEFINED)
+	if (normalcursorheight == UNDEFINED)
 	{
 		normalcursorheight = cursor.dwSize;
 	}

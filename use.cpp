@@ -1,6 +1,8 @@
 #include "include.h"
 
-char const *cmds[15] = {"oost", "west", "noord", "zuid", "klim", "daal", "gebruik",
+#define COMMAND_COUNT	15
+
+char const *cmds[COMMAND_COUNT] = {"oost", "west", "noord", "zuid", "klim", "daal", "gebruik",
 							"combineer", "pak", "leg", "bekijk", "afwachten", "einde",
 							"status", "help"};
 
@@ -61,39 +63,44 @@ bool DoAction(Progdata &progdata)
 		case DO_DOWN:
 			if (progdata.rooms[progdata.status.curroom].connect[parsedata.selected] >= 0)
 			{
-				if (progdata.living[LIVING_GNOE].room == progdata.status.curroom && progdata.living[LIVING_GNOE].status != 3)
-					switch(random(5))
+				if (progdata.living[LIVING_GNOE].room == progdata.status.curroom && progdata.living[LIVING_GNOE].status != STATUS_LIVING_DEAD)
+				{
+					switch (random(5))
 					{
 					case 0:
-						progdata.living[LIVING_GNOE].room = 44;
+						progdata.living[LIVING_GNOE].room = ROOM_GNOEGROT;
 						break;
 					case 1:
-						progdata.living[LIVING_GNOE].room = 47;
+						progdata.living[LIVING_GNOE].room = ROOM_ROTSGROT;
 						break;
 					case 2:
-						progdata.living[LIVING_GNOE].room = 48;
+						progdata.living[LIVING_GNOE].room = ROOM_LEEGTE;
 						break;
 					case 3:
-						progdata.living[LIVING_GNOE].room = 49;
+						progdata.living[LIVING_GNOE].room = ROOM_ZANDBANK;
 						break;
 					case 4:
-						progdata.living[LIVING_GNOE].room = 54;
+						progdata.living[LIVING_GNOE].room = ROOM_OLIEGROT;
 						break;
 					}
+				}
+				
 				progdata.status.curroom = progdata.rooms[progdata.status.curroom].connect[parsedata.selected];
-				if (progdata.status.paperpos != 6)
+				
+				if (progdata.status.paperpos != PAPERROUTE_LENGTH)
 				{
 					if (progdata.status.curroom == progdata.paperroute[progdata.status.paperpos])
 						progdata.status.paperpos++;
 					else
 						progdata.status.paperpos = 0;
-					if (progdata.status.paperpos == 6)
-						progdata.living[LIVING_PAPIER].status = 1;
+
+					if (progdata.status.paperpos == PAPERROUTE_LENGTH)
+						progdata.living[LIVING_PAPIER].status = STATUS_PAPIER_OPENING;
 				}
 				return true;
 			}
 			else
-				_cprintf("Daar kunt u niet heen.\r\n");
+				_cprintf("Daar kun je niet heen.\r\n");
 			break;
 		case DO_GEBRUIK:
 			return DoGebruik(progdata, parsedata);
@@ -175,7 +182,7 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 		_cprintf("\r\n");
 		if (!progdata.living[i].strike)
 		{
-			progdata.living[i].status = 3;
+			progdata.living[i].status = STATUS_LIVING_DEAD;
 			LivingStatus(progdata);
 		}
 		(void)_getch();
@@ -205,8 +212,8 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 				 "op je lippen van de pijn als het verband je nog bloedende wonden raakt.\r\n\r\n"
 				 "Je bent weer zo goed als nieuw.\r\n");
 		progdata.status.lifepoints = 20;
-		progdata.items[ITEM_VERBAND].room = -1;
-		progdata.owneditems[parsedata.object1] = -1;
+		progdata.items[ITEM_VERBAND].room = UNDEFINED;
+		progdata.owneditems[parsedata.object1] = UNDEFINED;
 		(void)_getch();
 		break;
 	case ITEM_TNT:
@@ -284,15 +291,15 @@ bool DoGebruik(Progdata &progdata, Parsedata &parsedata)
 
 void UseItemToStatus(Progdata &progdata, int item, int ownedindex, int beast, int status)
 {
-	progdata.items[item].room = -1;
-	progdata.owneditems[ownedindex] = -1;
+	progdata.items[item].room = UNDEFINED;
+	progdata.owneditems[ownedindex] = UNDEFINED;
 	progdata.living[beast].status = status;
 }
 
 void DoCombineer(Progdata &progdata, Parsedata &parsedata)
 {
 	if (progdata.items[progdata.owneditems[parsedata.object1]].useableon > -2
-		 || -(progdata.items[progdata.owneditems[parsedata.object1]].useableon + 2) != progdata.owneditems[parsedata.object2])
+		 || connectToItem(progdata.items[progdata.owneditems[parsedata.object1]].useableon) != progdata.owneditems[parsedata.object2])
 	{
 		_cprintf("Dat levert niets bruikbaars op.\r\n");
 		return;
@@ -306,22 +313,22 @@ void DoCombineer(Progdata &progdata, Parsedata &parsedata)
 				 "vallen. Daarna steek je de \"trommelbatterijen\" erin en schroeft de lamp weer\r\n"
 				 "dicht. Nadat je een paar keer op de zaklantaarn hebt geslagen zie je dat hij\r\n"
 				 "het doet.\r\n");
-		progdata.status.lamppoints = -1;
-		progdata.items[ITEM_BATTERIJEN].room = -1;
+		progdata.status.lamppoints = UNDEFINED;
+		progdata.items[ITEM_BATTERIJEN].room = UNDEFINED;
 		if (progdata.owneditems[parsedata.object1] == ITEM_BATTERIJEN)
-			progdata.owneditems[parsedata.object1] = -1;
+			progdata.owneditems[parsedata.object1] = UNDEFINED;
 		else
-			progdata.owneditems[parsedata.object2] = -1;
+			progdata.owneditems[parsedata.object2] = UNDEFINED;
 		break;
 	case ITEM_GASPATROON:
 	case ITEM_ONTSTEKING:
 		_cprintf("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\r\n"
 				 "resultaat een werkende mosterdgasgranaat.\r\n");
-		progdata.items[ITEM_GASPATROON].room = -1;
-		progdata.items[ITEM_ONTSTEKING].room = -1;
-		progdata.items[ITEM_GASGRANAAT].room = -2;
+		progdata.items[ITEM_GASPATROON].room = UNDEFINED;
+		progdata.items[ITEM_ONTSTEKING].room = UNDEFINED;
+		progdata.items[ITEM_GASGRANAAT].room = STATUS_ITEM_INPOSSESSION;
 		progdata.owneditems[parsedata.object1] = ITEM_GASGRANAAT;
-		progdata.owneditems[parsedata.object2] = -1;
+		progdata.owneditems[parsedata.object2] = UNDEFINED;
 		break;
 	}
 }
@@ -342,7 +349,7 @@ void DoLeg(Progdata &progdata, Parsedata &parsedata)
 	}
 	_cprintf("Je legt %s neer.\r\n", progdata.items[progdata.owneditems[parsedata.object1]].name);
 	progdata.items[progdata.owneditems[parsedata.object1]].room = progdata.status.curroom;
-	progdata.owneditems[parsedata.object1] = -1;
+	progdata.owneditems[parsedata.object1] = UNDEFINED;
 }
 
 void DoPak(Progdata &progdata, Parsedata &parsedata)
@@ -350,7 +357,7 @@ void DoPak(Progdata &progdata, Parsedata &parsedata)
 	int i;
 
 	for (i = 0; i < 10; i++)
-		if (progdata.owneditems[i] == -1)
+		if (progdata.owneditems[i] == UNDEFINED)
 			break;
 
 	if (i == 10)
@@ -361,13 +368,14 @@ void DoPak(Progdata &progdata, Parsedata &parsedata)
 
 	_cprintf("Je pakt %s op en steekt deze in een van je zakken.\r\n", progdata.items[parsedata.object1].name);
 
-	progdata.items[parsedata.object1].room = -2;
+	progdata.items[parsedata.object1].room = STATUS_ITEM_INPOSSESSION;
 	progdata.owneditems[i] = parsedata.object1;
 }
 
 void DoBekijk(Progdata &progdata, Parsedata &parsedata)
 {
-	if (progdata.status.curroom != 61 && progdata.status.curroom != 31 && progdata.status.curroom >= 20 && !progdata.status.lamp)
+	if (progdata.status.curroom >= ROOM_SLIJMGROT && !progdata.status.lamp
+		&& progdata.status.curroom != ROOM_RADIOACTIEVEGROT && progdata.status.curroom != ROOM_TLGROT)
 	{
 		_cprintf("Het is veel te donker om wat dan ook te bekijken.\r\n");
 		return;
@@ -405,20 +413,20 @@ void DoStatus(Progdata &progdata)
 
 	_cprintf("--- STATUSRAPPORT ---\r\n\r\n");
 	_cprintf("Je hebt nog %d levenspunten.\r\n", progdata.status.lifepoints);
-	if (progdata.items[ITEM_ZAKLAMP].room == -2)
+	if (progdata.items[ITEM_ZAKLAMP].room == STATUS_ITEM_INPOSSESSION)
 		_cprintf("Je zaklamp staat %s.\r\n", progdata.status.lamp ? "aan" : "uit");
 
 	for (i = 0; i < 10; i++)
-		if (progdata.owneditems[i] != -1)
+		if (progdata.owneditems[i] != UNDEFINED)
 			count++;
 
 	if (!count)
-		_cprintf("Je hebt niets.\r\n");
+		_cprintf("Je draagt niets.\r\n");
 	else
 	{
 		_cprintf("Je hebt in je bezit:\r\n");
 		for (i = 0; i < 10; i++)
-			if (progdata.owneditems[i] != -1)
+			if (progdata.owneditems[i] != UNDEFINED)
 				_cprintf("    %s\r\n", progdata.items[progdata.owneditems[i]].name);
 	}
 }
@@ -481,7 +489,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 
 	parsedata.selected = -1;
 
-	for (i = 0; parsedata.selected == -1 && i < 15; i++)
+	for (i = 0; parsedata.selected == -1 && i < COMMAND_COUNT; i++)
 	{
 		if (!strncmp(cmds[i], curp, int(eoword - curp)))
 			parsedata.selected = i;
@@ -505,7 +513,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
 		switch (parsedata.object1)
 		{
-		case -1:
+		case UNDEFINED:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
 			(void)_getch();
@@ -528,7 +536,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
 		switch (parsedata.object1)
 		{
-		case -1:
+		case UNDEFINED:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
 			(void)_getch();
@@ -551,7 +559,7 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		parsedata.object1 = FindOwnedItemNum(progdata, eoword + 1);
 		switch (parsedata.object1)
 		{
-		case -1:
+		case UNDEFINED:
 			_cprintf("%s\r< je hebt geen \"%s\"", spaces, eoword + 1);
 			parsedata.parseerror = true;
 			(void)_getch();
@@ -652,15 +660,20 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 	}
 }
 
+bool ParseSingleItemCommand(const char* parseString, const char* command)
+{
+	return false;
+}
+
 int FindOwnedItemNum(Progdata &progdata, char *itemname)
 {
 	int item = -1;
 	int i;
 
 	for (i = 0; i < 10 && item != -2; i++)
-		if (progdata.owneditems[i] != -1)
+		if (progdata.owneditems[i] != UNDEFINED)
 			if (strstr(progdata.items[progdata.owneditems[i]].name, itemname))
-				item = ((item == -1) ? i : -2);
+				item = ((item == UNDEFINED) ? i : -2);
 
 	return item;
 }
