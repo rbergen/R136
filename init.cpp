@@ -228,7 +228,7 @@ bool Initialize(Progdata& progdata)
 
 	progdata.status.curroom = ROOM_BOS0;
 	progdata.status.paperpos = 0;
-	progdata.status.lifepoints = 20;
+	progdata.status.lifepoints = MAX_LIFEPOINTS;
 	progdata.status.lamp = false;
 	progdata.status.lamppoints = 60;
 
@@ -246,7 +246,7 @@ bool Initialize(Progdata& progdata)
 	progdata.living = living;
 	progdata.items = items;
 
-	return (SetRoomConnections(progdata.rooms);
+	return SetRoomConnections(progdata.rooms);
 }
 
 bool SetRoomConnections(Room *rooms)

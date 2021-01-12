@@ -11,60 +11,7 @@
 #include <dos.h>
 
 /*
-  structures
-*/
-
-struct Room
-{
-	const char *name;
-	const char *descript;
-	char connect[6];
-};
-
-struct Living
-{
-	char room;
-	char strike;
-	char status;
-};
-
-struct Item
-{
-	const char *name;
-	const char *descript;
-	char room;
-	char useableon;
-};
-
-struct Status
-{
-	char paperpos;
-	char curroom;
-	char lifepoints;
-	bool lamp;
-	char lamppoints;
-};
-
-struct Progdata
-{
-	Room *rooms;
-	Living *living;
-	Item *items;
-	char owneditems[10];
-	char *paperroute;
-	Status status;
-};
-
-struct Parsedata
-{
-	char selected;
-	char object1;
-	char object2;
-	bool parseerror;
-};
-
-/*
-  defines
+	Defines
 */
 #define CURSOR_NORMAL		0
 #define CURSOR_FULL			1
@@ -222,10 +169,85 @@ struct Parsedata
 #define ROOM_TELEPORTGROT		79
 
 #define PAPERROUTE_LENGTH		6
-#define STATUS_LIVING_DEAD		3
-#define STATUS_PAPIER_OPENING	1
-#define STATUS_ITEM_INPOSSESSION		-2
+#define MAX_LIFEPOINTS			20
+#define MAX_OWNEDITEMS			10
 
+#define STATUS_LIVING_DEAD				3
+#define STATUS_PAPIER_OPENING			1
+#define STATUS_DEUR_OPEN				1
+#define STATUS_BARBECUE_INITIALBURN		0
+#define STATUS_BARBECUE_HASJONFIRE		1
+#define STATUS_BARBECUE_VLEESONFIRE		2
+#define STATUS_BARBECUE_INGREDIENTBURN	3
+#define STATUS_BARBECUE_KOEKJEBAKING	4
+#define STATUS_COMPUTER_READING			2
+#define STATUS_DRAAK_KOEKJETHROWN		3
+#define STATUS_DRAAK_LIGHTSLEEPING		4
+#define STATUS_DRAAK_SLAAPMUTSONHEAD	5
+#define STATUS_LAVA_BOMDROPPED			1
+#define STATUS_BOOM_SETONFIRE			1
+#define STATUS_GNOE_GIFTIGVLEESFED		2
+#define STATUS_RODETROL_BOEKJETHROWN	4
+#define STATUS_GEZWEL_GASSED			2
+#define STATUS_ITEM_OWNED				-2
+
+/*
+	Structures
+*/
+
+struct Room
+{
+	const char* name;
+	const char* descript;
+	char connect[6];
+};
+
+struct Living
+{
+	char room;
+	char strike;
+	char status;
+};
+
+struct Item
+{
+	const char* name;
+	const char* descript;
+	char room;
+	char useableon;
+};
+
+struct Status
+{
+	char paperpos;
+	char curroom;
+	char lifepoints;
+	bool lamp;
+	char lamppoints;
+};
+
+struct Progdata
+{
+	Room* rooms;
+	Living* living;
+	Item* items;
+	char owneditems[MAX_OWNEDITEMS];
+	char* paperroute;
+	Status status;
+};
+
+struct Parsedata
+{
+	char selected;
+	char object1;
+	char object2;
+	bool parseerror;
+};
+
+
+/*
+	Functions
+*/
 
 int random(int max);
 
@@ -245,8 +267,8 @@ bool Initialize(Progdata &progdata);
 bool SetRoomConnections(Room *rooms);
 
 bool DoAction(Progdata &progdata);
-bool DoGebruik(Progdata &progdata, Parsedata &parsedata);
-void UseItemToStatus(Progdata &progdata, int item, int ownedindex, int beast, int status);
+void DoGebruik(Progdata &progdata, Parsedata &parsedata);
+void UseItemToStatus(Progdata &progdata, int ownedindex, int beast, int status);
 void DoCombineer(Progdata &progdata, Parsedata &parsedata);
 void DoLeg(Progdata &progdata, Parsedata &parsedata);
 void DoPak(Progdata &progdata, Parsedata &parsedata);
@@ -255,8 +277,12 @@ void DoAfwachten(void);
 void DoStatus(Progdata &progdata);
 void DoHelp(void);
 void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata);
-int FindOwnedItemNum(Progdata &progdata, char *itemname);
-int FindLayingItemNum(Progdata &progdata, char *itemname);
+void ParseCombineItemsParameters(Progdata& progdata, Parsedata& parsedata, const char* currentMatch, const char* clearString);
+bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, const char* undefinedItemFormatString, const char* clearString);
+bool ParseSingleOwnedItemCommandParam(Progdata& progdata, Parsedata& parsedata, const char* command, const char* parseString, const char* clearString);
+int FindOwnedItemNum(Progdata &progdata, const char *itemname);
+bool IsRoomLit(Status& status);
+int FindLayingItemNum(Progdata &progdata, const char *itemname);
 
 void ShowSplashScreen(void);
 void ShowStartMessage(void);
