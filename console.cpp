@@ -47,13 +47,32 @@ void clrscr();
 int wherex();
 int wherey();
 void gotoxy(int x, int y);
+void setcursor(int mode);
 int agetchar(const char *allowed);
 int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
 int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
 #define CURSOR_NORMAL		0
 #define CURSOR_FULL			1
-#define CURSOR_UNDEFINED	-1
+
+#define UNDEFINED	-1
+
+/*-------------------------------------------------------------------------*
+ * Remarks: 1. to create a header file for the  functions, the code shown
+ *             until so far has to be used for that purpose.
+ *          2. the routines use functions that can write to screen via either
+ *             BIOS routines or direct video memory access.
+ *             To use the BIOS routines (slower but valid for any MS-DOS
+ *             computer and default), include this code in your source file:
+ *             directvideo = 0;
+ *             To use the memory routines (faster but unusable for some
+ *             computers), include this code in your source file:
+ *             directvideo = 1;
+ *-------------------------------------------------------------------------*/
+
+ /***************************************************************************
+  * Definitions of the functions
+  ***************************************************************************/
 
 void clrscr()
 {
@@ -97,13 +116,13 @@ void gotoxy(int x, int y)
 
 void setcursor(int mode)
 {
-	static int normalcursorheight = CURSOR_UNDEFINED;
+	static int normalcursorheight = UNDEFINED;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cursor;
 
 	GetConsoleCursorInfo(console, &cursor);
 
-	if (normalcursorheight == CURSOR_UNDEFINED)
+	if (normalcursorheight == UNDEFINED)
 	{
 		normalcursorheight = cursor.dwSize;
 	}
@@ -120,23 +139,6 @@ void setcursor(int mode)
 		break;
 	}
 }
-
-/*-------------------------------------------------------------------------*
- * Remarks: 1. to create a header file for the  functions, the code shown
- *             until so far has to be used for that purpose.
- *          2. the routines use functions that can write to screen via either
- *             BIOS routines or direct video memory access.
- *             To use the BIOS routines (slower but valid for any MS-DOS
- *             computer and default), include this code in your source file:
- *             directvideo = 0;
- *             To use the memory routines (faster but unusable for some
- *             computers), include this code in your source file:
- *             directvideo = 1;
- *-------------------------------------------------------------------------*/
-
-/***************************************************************************
- * Definitions of the functions
- ***************************************************************************/
 
 /*=========================================================================*
  * function: int agetchar(char *allowed)
