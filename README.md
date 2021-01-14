@@ -2,7 +2,7 @@
 
 This is text adventure a friend and I created all the way back in 1998.
 
-After initially developing the game in what must have been QuickBASIC, I ported it to the C language I was just getting comfortable with at the time.
+After initially developing the game in what must have been QuickBASIC, it seems that I ported it to the C language I was just getting comfortable with at the time.
 
 The C version of the game was developed for MS-DOS using the Borland C++ IDE, including the proprietary functions it provided. This repository holds a Windows console conversion 
 of that version, developed in Visual Studio 2019 Community Edition. You will need to install the "Desktop development with C++" workload to be able to build it. The original 1998 
