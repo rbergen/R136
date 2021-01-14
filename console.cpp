@@ -126,8 +126,17 @@ void waitforkey()
 	int y, x;
 
 	wrefresh(MAINWINDOW);
-	getyx(MAINWINDOW, y, x);
-	mvwgetch(MAINWINDOW, y, x);
+	while (true)
+	{
+		getyx(MAINWINDOW, y, x);
+		if (mvwgetch(MAINWINDOW, y, x) == KEY_RESIZE)
+		{
+			resize_term(0, 0);
+			setupwindows();
+		}
+		else
+			break;
+	}
 }
 
 void printcentered(WINDOW* win, const char* str)
