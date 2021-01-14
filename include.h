@@ -2,13 +2,15 @@
 
 #define R136_INCLUDE
 
-#include <conio.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dos.h>
+
+#define HAVE_VSNPRINTF
+
+#include "curses.h"
 
 /*
 	Defines
@@ -251,14 +253,17 @@ struct Parsedata
 
 int random(int max);
 
+int printmw(const char* fmt, ...);
+void initconsole();
 void clrscr();
-int wherex();
-int wherey();
-void gotoxy(int x, int y);
-void setcursor(int mode);
+void waitforkey();
+void printcentered(WINDOW* win, const char* str);
+void clearline(WINDOW *win);
+void getcmdstr(char* input, int maxlength);
+void printcmdstr(const char* fmt, ...);
 int agetchar(const char *allowed);
-int ascanf(int chckinp, int length, const char *allowed, const char *frmstr, ...);
-int strinp (const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
+int strinp (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
 void SaveStatus(Progdata &progdata);
 bool LoadStatus(Progdata &progdata);
@@ -277,9 +282,9 @@ void DoAfwachten(void);
 void DoStatus(Progdata &progdata);
 void DoHelp(void);
 void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata);
-void ParseCombineItemsParameters(Progdata& progdata, Parsedata& parsedata, const char* currentMatch, const char* clearString);
-bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, const char* undefinedItemFormatString, const char* clearString);
-bool ParseSingleOwnedItemCommandParam(Progdata& progdata, Parsedata& parsedata, const char* command, const char* parseString, const char* clearString);
+void ParseCombineItemsParameters(Progdata& progdata, Parsedata& parsedata, const char* currentMatch);
+bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, const char* undefinedItemFormatString);
+bool ParseSingleOwnedItemCommandParam(Progdata& progdata, Parsedata& parsedata, const char* command, const char* parseString);
 int FindOwnedItemNum(Progdata &progdata, const char *itemname);
 bool IsRoomLit(Status& status);
 int FindLayingItemNum(Progdata &progdata, const char *itemname);
@@ -309,6 +314,9 @@ bool LavaStatus(Progdata &progdata);
 void PapierStatus(Progdata &progdata);
 
 extern const char* LOADSAVEDATAPATH;
+extern WINDOW* BANNERWINDOW;
+extern WINDOW* MAINWINDOW;
+extern WINDOW* INPUTWINDOW;
 
 #endif // !R136_INCLUDE
 

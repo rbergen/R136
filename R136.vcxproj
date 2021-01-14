@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="curses.h" />
     <ClInclude Include="include.h" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,11 @@
   <ItemGroup>
     <None Include="Original\R136.zip" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PDCurses\PDCurses.vcxproj">
+      <Project>{4ba455ef-74fc-4772-ae91-64d0b132a3d4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

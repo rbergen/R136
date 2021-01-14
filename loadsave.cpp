@@ -7,31 +7,31 @@ void SaveStatus(Progdata &progdata)
 	FILE *fp;
 	int i;
 
-	_cprintf("\r\n\r\nWil je je huidige status opslaan? ");
+	printmw("\n\nWil je je huidige status opslaan? ");
 	if (tolower(agetchar("jJnN")) != 'j')
 	{
-		_cprintf("\r\n");
+		printmw("\n");
 		return;
 	}
 
 	while (fopen_s(&fp, LOADSAVEDATAPATH, "wb"))
 	{
-		_cprintf("\r\n\r\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+		printmw("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 		if (tolower(agetchar("jJnN")) != 'j')
 		{
-			_cprintf("\r\n\r\nStatus niet opgeslagen!\r\n");
+			printmw("\n\nStatus niet opgeslagen!\n");
 			remove(LOADSAVEDATAPATH);
 			return;
 		}
 	}
 
-	_cprintf("\r\n");
+	printmw("\n");
 
 	for (i = 0; i < 25; i++)
 	{
 		if (fp != 0 && fwrite(&progdata.items[i].room, sizeof(char), 1, fp) < 1)
 		{
-			_cprintf("Fout bij wegschrijven status.\r\n\r\nStatus niet opgeslagen!\r\n");
+			printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
 			return;
@@ -42,7 +42,7 @@ void SaveStatus(Progdata &progdata)
 	{
 		if (fp != 0 && fwrite(progdata.rooms[i].connect, sizeof(char) * 6, 1, fp) < 1)
 		{
-			_cprintf("Fout bij wegschrijven status.\r\n\r\nStatus niet opgeslagen!\r\n");
+			printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
 			return;
@@ -52,7 +52,7 @@ void SaveStatus(Progdata &progdata)
 	{
 		if (fp != 0 && fwrite(&progdata.living[i], sizeof(Living), 1, fp) < 1)
 		{
-			_cprintf("Fout bij wegschrijven status.\r\n\r\nStatus niet opgeslagen!\r\n");
+			printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
 			return;
@@ -60,14 +60,14 @@ void SaveStatus(Progdata &progdata)
 	}
 	if (fp != 0 && fwrite(progdata.owneditems, sizeof(char), 10, fp) < 10)
 	{
-		_cprintf("Fout bij wegschrijven status.\r\n\r\nStatus niet opgeslagen!\r\n");
+		printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 		fclose(fp);
 		remove(LOADSAVEDATAPATH);
 		return;
 	}
 	if (fp != 0 && fwrite(&progdata.status, sizeof(Status), 1, fp) < 1)
 	{
-		_cprintf("Fout bij wegschrijven status.\r\n\r\nStatus niet opgeslagen!\r\n");
+		printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 		fclose(fp);
 		remove(LOADSAVEDATAPATH);
 		return;
@@ -85,12 +85,12 @@ bool LoadStatus(Progdata &progdata)
 
 	if (fopen_s(&fp, LOADSAVEDATAPATH, "rb"))
 	{
-		printf("                      Druk op een toets om te beginnen");
-		(void)_getch();
+		printcentered(MAINWINDOW, "Druk op een toets om te beginnen");
+		waitforkey();
 		return false;
 	}
 
-	_cprintf("            Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+	printcentered(MAINWINDOW, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
 	if (tolower(agetchar("12")) != '2')
 	{
 		if (fp != 0) 
@@ -98,16 +98,16 @@ bool LoadStatus(Progdata &progdata)
 		remove(LOADSAVEDATAPATH);
 		return false;
 	}
-	_cprintf("\r\n");
+	printmw("\n");
 
 	for (i = 0; i < 25; i++)
 	{
 		if (fp != 0 && fread(&progdata.items[i].room, sizeof(char), 1, fp) < 1)
 		{
-			_cprintf("Fout bij lezen status.\r\n\r\nJe start een nieuw spel.\r\n\r\n");
+			printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
-			(void)_getch();
+			waitforkey();
 			Initialize(progdata);
 			return false;
 		}
@@ -116,10 +116,10 @@ bool LoadStatus(Progdata &progdata)
 	{
 		if (fp != 0 && fread(progdata.rooms[i].connect, sizeof(char) * 6, 1, fp) < 1)
 		{
-			_cprintf("Fout bij lezen status.\r\n\r\nJe start een nieuw spel.\r\n\r\n");
+			printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
-			(void)_getch();
+			waitforkey();
 			Initialize(progdata);
 			return false;
 		}
@@ -128,33 +128,33 @@ bool LoadStatus(Progdata &progdata)
 	{
 		if (fp != 0 && fread(&progdata.living[i], sizeof(Living), 1, fp) < 1)
 		{
-			_cprintf("Fout bij lezen status.\r\n\r\nJe start een nieuw spel.\r\n\r\n");
+			printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 			fclose(fp);
 			remove(LOADSAVEDATAPATH);
-			(void)_getch();
+			waitforkey();
 			Initialize(progdata);
 			return false;
 		}
 	}
 	if (fp != 0 && fread(progdata.owneditems, sizeof(char), 10, fp) < 10)
 	{
-		_cprintf("Fout bij lezen status.\r\n\r\nJe start een nieuw spel.\r\n\r\n");
+		printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 		fclose(fp);
 		remove(LOADSAVEDATAPATH);
-		(void)_getch();
+		waitforkey();
 		Initialize(progdata);
 		return false;
 	}
 	if (fp != 0 && fread(&progdata.status, sizeof(Status), 1, fp) < 1)
 	{
-		_cprintf("Fout bij lezen status.\r\n\r\nJe start een nieuw spel.\r\n\r\n");
+		printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 		fclose(fp);
 		remove(LOADSAVEDATAPATH);
-		(void)_getch();
+		waitforkey();
 		Initialize(progdata);
 		return false;
 	}
-	_cprintf("\r\n");
+	printmw("\n");
 	
 	if (fp != 0)
 		fclose(fp);
