@@ -16,3 +16,4 @@ Oh, yeah, the game is in Dutch. I guess international awareness & orientation is
 
 * Peter Wouda - co-creator, primary game designer and idea fountain extraordinaire. Since then, Peter became the creator of the physical board game [Skipp](https://www.skipp.game/en)
 * Machiel Keizer - tester
+* Authors of source code used within this C(++) port, as indicated in respective source files.

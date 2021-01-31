@@ -10,18 +10,27 @@
   I do this because error checking can be performed at the boundaries (I/O),
   with these routines reserved for higher performance on data known to be
   valid.
+
+  It has been modified to compile in Visual Studio 2019, by:
+  - adding typedefs for the u_intxx_t types
+  - using C calling convention
+  - changing read-only string parameters and return types from char * to const char *
 */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <malloc.h>
 #else
 #include <alloca.h>
 #endif
 
 #include "utf8.h"
+
+// these are VS prudent person warnings that get triggered by some of the original developer's programming that I've found to be creative but harmless
+#pragma warning(disable: 6255 4018 6386)
 
 static const u_int32_t offsetsFromUTF8[6] = {
     0x00000000UL, 0x00003080UL, 0x000E2080UL,
@@ -447,6 +456,8 @@ int u8_vprintf(const char *fmt, va_list ap)
     char *buf;
     u_int32_t *wcs;
 
+    // the following code relies on the fact that the stack grows downward. on systems where it doesn't, 
+    // things will break if the initially allocated 512 bytes of buffer aren't enough
     sz = 512;
     buf = (char*)alloca(sz);
  try_print:

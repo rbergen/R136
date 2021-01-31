@@ -1,8 +1,9 @@
+// header accompanying utf8.c, which contains info on provenance and adaptations
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
 
-#if defined(_WIN32)
+#ifdef _WIN32
 
 #include <stdint.h>
 
