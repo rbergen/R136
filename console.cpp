@@ -325,10 +325,13 @@ void printcmdstr(const char* fmt, ...)
 int agetchar(const char *allowed)
 {  
 	char input = 0;
+	int y = getcury(MAINWINDOW);
+	int x = getcurx(MAINWINDOW);
 
 	wattron(MAINWINDOW, ATTR_BOLD);
 	do
 	{  
+		wmove(MAINWINDOW, y, x);
 
 		if (ascanf(MAINWINDOW, 0, 1, allowed, "%c", &input) == L_ESC)
 			input = L_ESC;

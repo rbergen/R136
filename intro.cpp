@@ -93,63 +93,58 @@ const char* digits[BLOCK_ROW_COUNT] = {
 
 #define DIGITS_WIDTH	22
 
-void RunIntro()
+void LowerSpider(int spiderx)
 {
-	int dropindex, flowindex, spiderindex;
-	int screenbottomy, screenrightx;
-	int spiderx, spiderbottomy, spiderrightx;
-	bool screenwidthisodd;
-
-	getfssize(screenbottomy, screenrightx);
-	screenrightx--;
-
-	clrfs(COLORS_INVERSE);
-
-	screenwidthisodd = (screenrightx % 2 == 1);
-	spiderx = (screenrightx - SPIDER_WIDTH) / 2;
+	int spiderbottomy, spiderrightx, dropindex, spiderswitch;
 
 	spiderbottomy = BLOCK_ROW_COUNT - 1;
 	spiderrightx = SPIDER_WIDTH - 1;
 
+	// Introduce the spider from the top of the screen
 	for (dropindex = BLOCK_ROW_COUNT; dropindex > 0; dropindex--)
 	{
-		for (spiderindex = 0; spiderindex < 2; spiderindex++)
+		for (spiderswitch = 0; spiderswitch < 2; spiderswitch++)
 		{
-			printfsblocksectionat(0, spiderx, COLORS_INVERSE, spider[spiderindex], dropindex - 1, 0, spiderbottomy, spiderrightx);
+			printfsblocksectionat(0, spiderx, COLORS_INVERSE, spider[spiderswitch], dropindex - 1, 0, spiderbottomy, spiderrightx);
 
 			updatefs();
 			mssleep(50);
 		}
 	}
 
+	// Lower it to its final place, leaving a silk thread
 	for (dropindex = 0; dropindex < SPIDER_DROPHEIGHT; dropindex++)
 	{
 		printfsat(dropindex, spiderx, COLORS_INVERSE, linesection);
 
-		for (spiderindex = 0; spiderindex < 2; spiderindex++)
+		for (spiderswitch = 0; spiderswitch < 2; spiderswitch++)
 		{
-			printfsblockat(dropindex + 1, spiderx, COLORS_INVERSE, spider[spiderindex], BLOCK_ROW_COUNT);
+			printfsblockat(dropindex + 1, spiderx, COLORS_INVERSE, spider[spiderswitch], BLOCK_ROW_COUNT);
 
 			updatefs();
 			mssleep(50);
 		}
 	}
+}
 
+void SwoopInLetters(int screenrightx, int screenmiddlex, int leftletterfinalx)
+{
+	int flowindex, rightletterfirstx;
 	int letterbottomy = BLOCK_ROW_COUNT - 1;
 	int letterrightx = LETTER_WIDTH - 1;
 
+	// Introduce letters from either side of the screen
 	for (flowindex = 0; flowindex < LETTER_WIDTH; flowindex++)
 	{
 		printfsblocksectionat(2, 0, COLORS_INVERSE, letters[LETTER_R], 0, letterrightx - flowindex, letterbottomy, letterrightx);
 		printfsblocksectionat(2, screenrightx - flowindex, COLORS_INVERSE, letters[LETTER_P], 0, 0, letterbottomy, flowindex);
 
 		updatefs();
-		mssleep(10);
 	}
 
-	int leftletterfinalx = screenrightx / 2 - LETTER_WIDTH - LETTER_SPACEWIDTH;
-	int rightletterfirstx = screenrightx - LETTER_WIDTH;
+	rightletterfirstx = screenrightx - LETTER_WIDTH;
 
+	// Bring the letters to the center
 	for (flowindex = 0; flowindex < leftletterfinalx; flowindex++)
 	{
 		printfsblockat(2, flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
@@ -159,31 +154,33 @@ void RunIntro()
 		printfsblockat(2, screenrightx - flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
 
 		updatefs();
-		mssleep(10);
 	}
 
-	if (!screenwidthisodd)
+	// If the silk thread is just left of center due to screen width, bump the P one more place to the left
+	if ((screenrightx % 2) == 0)
 	{
 		printfsblockat(2, rightletterfirstx - flowindex, COLORS_INVERSE, letters[LETTER_P], BLOCK_ROW_COUNT);
 		printfsblockat(2, screenrightx - flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
 
 		updatefs();
-		mssleep(10);
 	}
 
-	int screenmiddlex = screenrightx / 2;
-	if (!screenwidthisodd)
-		screenmiddlex--;
+	// Cut the silk thread to create the letter I
 	printfsat(1, screenmiddlex, COLORS_INVERSE, u8"▀");
 	printfsat(1 + BLOCK_ROW_COUNT, screenmiddlex, COLORS_INVERSE, u8"▄");
 
 	updatefs();
-	mssleep(2000);
+}
+
+void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int spiderx, int leftletterfinalx)
+{
+	int flowindex, digitsfinalx, digitsbottomy;
 
 	int letterstopy = (screenbottomy - BLOCK_ROW_COUNT) / 2;
 	if (letterstopy < 2)
 		letterstopy = 2;
 
+	// clear everything except for the R
 	printfsat(0, screenmiddlex, COLORS_INVERSE, u8" ");
 	printfsat(1, screenmiddlex, COLORS_INVERSE, u8" ");
 	for (int i = 2; i < 2 + BLOCK_ROW_COUNT; i++)
@@ -201,41 +198,70 @@ void RunIntro()
 		printfsat(i, spiderx, COLORS_INVERSE, clearspiderspaces);
 	}
 
+	// Lower the R to the vertical middle of the screen
 	for (int i = 2; i < letterstopy; i++)
 	{
 		printfsblockat(i, leftletterfinalx, COLORS_INVERSE, letters[LETTER_R_LOW], BLOCK_ROW_COUNT);
 
 		updatefs();
-		mssleep(10);
+		mssleep(5);
 
 		printfsat(i, leftletterfinalx, COLORS_INVERSE, clearleftletterspaces);
 		printfsblockat(i + 1, leftletterfinalx, COLORS_INVERSE, letters[LETTER_R], BLOCK_ROW_COUNT);
-	
+
 		updatefs();
-		mssleep(10);
+		mssleep(5);
 	}
 
-	int digitsfinalx = leftletterfinalx + LETTER_WIDTH + 3;
-	int digitsbottomy = BLOCK_ROW_COUNT - 1;
+	digitsfinalx = leftletterfinalx + LETTER_WIDTH + 3;
+	digitsbottomy = BLOCK_ROW_COUNT - 1;
 
+	// Bring the letters to the center
 	for (flowindex = 0; flowindex < DIGITS_WIDTH; flowindex++)
 	{
 		printfsblocksectionat(letterstopy, screenrightx - flowindex, COLORS_INVERSERED, digits, 0, 0, digitsbottomy, flowindex);
 
 		updatefs();
-		mssleep(10);
 	}
 
+	// Introduce the digits from the right-hand side of the screen
 	for (flowindex = screenrightx - DIGITS_WIDTH; flowindex >= digitsfinalx; flowindex--)
 	{
 		printfsblockat(letterstopy, flowindex, COLORS_INVERSERED, digits, BLOCK_ROW_COUNT);
 		printfsblockat(letterstopy, flowindex + DIGITS_WIDTH, COLORS_INVERSERED, verticalspace, BLOCK_ROW_COUNT);
 
 		updatefs();
-		mssleep(10);
 	}
+}
+
+void RunIntro()
+{
+	int screenbottomy, screenrightx, screenmiddlex;
+	int spiderx, leftletterfinalx;
+
+	getfssize(screenbottomy, screenrightx);
+	screenrightx--;
+
+	clrfs(COLORS_INVERSE);
+
+	spiderx = (screenrightx - SPIDER_WIDTH) / 2;
+
+	LowerSpider(spiderx);
+
+	leftletterfinalx = screenrightx / 2 - LETTER_WIDTH - LETTER_SPACEWIDTH;
+
+	screenmiddlex = screenrightx / 2;
+	if ((screenrightx % 2) == 0)
+		screenmiddlex--;
+
+	SwoopInLetters(screenrightx, screenmiddlex, leftletterfinalx);
+
+	mssleep(2000);
+
+	SwoopInDigits(screenbottomy, screenrightx, screenmiddlex, spiderx, leftletterfinalx);
 
 	mssleep(2500);
 
 	clrfs(COLORS_NORMAL);
 }
+

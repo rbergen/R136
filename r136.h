@@ -291,6 +291,12 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, i
 
 void RunIntro();
 
+void SwoopInDigits(int screenbottomy, int screenmiddlex, int spiderx, int leftletterfinalx, int screenrightx);
+
+void SwoopInLetters(int& flowindex, int screenrightx, int leftletterfinalx, bool screenwidthisodd);
+
+void LowerSpider(int& spiderbottomy, int& spiderrightx, int& dropindex, int& spiderswitch, int spiderx);
+
 void SaveStatus(Progdata &progdata);
 bool LoadStatus(Progdata &progdata);
 
