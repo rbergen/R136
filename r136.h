@@ -12,9 +12,25 @@
 
 #include "curses.h"
 
+// This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
+#ifdef _WIN32
+#include <windows.h>
+#define mssleep(n)	Sleep((n))	
+#else
+#include <unistd.h>
+#define mssleep(n)	usleep((n))
+#endif
+
 /*
 	Defines
 */
+#define COLORS_BOLD			1
+#define COLORS_BANNER		2
+#define COLORS_ERROR		3
+#define COLORS_INVERSE		4
+#define COLORS_INVERSERED	5
+#define COLORS_NORMAL		6
+
 #define CURSOR_NORMAL		0
 #define CURSOR_FULL			1
 
@@ -253,10 +269,18 @@ struct Parsedata
 
 int random(int max);
 
+void setupwindows();
 int printmw(const char* fmt, ...);
 void initconsole();
+void printfsblockat(int y, int x, int colors, const char** block, int rowcount);
+void printfsblocksectionat(int y, int x, int colors, const char** block, int uppery, int leftx, int lowery, int rightx);
+void printfsat(int y, int x, int colors, const char* text);
+void clrfs(int colors);
+void getfssize(int& y, int& x);
+void updatefs();
 void clrscr();
 void waitforkey();
+void waitforfskey();
 void printcentered(WINDOW* win, const char* str);
 void clearline(WINDOW *win);
 void getcmdstr(char* input, int maxlength);
@@ -264,6 +288,8 @@ void printcmdstr(const char* fmt, ...);
 int agetchar(const char *allowed);
 int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
 int strinp (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+
+void RunIntro();
 
 void SaveStatus(Progdata &progdata);
 bool LoadStatus(Progdata &progdata);

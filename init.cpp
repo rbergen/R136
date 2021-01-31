@@ -1,4 +1,4 @@
-#include "include.h"
+ï»¿#include "r136.h"
 #include <time.h>
 
 Room rooms[ROOM_COUNT] = { // { name, descript }
@@ -21,7 +21,7 @@ Room rooms[ROOM_COUNT] = { // { name, descript }
 	{ "in het bos" },
 	{ "op een open plek",		"Er ligt hier een dood konijn dat wordt belaagd door vliegen." },
 	{ "in het moeras",			"Er hangt een griezelige nevel over het stinkende oppervlak." },
-	{ "in de ruïne",			"Je bevindt je in een spookachtige ruïne. Er is hier een wankele trap die naar\nbeneden leidt." },
+	{ u8"in de ruÃ¯ne",			u8"De ruÃ¯ne is een spookachtige bouwval. Er is hier een wankele trap die naar\nbeneden leidt." },
 
 	{ "in de slijmgrot",		"De wanden van deze grot zijn bekleed met een snotachtig slijm." },
 	{ "in de zwarte grot",		"Je ziet geen hand voor ogen." },
@@ -31,7 +31,7 @@ Room rooms[ROOM_COUNT] = { // { name, descript }
 	{ "in een verwaarloosde grot" },
 	{ "in een lege grot" },
 	{ "in de hoofdgrot",		"Er staat hier een batterij aan mysterieuze apparatuur." },
-	{ "in de hiërogliefengrot", "Op de wanden staan hiërogliefen waar je geen wijs uit wordt." },
+	{ u8"in de hiÃ«rogliefengrot", u8"Op de wanden staan hiÃ«rogliefen waar je geen wijs uit wordt." },
 	{ "in de stankgrot",		"Er hangt hier een smerige lucht die je herinnert aan de zware lucht van een\nbeerput." },
 	{ "in een troosteloze grot" },
 	{ "in de TL-grot",			"De grot wordt zwak verlicht door een lichtbron die hoog aan het plafond hangt." },
@@ -40,12 +40,12 @@ Room rooms[ROOM_COUNT] = { // { name, descript }
 	{ "in de kaktusgrot",		"Je bent omringd door giftige kaktussen die in deze grot staan." },
 	{ "in de stalagmietengrot",	"Hier zie je een traliewerk van stalagmieten." },
 	{ "in de stormgrot",		"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden." },
-	{ "in de mistgrot",			"Een dichte mist belemmert je zicht, en je verliest je or‹entatiegevoel." },
+	{ "in de mistgrot",			"Een dichte mist belemmert je zicht, en je verliest je orâ€¹entatiegevoel." },
 	{ "in de wenteltrapgrot",	"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt." },
 	{ "in de tentakelgrot",		"Van alle kanten komen grote tentakels die je aftasten en groene sporen op je\nhuid achterlaten." },
 
 	{ "in de vuilnisgrot",		"In deze grot ligt een grote stapel rottende etensresten. De stank is bijna on-\ndraaglijk." },
-	{ "in de echogrot",			"Hier worden alle geluiden die je maakt tegen de wanden geëcho'd." },
+	{ "in de echogrot",			u8"Hier worden alle geluiden die je maakt tegen de wanden geÃ«cho'd." },
 	{ "in de geheime grot",		"Op de grond van deze grot liggen allerlei onbekende en geheimzinnige voorwer-\npen." },
 	{ "in de voedselgrot",		"Zo te ruiken is dit waarschijnlijk eens een keuken geweest..." },
 	{ "in de grot van de gnoe", "Hier liggen de geraamtes van wezens die eerder ten prooi zijn gevallen aan de\ngnoe." },
@@ -200,13 +200,13 @@ Item items[ITEM_COUNT] = { // { name, descript, room, useableon }
 	{ "de hasj", "Het is een zakje met spul dat lijkt op tabak.", ROOM_DRUGSGROT, LIVING_BARBECUE },
 	{ "het rood kristal", "Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", UNDEFINED, LIVING_DRAKEKOP },
 	{ "de slaapmuts", "Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", ROOM_DWANGBUISGROT, LIVING_DRAAK },
-	{ "de noekietronenbom", "De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5 - 105ø, Codenaam: R136.", ROOM_HOOFDGROT, LIVING_LAVA },
+	{ "de noekietronenbom", u8"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5Â° - 105Â°, Codenaam: R136.", ROOM_HOOFDGROT, LIVING_LAVA },
 	{ "de zaklamp", "Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", ROOM_TLGROT, connectToItem(ITEM_BATTERIJEN) },
 	{ "het verband", "Het is een witte doos met een rood kruis waarin wat verband en een paar pleis-\nters zitten.", ROOM_TENTAKELGROT, UNDEFINED },
-	{ "de vlammenwerper", "De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\naktivatieknop. Uit de pijp komt een klein waakvlammetje.", ROOM_VUILNISGROT, LIVING_BOOM },
+	{ "de vlammenwerper", "De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\nactivatieknop. Uit de pijp komt een klein waakvlammetje.", ROOM_VUILNISGROT, LIVING_BOOM },
 	{ "het kookboek", "Het is een oud, vergeeld kookboek met daarin een koekjesrecept. Er staat:\n'Pak wat hellehond en wat hasj, en gooi het in de barbecue'.\nDat is alles.", ROOM_VOEDSELGROT, UNDEFINED },
 	{ "de tnt", "De T.N.T. is een bosje rode staven met een velletje waarop staat: 'Pas op!\nSchokgevoelig!'", ROOM_LEGEGROT51, UNDEFINED },
-	{ "het mosterdgaspatroon", "Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te aktiveren.", UNDEFINED, connectToItem(ITEM_ONTSTEKING) },
+	{ "het mosterdgaspatroon", "Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te activeren.", UNDEFINED, connectToItem(ITEM_ONTSTEKING) },
 	{ "het giftige vlees", "Het is een stuk vlees dat er op zich lekker uit ziet, maar een paar groene\nvlekken heeft. Er zit een dode mier op.", ROOM_VEILIGEGROT, LIVING_GNOE },
 	{ "de ontsteking", "De ontsteking is een kastje met een T-vormige hendel erop.", ROOM_SKOEBIEGROT, connectToItem(ITEM_GASPATROON) },
 	{ "het pakje batterijen", "Het is een pakketje met penlights. Konijntjes kunnen er uren mee trommelen.", ROOM_RADIOACTIEVEGROT, connectToItem(ITEM_ZAKLAMP) },

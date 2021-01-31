@@ -1,7 +1,8 @@
 /***************************************************************************
  * Includes necessary for functions to work
  ***************************************************************************/
-#include "include.h"
+#include "r136.h"
+#include "utf8.h"
 
 /***************************************************************************
  * #defines of constants used by the functions
@@ -26,19 +27,31 @@
 	== 3: Insert on at start, use block cursor to indicate Insert off. */
 #define L_INSFLAG  3
 
-#define PAIR_BOLD		1
-#define PAIR_BANNER		2
-#define PAIR_ERROR		3
 #define FG_BOLD			COLOR_WHITE
 #define FG_BANNER		COLOR_RED
 #define FG_ERROR		COLOR_RED
-#define ATTR_BOLD		(COLOR_PAIR(PAIR_BOLD) | A_BOLD)
-#define ATTR_BANNER		(COLOR_PAIR(PAIR_BANNER) | A_UNDERLINE)
-#define ATTR_ERROR		(COLOR_PAIR(PAIR_ERROR) | A_BOLD)
+#define FG_INVERSE		COLOR_BLACK
+#define FG_INVERSERED	COLOR_RED
+#define FG_NORMAL		COLOR_WHITE
+#define BG_BOLD			COLOR_BLACK
+#define BG_BANNER		COLOR_BLACK
+#define BG_ERROR		COLOR_BLACK
+#define BG_INVERSE		COLOR_WHITE
+#define BG_INVERSERED	COLOR_WHITE
+#define BG_NORMAL		COLOR_BLACK
+#define ATTR_BOLD		(COLOR_PAIR(COLORS_BOLD) | A_BOLD)
+#define ATTR_BANNER		(COLOR_PAIR(COLORS_BANNER) | A_UNDERLINE)
+#define ATTR_ERROR		(COLOR_PAIR(COLORS_ERROR) | A_BOLD)
+#define ATTR_INVERSE	(COLOR_PAIR(COLORS_INVERSE))
+#define ATTR_INVERSERED	(COLOR_PAIR(COLORS_INVERSERED) | A_BOLD)
+#define ATTR_NORMAL		(COLOR_PAIR(COLORS_NORMAL))
+
+chtype attributes[7];
 
 WINDOW *BANNERWINDOW = NULL;
 WINDOW* MAINWINDOW = NULL;
 WINDOW *INPUTWINDOW = NULL;
+WINDOW* FULLSCREEN = NULL;
 
 
  /***************************************************************************
@@ -102,18 +115,82 @@ int printmw(const char* fmt, ...)
 	return retval;
 }
 
+void initcolors()
+{
+	start_color();
+
+	init_pair(COLORS_BOLD, FG_BOLD, BG_BOLD);
+	attributes[COLORS_BOLD] = ATTR_BOLD;
+
+	init_pair(COLORS_BANNER, FG_BANNER, BG_BANNER);
+	attributes[COLORS_BANNER] = ATTR_BANNER;
+
+	init_pair(COLORS_ERROR, FG_ERROR, BG_ERROR);
+	attributes[COLORS_ERROR] = ATTR_ERROR;
+
+	init_pair(COLORS_INVERSE, FG_INVERSE, BG_INVERSE);
+	attributes[COLORS_INVERSE] = ATTR_INVERSE;
+
+	init_pair(COLORS_INVERSERED, FG_INVERSERED, BG_INVERSERED);
+	attributes[COLORS_INVERSERED] = ATTR_INVERSERED;
+
+	init_pair(COLORS_NORMAL, FG_NORMAL, BG_NORMAL);
+	attributes[COLORS_NORMAL] = ATTR_NORMAL;
+
+}
+
 void initconsole()
 {
 	initscr();
 	noecho();
 	keypad(stdscr, true);
 
-	start_color();
-	init_pair(PAIR_BOLD, FG_BOLD, COLOR_BLACK);
-	init_pair(PAIR_BANNER, FG_BANNER, COLOR_BLACK);
-	init_pair(PAIR_ERROR, FG_ERROR, COLOR_BLACK);
+	FULLSCREEN = stdscr;
+	
+	initcolors();
+}
 
-	setupwindows();
+void printfsblockat(int y, int x, int colors, const char** block, int rowcount) 
+{
+	wattron(FULLSCREEN, attributes[colors]);
+	
+	for (int i  = 0; i < rowcount; i++)
+	{
+		mvwaddstr(FULLSCREEN, y + i, x, block[i]);
+	}
+
+	wattroff(FULLSCREEN, attributes[colors]);
+}
+
+void printfsblocksectionat(int y, int x, int colors, const char** block, int topy, int leftx, int bottomy, int rightx)
+{
+	wattron(FULLSCREEN, attributes[colors]);
+
+	for (int i = topy; i <= bottomy; i++)
+	{
+		mvwaddnstr(FULLSCREEN, y + i - topy, x, &block[i][u8_offset(block[i], leftx)], u8_offset(block[i], rightx - leftx + 1));
+	}
+
+	wattroff(FULLSCREEN, attributes[colors]);
+}
+
+
+void printfsat(int y, int x, int colors, const char* text) 
+{
+	wattron(FULLSCREEN, attributes[colors]);
+	mvwaddstr(FULLSCREEN, y, x, text);
+	wattroff(FULLSCREEN, attributes[colors]);
+}
+
+void clrfs(int colors) 
+{
+	wbkgd(FULLSCREEN, attributes[colors]);
+	werase(FULLSCREEN);
+}
+
+void updatefs()
+{
+	wrefresh(FULLSCREEN);
 }
 
 void clrscr()
@@ -121,22 +198,39 @@ void clrscr()
 	werase(MAINWINDOW);
 }
 
-void waitforkey()
+void getfssize(int& y, int& x)
 {
+	getmaxyx(FULLSCREEN, y, x);
+}
+
+void waitforkeyengine(WINDOW* window, bool dosetup) {
 	int y, x;
 
-	wrefresh(MAINWINDOW);
+	wrefresh(window);
 	while (true)
 	{
-		getyx(MAINWINDOW, y, x);
-		if (mvwgetch(MAINWINDOW, y, x) == KEY_RESIZE)
+		getyx(window, y, x);
+		if (mvwgetch(window, y, x) == KEY_RESIZE)
 		{
 			resize_term(0, 0);
-			setupwindows();
+			if (dosetup)
+			{
+				setupwindows();
+			}
 		}
 		else
 			break;
 	}
+}
+
+void waitforfskey()
+{
+	waitforkeyengine(FULLSCREEN, false);
+}
+
+void waitforkey()
+{
+	waitforkeyengine(MAINWINDOW, true);
 }
 
 void printcentered(WINDOW* win, const char* str)
@@ -200,7 +294,6 @@ void printcmdstr(const char* fmt, ...)
 	clearline(INPUTWINDOW);
 
 	va_list args;
-	int retval;
 
 	wattron(INPUTWINDOW, ATTR_ERROR);
 

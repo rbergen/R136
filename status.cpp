@@ -1,4 +1,4 @@
-#include "include.h"
+ï»¿#include "r136.h"
 
 void RoomStatus(Progdata &progdata)
 {
@@ -197,7 +197,7 @@ bool LivingStatus(Progdata &progdata)
 		return false;
 	case LIVING_MISTGROT:
 		printmw("In deze grot hangt een vreemde, dichte mist, waardoor je geen hand voor ogen\n");
-		printmw("ziet. Je verliest je or‹entatiegevoel en stommelt paniekerig door de grot, op\n");
+		printmw(u8"ziet. Je verliest je orÃ¯entatiegevoel en stommelt paniekerig door de grot, op\n");
 		printmw("zoek naar een uitgang.\n");
 		printmw("Net als je begint te denken dat je nooit een uitgang uit deze grot zult vinden,\n");
 		printmw("struikel je voorover een andere grot in.\n\n");
@@ -278,7 +278,7 @@ void RodeTrolStatus(Progdata &progdata)
 	switch (progdata.living[LIVING_RODETROL].status)
 	{
 	case 0:
-      printmw("Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geërgerd.\n\n");
+      printmw(u8"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geÃ«rgerd.\n\n");
 
 		progdata.living[LIVING_RODETROL].status++;
 		break;
@@ -383,7 +383,7 @@ void GnoeStatus(Progdata &progdata)
 		progdata.status.lifepoints--; //   Wond
 		break;
 	case STATUS_GNOE_GIFTIGVLEESFED:
-      printmw("De gnoe ziet het vlees, snuffelt er aan, en slokt het in één hap naar binnen.\n");
+      printmw(u8"De gnoe ziet het vlees, snuffelt er aan, en slokt het in Ã©Ã©n hap naar binnen.\n");
 	  printmw("Je ziet hem langzaam opzwellen en zijn hersens komen door zijn oogkassen naar\n");
 	  printmw("buiten. Hij zakt in elkaar en blijft roerloos liggen.\n\n");
 
@@ -512,7 +512,7 @@ void DeurStatus(Progdata &progdata)
 
 		break;
 	case STATUS_DEUR_OPEN:
-		printmw("Je zet 1 eind van het bot onder de deur, en op het andere begin je te duwen.\n");
+		printmw(u8"Je zet Ã©Ã©n eind van het bot onder de deur, en op het andere begin je te duwen.\n");
 		printmw("Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een\n");
 		printmw("kier. Je geeft nog een duw, en langzaam draait de deur open.\n\n");
 
@@ -569,9 +569,9 @@ void BarbecueStatus(Progdata &progdata)
 
 		break;
 	case STATUS_BARBECUE_KOEKJEBAKING:
-      printmw("Een grote rookontwikkeling treedt op wanneer het tweede ingrediënt in de\n");
+      printmw(u8"Een grote rookontwikkeling treedt op wanneer het tweede ingrediÃ«nt in de\n");
 	  printmw("barbecue belandt.\n");
-	  printmw("Knetterend smelten de 2 ingrediënten om tot een koekje.\n\n");
+	  printmw(u8"Knetterend smelten de 2 ingrediÃ«nten om tot een koekje.\n\n");
 
 		progdata.items[ITEM_KOEKJE].room = progdata.status.curroom;
 		progdata.living[LIVING_BARBECUE].status = STATUS_BARBECUE_INITIALBURN;
@@ -630,7 +630,7 @@ void GroenKristalStatus(Progdata &progdata)
 	switch (progdata.living[LIVING_GROENKRISTAL].status)
 	{
 	case 0:
-      printmw("Je struikelt over iets. Door de begroeïing zie je niet wat het is.\n\n");
+      printmw(u8"Je struikelt over iets. Door de begroeÃ¯ing zie je niet wat het is.\n\n");
 
 		break;
 	}

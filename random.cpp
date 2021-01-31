@@ -1,4 +1,4 @@
-#include "include.h"
+#include "r136.h"
 
 int random(int max)
 {
