@@ -150,6 +150,18 @@ void initconsole()
 	initcolors();
 }
 
+void releaseconsole() 
+{
+	if (INPUTWINDOW)
+		delwin(INPUTWINDOW);
+	if (MAINWINDOW)
+		delwin(MAINWINDOW);
+	if (BANNERWINDOW)
+		delwin(BANNERWINDOW);
+
+	endwin();	
+}
+
 void printfsblockat(int y, int x, int colors, const char** block, int rowcount) 
 {
 	wattron(FULLSCREEN, attributes[colors]);

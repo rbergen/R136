@@ -265,10 +265,10 @@ struct Parsedata
 */
 
 int random(int max);
-
 void setupwindows();
 int printmw(const char* fmt, ...);
 void initconsole();
+void releaseconsole();
 void printfsblockat(int y, int x, int colors, const char** block, int rowcount);
 void printfsblocksectionat(int y, int x, int colors, const char** block, int uppery, int leftx, int lowery, int rightx);
 void printfsat(int y, int x, int colors, const char* text);

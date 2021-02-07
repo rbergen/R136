@@ -31,6 +31,8 @@ int main()
 
 	clrscr();
 
+	releaseconsole();
+
 	return 0;
 }
 
@@ -116,6 +118,8 @@ void ForceExit(void)
 	remove(LOADSAVEDATAPATH);
 
 	clrscr();
+
+	releaseconsole();
 
 	exit(0);
 }
