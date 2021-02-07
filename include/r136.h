@@ -7,7 +7,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curses.h>
+
+// Figure out which (n)curses header to include
+#ifdef HAVE_NCURSES_NCURSES_H
+	#ifdef CURSES_WIDE
+		#include <ncursesw/ncurses.h>
+	#else
+		#include <ncurses/ncurses.h>
+	#endif
+#elif HAVE_NCURSES_CURSES_H 
+	#ifdef CURSES_WIDE
+		#include <ncursesw/curses.h>
+	#else
+		#include <ncurses/curses.h>
+	#endif
+#elif HAVE_NCURSES_H
+	#include <ncurses.h>
+#else
+	#include <curses.h>
+#endif
 
 // This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32

@@ -14,6 +14,7 @@ After that, for non-Windows platforms, I've added a CMake build configuration. W
 * Windows using Visual Studio 2019
 * Windows with MSYS2/MinGW64 using GCC and PDCurses
 * Windows with MSYS2/MinGW64 using GCC and ncurses
+* WSL (Ubuntu) using GCC and ncurses
 * MacOS using (MacOS native) CLang and ncurses
 
 Oh, yeah, the game is in Dutch. I guess international awareness & orientation is something that developed in me over the past couple of decades...
