@@ -15,7 +15,7 @@
 #define mssleep(n)	Sleep((n))	
 #else
 #include <unistd.h>
-#define mssleep(n)	usleep((n))
+#define mssleep(n)	usleep((n) * 1000)
 #endif
 
 /*

@@ -66,7 +66,7 @@ void setupwindows()
 
 	if (BANNERWINDOW)
 	{
-		BANNERWINDOW = resize_window(BANNERWINDOW, 2, width);
+		wresize(BANNERWINDOW, 2, width);
 		touchwin(BANNERWINDOW);
 	}
 	else
@@ -74,7 +74,7 @@ void setupwindows()
 
 	if (MAINWINDOW)
 	{
-		MAINWINDOW = resize_window(MAINWINDOW, height - 3, width);
+		wresize(MAINWINDOW, height - 3, width);
 		touchwin(MAINWINDOW);
 	}
 	else 
@@ -85,7 +85,7 @@ void setupwindows()
 
 	if (INPUTWINDOW)
 	{
-		INPUTWINDOW = resize_window(INPUTWINDOW, 1, width);
+		wresize(INPUTWINDOW, 1, width);
 		mvwin(INPUTWINDOW, height - 1, 0);
 		touchwin(INPUTWINDOW);
 	}
