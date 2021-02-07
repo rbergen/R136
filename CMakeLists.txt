@@ -4,6 +4,10 @@ project(
     R136 
     VERSION 3.1.0)
 
+find_library(CURSES_LIBRARY 
+    NAMES pdcurses ncursesw ncurses 
+    REQUIRED)
+
 include_directories(include)
 
 add_executable(
@@ -24,6 +28,8 @@ target_compile_features(${PROJECT_NAME}
     PUBLIC
     cxx_std_14
 )
+
+target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARY})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
