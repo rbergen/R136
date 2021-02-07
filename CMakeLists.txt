@@ -4,6 +4,9 @@ project(
     R136 
     VERSION 3.1.0)
 
+
+add_compile_definitions(_XOPEN_SOURCE_EXTENDED)
+
 find_library(CURSES_LIBRARY 
     NAMES pdcurses ncursesw ncurses 
     REQUIRED)
