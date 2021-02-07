@@ -113,7 +113,7 @@ int printmw(const char* fmt, ...)
 	int retval;
 
 	va_start(args, fmt);
-	retval = vwprintw(MAINWINDOW, fmt, args);
+	retval = vw_printw(MAINWINDOW, fmt, args);
 	va_end(args);
 
 	return retval;
@@ -316,7 +316,7 @@ void printcmdstr(const char* fmt, ...)
 	wattron(INPUTWINDOW, ATTR_ERROR);
 
 	va_start(args, fmt);
-	vwprintw(INPUTWINDOW, fmt, args);
+	vw_printw(INPUTWINDOW, fmt, args);
 	va_end(args);
 
 	wattroff(INPUTWINDOW, ATTR_ERROR);
