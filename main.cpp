@@ -59,7 +59,7 @@ void ShowSplashScreen(void)
 	printcentered(MAINWINDOW, "Rutger van Bergen");
 	waddstr(MAINWINDOW, "\n\n");
 	wattron(MAINWINDOW, A_BOLD);
-	printcentered(MAINWINDOW, "Versie 3.1, (C) 1998, 2021 R.I.P.");
+	printcentered(MAINWINDOW, "Versie 3.2, (C) 1998, 2021 R.I.P.");
 	wattroff(MAINWINDOW, A_BOLD);
 	waddstr(MAINWINDOW, "\n\n");
 }
