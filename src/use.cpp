@@ -458,7 +458,8 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 
 	parsedata.parseerror = false;
 
-	strcpy_s(workstr, inpstr);
+	strncpy(workstr, inpstr, 64);
+	workstr[64] = 0;
 
 	for (i = (int)strlen(workstr) - 1; i >= 0 && workstr[i] == ' '; i--);
 	workstr[i + 1] = 0;
@@ -537,7 +538,7 @@ void ParseCombineItemsParameters(Progdata &progdata, Parsedata& parsedata, const
 	if (itemLength >= 25)
 		itemLength = 24;
 
-	strncpy_s(itemname, previousMatch, itemLength);
+	strncpy(itemname, previousMatch, itemLength);
 	itemname[itemLength] = 0;
 
 	parsedata.object1 = FindOwnedItemNum(progdata, itemname);
@@ -550,7 +551,7 @@ void ParseCombineItemsParameters(Progdata &progdata, Parsedata& parsedata, const
 	if (itemLength >= 25)
 		itemLength = 24;
 
-	strncpy_s(itemname, previousMatch, itemLength);
+	strncpy(itemname, previousMatch, itemLength);
 	itemname[itemLength] = 0;
 
 	parsedata.object2 = FindOwnedItemNum(progdata, itemname);

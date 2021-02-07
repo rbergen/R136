@@ -2,7 +2,7 @@
  * Includes necessary for functions to work
  ***************************************************************************/
 #include "r136.h"
-#include "utf8.h"
+#include <locale.h>
 
 /***************************************************************************
  * #defines of constants used by the functions
@@ -66,7 +66,7 @@ void setupwindows()
 
 	if (BANNERWINDOW)
 	{
-		BANNERWINDOW = resize_window(BANNERWINDOW, 2, width);
+		wresize(BANNERWINDOW, 2, width);
 		touchwin(BANNERWINDOW);
 	}
 	else
@@ -74,29 +74,33 @@ void setupwindows()
 
 	if (MAINWINDOW)
 	{
-		MAINWINDOW = resize_window(MAINWINDOW, height - 3, width);
+		wresize(MAINWINDOW, height - 3, width);
 		touchwin(MAINWINDOW);
 	}
 	else 
 	{
 		MAINWINDOW = subwin(stdscr, height - 3, width, 2, 0);
+		keypad(MAINWINDOW, TRUE);
 		touchwin(MAINWINDOW);
 	}
 
 	if (INPUTWINDOW)
 	{
-		INPUTWINDOW = resize_window(INPUTWINDOW, 1, width);
+		wresize(INPUTWINDOW, 1, width);
 		mvwin(INPUTWINDOW, height - 1, 0);
 		touchwin(INPUTWINDOW);
 	}
-	else
+	else 
+	{
 		INPUTWINDOW = subwin(stdscr, 1, width, height - 1, 0);
+		keypad(INPUTWINDOW, true);
+	}
 
 	wattron(BANNERWINDOW, ATTR_BANNER);
 	wmove(BANNERWINDOW, 0, 0);
 	printcentered(BANNERWINDOW, "Missiecode: R136");
 
-	scrollok(MAINWINDOW, TRUE);
+	scrollok(MAINWINDOW, true);
 
 	wrefresh(BANNERWINDOW);
 	wrefresh(MAINWINDOW);
@@ -141,6 +145,8 @@ void initcolors()
 
 void initconsole()
 {
+	setlocale(LC_ALL, "");
+
 	initscr();
 	noecho();
 	keypad(stdscr, true);
@@ -150,35 +156,35 @@ void initconsole()
 	initcolors();
 }
 
-void printfsblockat(int y, int x, int colors, const char** block, int rowcount) 
+void printfsblockat(int y, int x, int colors, const wchar_t** block, int rowcount) 
 {
 	wattron(FULLSCREEN, attributes[colors]);
 	
 	for (int i  = 0; i < rowcount; i++)
 	{
-		mvwaddstr(FULLSCREEN, y + i, x, block[i]);
+		mvwaddwstr(FULLSCREEN, y + i, x, block[i]);
 	}
 
 	wattroff(FULLSCREEN, attributes[colors]);
 }
 
-void printfsblocksectionat(int y, int x, int colors, const char** block, int topy, int leftx, int bottomy, int rightx)
+void printfsblocksectionat(int y, int x, int colors, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
 {
 	wattron(FULLSCREEN, attributes[colors]);
 
 	for (int i = topy; i <= bottomy; i++)
 	{
-		mvwaddnstr(FULLSCREEN, y + i - topy, x, &block[i][u8_offset(block[i], leftx)], u8_offset(block[i], rightx - leftx + 1));
+		mvwaddnwstr(FULLSCREEN, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
 	}
 
 	wattroff(FULLSCREEN, attributes[colors]);
 }
 
 
-void printfsat(int y, int x, int colors, const char* text) 
+void printfsat(int y, int x, int colors, const wchar_t* text) 
 {
 	wattron(FULLSCREEN, attributes[colors]);
-	mvwaddstr(FULLSCREEN, y, x, text);
+	mvwaddwstr(FULLSCREEN, y, x, text);
 	wattroff(FULLSCREEN, attributes[colors]);
 }
 
@@ -532,7 +538,11 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 			break;
 
 		case KEY_BACKSPACE: /* Backspace */
+		#ifdef __APPLE__
+		case 127:
+		#else
 		case 8:
+		#endif
 			if (ipos)
 			{  
 				memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);

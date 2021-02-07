@@ -14,7 +14,7 @@ void SaveStatus(Progdata &progdata)
 		return;
 	}
 
-	while (fopen_s(&fp, LOADSAVEDATAPATH, "wb"))
+	while (!(fp = fopen(LOADSAVEDATAPATH, "wb")))
 	{
 		printmw("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 		if (tolower(agetchar("jJnN")) != 'j')
@@ -83,7 +83,7 @@ bool LoadStatus(Progdata &progdata)
 	FILE *fp;
 	int i;
 
-	if (fopen_s(&fp, LOADSAVEDATAPATH, "rb"))
+	if (!(fp = fopen(LOADSAVEDATAPATH, "rb")))
 	{
 		printcentered(MAINWINDOW, "Druk op een toets om te beginnen");
 		waitforkey();

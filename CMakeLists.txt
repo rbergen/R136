@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(
     R136 
-    VERSION 3.1.0)
+    VERSION 3.2.0)
+
+
+add_compile_definitions(_XOPEN_SOURCE_EXTENDED PDC_WIDE)
 
 find_library(CURSES_LIBRARY 
     NAMES pdcurses ncursesw ncurses 
@@ -20,9 +23,7 @@ add_executable(
     src/random.cpp 
     src/status.cpp 
     src/use.cpp
-    $<TARGET_OBJECTS:utf8>)
-
-add_subdirectory(utf8)
+)
 
 target_compile_features(${PROJECT_NAME}
     PUBLIC

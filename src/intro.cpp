@@ -2,24 +2,24 @@
 
 #define BLOCK_ROW_COUNT	8
 
-const char* spider[2][BLOCK_ROW_COUNT] = { {
-	u8"  ▄▄▄        ▄ █ ▄        ▄▄▄  ",
-	u8" ▄▀  ▀▀▄▄  ▄▀ ▀█▀ ▀▄  ▄▄▀▀  ▀▄ ",
-	u8"▄█ ▄▄▄▄  ███ ▀ ▄ ▀ ███  ▄▄▄▄ █▄",
-	u8"   █   ▀▀████▄███▄████▀▀   █   ",
-	u8" ▄█    ▄▄▄▀█████████▀▄▄▄    █▄ ",
-	u8"   ▄▀▀▀                 ▀▀▀▄   ",
-	u8"  █                         █  ",
-	u8" ▀▀                         ▀▀ ",
+const wchar_t* spider[2][BLOCK_ROW_COUNT] = { {
+	L"  ▄▄▄        ▄ █ ▄        ▄▄▄  ",
+	L" ▄▀  ▀▀▄▄  ▄▀ ▀█▀ ▀▄  ▄▄▀▀  ▀▄ ",
+	L"▄█ ▄▄▄▄  ███ ▀ ▄ ▀ ███  ▄▄▄▄ █▄",
+	L"   █   ▀▀████▄███▄████▀▀   █   ",
+	L" ▄█    ▄▄▄▀█████████▀▄▄▄    █▄ ",
+	L"   ▄▀▀▀                 ▀▀▀▄   ",
+	L"  █                         █  ",
+	L" ▀▀                         ▀▀ ",
 }, {
-	u8"               █               ",
-	u8"  █▀▀▄▄     ▄▀▄█▄▀▄     ▄▄▀▀█  ",
-	u8" █     ▀▀▄▄█ ▄ ▀ ▄ █▄▄▀▀     █ ",
-	u8"▀▀ █▀▀▀▄▄███▄ ▄█▄ ▄███▄▄▀▀▀█ ▀▀",
-	u8"  ▄▀     ▀███████████▀     ▀▄  ",
-	u8" ▀▀ ▄▄▄▀▀▀ ▀▀▀▀▀▀▀▀▀ ▀▀▀▄▄▄ ▀▀ ",
-	u8"  ▄▀                       ▀▄  ",
-	u8" ▄█                         █▄ "
+	L"               █               ",
+	L"  █▀▀▄▄     ▄▀▄█▄▀▄     ▄▄▀▀█  ",
+	L" █     ▀▀▄▄█ ▄ ▀ ▄ █▄▄▀▀     █ ",
+	L"▀▀ █▀▀▀▄▄███▄ ▄█▄ ▄███▄▄▀▀▀█ ▀▀",
+	L"  ▄▀     ▀███████████▀     ▀▄  ",
+	L" ▀▀ ▄▄▄▀▀▀ ▀▀▀▀▀▀▀▀▀ ▀▀▀▄▄▄ ▀▀ ",
+	L"  ▄▀                       ▀▄  ",
+	L" ▄█                         █▄ "
 } };
 
 #define SPIDER_UPPER		0
@@ -27,40 +27,40 @@ const char* spider[2][BLOCK_ROW_COUNT] = { {
 #define SPIDER_DROPHEIGHT	13
 #define SPIDER_WIDTH		31
 
-const char* linesection = u8"               █               ";
-const char* clearspiderspaces = u8"                               ";
+const wchar_t* linesection = L"               █               ";
+const wchar_t* clearspiderspaces = L"                               ";
 
-const char* letters[3][BLOCK_ROW_COUNT] = { {
-	u8"█▀▀▀▀▀▀▀▀▀▀▄",
-	u8"█          █",
-	u8"█          █",
-	u8"█▄▄▄▄▄▄▄▄▄▄▀",
-	u8"█     ▀▄    ",
-	u8"█       ▀▄  ",
-	u8"█         ▀▄",
-	u8"            "
+const wchar_t* letters[3][BLOCK_ROW_COUNT] = { {
+	L"█▀▀▀▀▀▀▀▀▀▀▄",
+	L"█          █",
+	L"█          █",
+	L"█▄▄▄▄▄▄▄▄▄▄▀",
+	L"█     ▀▄    ",
+	L"█       ▀▄  ",
+	L"█         ▀▄",
+	L"            "
 }, {
-	u8"█▀▀▀▀▀▀▀▀▀▀▄",
-	u8"█          █",
-	u8"█          █",
-	u8"█▄▄▄▄▄▄▄▄▄▄▀",
-	u8"█           ",
-	u8"█           ",
-	u8"█           ",
-	u8"            "
+	L"█▀▀▀▀▀▀▀▀▀▀▄",
+	L"█          █",
+	L"█          █",
+	L"█▄▄▄▄▄▄▄▄▄▄▀",
+	L"█           ",
+	L"█           ",
+	L"█           ",
+	L"            "
 }, {
-	u8"▄▄▄▄▄▄▄▄▄▄▄ ",
-	u8"█          █",
-	u8"█          █",
-	u8"█          █",
-	u8"█▀▀▀▀▀█▀▀▀▀ ",
-	u8"█      ▀▄   ",
-	u8"█        ▀▄ ",
-	u8"▀          ▀"
+	L"▄▄▄▄▄▄▄▄▄▄▄ ",
+	L"█          █",
+	L"█          █",
+	L"█          █",
+	L"█▀▀▀▀▀█▀▀▀▀ ",
+	L"█      ▀▄   ",
+	L"█        ▀▄ ",
+	L"▀          ▀"
 } };
 
-const char* clearleftletterspaces = u8"            ";
-const char* clearrightletterspaces = u8"                    ";
+const wchar_t* clearleftletterspaces = L"            ";
+const wchar_t* clearrightletterspaces = L"                    ";
 
 #define LETTER_R			0
 #define LETTER_P			1
@@ -68,27 +68,27 @@ const char* clearrightletterspaces = u8"                    ";
 #define LETTER_WIDTH		12
 #define LETTER_SPACEWIDTH	6
 
-const char* verticalspace[BLOCK_ROW_COUNT] =
+const wchar_t* verticalspace[BLOCK_ROW_COUNT] =
 {
-	u8" ",
-	u8" ",
-	u8" ",
-	u8" ",
-	u8" ",
-	u8" ",
-	u8" ",
-	u8" "
+	L" ",
+	L" ",
+	L" ",
+	L" ",
+	L" ",
+	L" ",
+	L" ",
+	L" "
 };
 
-const char* digits[BLOCK_ROW_COUNT] = {
-	u8"▄█   ▄▀▀▀▀▀▄   ▄▀▀▀▀▀▄",
-	u8" █         █   █      ",
-	u8" █         █   █      ",
-	u8" █    ▀▀▀▀▀▄   █▀▀▀▀▀▄",
-	u8" █         █   █     █",
-	u8" █         █   █     █",
-	u8" █   ▀▄▄▄▄▄▀   ▀▄▄▄▄▄▀",
-	u8"                      "
+const wchar_t* digits[BLOCK_ROW_COUNT] = {
+	L"▄█   ▄▀▀▀▀▀▄   ▄▀▀▀▀▀▄",
+	L" █         █   █      ",
+	L" █         █   █      ",
+	L" █    ▀▀▀▀▀▄   █▀▀▀▀▀▄",
+	L" █         █   █     █",
+	L" █         █   █     █",
+	L" █   ▀▄▄▄▄▄▀   ▀▄▄▄▄▄▀",
+	L"                      "
 };
 
 #define DIGITS_WIDTH	22
@@ -166,8 +166,8 @@ void SwoopInLetters(int screenrightx, int screenmiddlex, int leftletterfinalx)
 	}
 
 	// Cut the silk thread to create the letter I
-	printfsat(1, screenmiddlex, COLORS_INVERSE, u8"▀");
-	printfsat(1 + BLOCK_ROW_COUNT, screenmiddlex, COLORS_INVERSE, u8"▄");
+	printfsat(1, screenmiddlex, COLORS_INVERSE, L"▀");
+	printfsat(1 + BLOCK_ROW_COUNT, screenmiddlex, COLORS_INVERSE, L"▄");
 
 	updatefs();
 }
@@ -181,8 +181,8 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 		letterstopy = 2;
 
 	// clear everything except for the R
-	printfsat(0, screenmiddlex, COLORS_INVERSE, u8" ");
-	printfsat(1, screenmiddlex, COLORS_INVERSE, u8" ");
+	printfsat(0, screenmiddlex, COLORS_INVERSE, L" ");
+	printfsat(1, screenmiddlex, COLORS_INVERSE, L" ");
 	for (int i = 2; i < 2 + BLOCK_ROW_COUNT; i++)
 	{
 		printfsat(i, screenmiddlex, COLORS_INVERSE, clearrightletterspaces);
@@ -190,7 +190,7 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 
 	for (int i = 2 + BLOCK_ROW_COUNT; i < SPIDER_DROPHEIGHT; i++)
 	{
-		printfsat(i, screenmiddlex, COLORS_INVERSE, u8" ");
+		printfsat(i, screenmiddlex, COLORS_INVERSE, L" ");
 	}
 
 	for (int i = SPIDER_DROPHEIGHT; i < SPIDER_DROPHEIGHT + BLOCK_ROW_COUNT; i++)
