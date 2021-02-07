@@ -9,58 +9,48 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Original">
-      <UniqueIdentifier>{6914d914-4c08-42e6-9629-1da061d93380}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="curses.h">
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\r136.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="r136.h">
+    <ClInclude Include="utf8\include\utf8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utf8.h">
+    <ClInclude Include="include-external\curses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="init.cpp">
+    <ClCompile Include="src\console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="loadsave.cpp">
+    <ClCompile Include="src\init.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loadsave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\status.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\use.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="status.cpp">
+    <ClCompile Include="utf8\src\utf8.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="use.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="console.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="intro.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utf8.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Original\R136.zip">
-      <Filter>Original</Filter>
-    </None>
-    <None Include="README.md" />
   </ItemGroup>
 </Project>

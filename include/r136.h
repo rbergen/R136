@@ -7,10 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define HAVE_VSNPRINTF
-
-#include "curses.h"
+#include <curses.h>
 
 // This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32

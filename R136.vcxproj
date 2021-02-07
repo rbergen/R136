@@ -72,15 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\rberg\source\repos\rbergen\R136\include-external;C:\Users\rberg\source\repos\rbergen\R136\utf8\include;C:\Users\rberg\source\repos\rbergen\R136\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\rberg\source\repos\rbergen\R136\include-external;C:\Users\rberg\source\repos\rbergen\R136\utf8\include;C:\Users\rberg\source\repos\rbergen\R136\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\rberg\source\repos\rbergen\R136\include-external;C:\Users\rberg\source\repos\rbergen\R136\utf8\include;C:\Users\rberg\source\repos\rbergen\R136\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\rberg\source\repos\rbergen\R136\include-external;C:\Users\rberg\source\repos\rbergen\R136\utf8\include;C:\Users\rberg\source\repos\rbergen\R136\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,29 +147,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="curses.h" />
-    <ClInclude Include="r136.h" />
-    <ClInclude Include="utf8.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="init.cpp" />
-    <ClCompile Include="loadsave.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="random.cpp" />
-    <ClCompile Include="intro.cpp" />
-    <ClCompile Include="status.cpp" />
-    <ClCompile Include="console.cpp" />
-    <ClCompile Include="use.cpp" />
-    <ClCompile Include="utf8.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Original\R136.zip" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PDCurses\PDCurses.vcxproj">
       <Project>{4ba455ef-74fc-4772-ae91-64d0b132a3d4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include-external\curses.h" />
+    <ClInclude Include="include\r136.h" />
+    <ClInclude Include="utf8\include\utf8.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\console.cpp" />
+    <ClCompile Include="src\init.cpp" />
+    <ClCompile Include="src\intro.cpp" />
+    <ClCompile Include="src\loadsave.cpp" />
+    <ClCompile Include="src\random.cpp" />
+    <ClCompile Include="src\status.cpp" />
+    <ClCompile Include="src\use.cpp" />
+    <ClCompile Include="utf8\src\utf8.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
