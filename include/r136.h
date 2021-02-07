@@ -15,7 +15,7 @@
 #define mssleep(n)	Sleep((n))	
 #else
 #include <unistd.h>
-#define mssleep(n)	usleep((n))
+#define mssleep(n)	usleep((n) * 1000)
 #endif
 
 /*
@@ -268,10 +268,9 @@ int random(int max);
 void setupwindows();
 int printmw(const char* fmt, ...);
 void initconsole();
-void releaseconsole();
-void printfsblockat(int y, int x, int colors, const char** block, int rowcount);
-void printfsblocksectionat(int y, int x, int colors, const char** block, int uppery, int leftx, int lowery, int rightx);
-void printfsat(int y, int x, int colors, const char* text);
+void printfsblockat(int y, int x, int colors, const wchar_t** block, int rowcount);
+void printfsblocksectionat(int y, int x, int colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
+void printfsat(int y, int x, int colors, const wchar_t* text);
 void clrfs(int colors);
 void getfssize(int& y, int& x);
 void updatefs();
