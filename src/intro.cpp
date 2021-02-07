@@ -216,7 +216,7 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 	digitsfinalx = leftletterfinalx + LETTER_WIDTH + 3;
 	digitsbottomy = BLOCK_ROW_COUNT - 1;
 
-	// Bring the letters to the center
+	// Introduce the digits from the right-hand side of the screen
 	for (flowindex = 0; flowindex < DIGITS_WIDTH; flowindex++)
 	{
 		printfsblocksectionat(letterstopy, screenrightx - flowindex, COLORS_INVERSERED, digits, 0, 0, digitsbottomy, flowindex);
@@ -224,7 +224,7 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 		updatefs();
 	}
 
-	// Introduce the digits from the right-hand side of the screen
+	// Bring the digits to the center
 	for (flowindex = screenrightx - DIGITS_WIDTH; flowindex >= digitsfinalx; flowindex--)
 	{
 		printfsblockat(letterstopy, flowindex, COLORS_INVERSERED, digits, BLOCK_ROW_COUNT);
