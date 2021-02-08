@@ -4,13 +4,10 @@ project(
     R136 
     VERSION 3.2.0)
 
-add_compile_definitions(_XOPEN_SOURCE_EXTENDED)
-
 set(CURSES_NEED_NCURSES 1)
-if (NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(CURSES_NEED_WIDE 1)
-    add_compile_definitions(CURSES_WIDE)
-endif()
+set(CURSES_NEED_WIDE 1)
+
+add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE)
 
 find_package(Curses)
 

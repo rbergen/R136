@@ -8,19 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
+	#error (PD)Curses must be built with wide-character support
+#endif
+
 // Figure out which (n)curses header to include
 #ifdef HAVE_NCURSES_NCURSES_H
-	#ifdef CURSES_WIDE
-		#include <ncursesw/ncurses.h>
-	#else
-		#include <ncurses/ncurses.h>
-	#endif
+	#include <ncursesw/ncurses.h>
 #elif HAVE_NCURSES_CURSES_H 
-	#ifdef CURSES_WIDE
-		#include <ncursesw/curses.h>
-	#else
-		#include <ncurses/curses.h>
-	#endif
+	#include <ncursesw/curses.h>
 #elif HAVE_NCURSES_H
 	#include <ncurses.h>
 #else
