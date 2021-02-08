@@ -15,7 +15,7 @@ After that, for non-Windows platforms, I've added a CMake build configuration. W
 * Windows with MSYS2/MinGW64 using GCC and PDCurses
 * Windows with MSYS2/MinGW64 using GCC and ncurses
 * WSL (Ubuntu) using GCC and ncurses
-* MacOS using (MacOS native) CLang and ncurses
+* MacOS using (MacOS native) Clang and ncurses
 
 Oh, yeah, the game is in Dutch. I guess international awareness & orientation is something that developed in me over the past couple of decades...
 
@@ -23,4 +23,3 @@ Oh, yeah, the game is in Dutch. I guess international awareness & orientation is
 
 * Peter Wouda - co-creator, primary game designer and idea fountain extraordinaire. Since then, Peter became the creator of the physical board game [Skipp](https://www.skipp.game/en)
 * Machiel Keizer - tester
-* Authors of source code used within this C(++) port, as indicated in respective source files.
