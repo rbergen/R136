@@ -4,12 +4,23 @@ project(
     R136 
     VERSION 3.2.0)
 
+set(CURSES_NEED_NCURSES 1)
+set(CURSES_NEED_WIDE 1)
 
-add_compile_definitions(_XOPEN_SOURCE_EXTENDED PDC_WIDE)
+add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE)
 
-find_library(CURSES_LIBRARY 
-    NAMES pdcurses ncursesw ncurses 
-    REQUIRED)
+find_package(Curses)
+
+if (NOT CURSES_FOUND)
+    find_library(CURSES_LIBRARIES pdcurses REQUIRED)
+    add_compile_definitions(PDC_WIDE)
+elseif (CURSES_HAVE_NCURSES_H)
+    add_compile_definitions(HAVE_NCURSES_H)
+elseif(CURSES_HAVE_NCURSES_NCURSES_H)
+    add_compile_definitions(HAVE_NCURSES_NCURSES_H)
+elseif(CURSES_HAVE_NCURSES_CURSES_H)
+    add_compile_definitions(HAVE_NCURSES_CURSES_H)
+endif()
 
 include_directories(include)
 
@@ -30,7 +41,10 @@ target_compile_features(${PROJECT_NAME}
     cxx_std_14
 )
 
-target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})
+if (CURSES_FOUND)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CURSES_INCLUDE_DIRS})
+endif() 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

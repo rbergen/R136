@@ -7,7 +7,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curses.h>
+
+#if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
+	#error (PD)Curses must be built with wide-character support
+#endif
+
+// Figure out which (n)curses header to include
+#ifdef HAVE_NCURSES_NCURSES_H
+	#include <ncursesw/ncurses.h>
+#elif HAVE_NCURSES_CURSES_H 
+	#include <ncursesw/curses.h>
+#elif HAVE_NCURSES_H
+	#include <ncurses.h>
+#else
+	#include <curses.h>
+#endif
 
 // This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32
