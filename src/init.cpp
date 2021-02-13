@@ -40,7 +40,7 @@ Room rooms[ROOM_COUNT] = { // { name, descript }
 	{ "in de kaktusgrot",		"Je bent omringd door giftige kaktussen die in deze grot staan." },
 	{ "in de stalagmietengrot",	"Hier zie je een traliewerk van stalagmieten." },
 	{ "in de stormgrot",		"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden." },
-	{ "in de mistgrot",			"Een dichte mist belemmert je zicht, en je verliest je or‹entatiegevoel." },
+	{ "in de mistgrot",			u8"Een dichte mist belemmert je zicht, en je verliest je orïentatiegevoel." },
 	{ "in de wenteltrapgrot",	"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt." },
 	{ "in de tentakelgrot",		"Van alle kanten komen grote tentakels die je aftasten en groene sporen op je\nhuid achterlaten." },
 
