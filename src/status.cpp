@@ -4,7 +4,7 @@ void RoomStatus(Progdata &progdata)
 {
 	printmw("Je bevindt je %s.\n", progdata.rooms[progdata.status.curroom].name);
 
-	if (progdata.status.curroom != 61 && progdata.status.curroom != 31 && progdata.status.curroom >= 20 && !progdata.status.lamp)
+	if (progdata.status.curroom != ROOM_RADIOACTIEVEGROT && progdata.status.curroom != ROOM_TLGROT && progdata.status.curroom >= 20 && !progdata.status.lamp)
 		printmw("Het is stekedonker en je ziet geen hand voor ogen.\n");
 	else
 	{
