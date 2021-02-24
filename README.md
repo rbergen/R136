@@ -1,6 +1,6 @@
 # R136
 
-This is text adventure a friend and I created all the way back in 1998.
+This is a text adventure a friend and I created all the way back in 1998.
 
 After initially developing the game in what must have been QuickBASIC, it seems that I ported it to the C language I was just getting comfortable with at the time.
 
