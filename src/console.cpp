@@ -152,7 +152,7 @@ void initcolors()
 
 void initconsole()
 {
-	char *oldlocale = setlocale(LC_ALL, "en_US.UTF-8");
+	setlocale(LC_ALL, "");
 
 	initscr();
 	noecho();
