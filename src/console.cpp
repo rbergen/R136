@@ -119,6 +119,13 @@ int printmw(const char* fmt, ...)
 	return retval;
 }
 
+int writemw(const wchar_t *text)
+{
+	return waddwstr(MAINWINDOW, text);
+}
+
+
+
 void initcolors()
 {
 	start_color();
@@ -145,7 +152,7 @@ void initcolors()
 
 void initconsole()
 {
-	setlocale(LC_ALL, "");
+	char *oldlocale = setlocale(LC_ALL, "en_US.UTF-8");
 
 	initscr();
 	noecho();
@@ -160,8 +167,10 @@ void releaseconsole()
 {
 	if (INPUTWINDOW)
 		delwin(INPUTWINDOW);
+
 	if (MAINWINDOW)
 		delwin(MAINWINDOW);
+
 	if (BANNERWINDOW)
 		delwin(BANNERWINDOW);
 
@@ -173,9 +182,7 @@ void printfsblockat(int y, int x, int colors, const wchar_t** block, int rowcoun
 	wattron(FULLSCREEN, attributes[colors]);
 	
 	for (int i  = 0; i < rowcount; i++)
-	{
 		mvwaddwstr(FULLSCREEN, y + i, x, block[i]);
-	}
 
 	wattroff(FULLSCREEN, attributes[colors]);
 }
@@ -185,9 +192,7 @@ void printfsblocksectionat(int y, int x, int colors, const wchar_t** block, int 
 	wattron(FULLSCREEN, attributes[colors]);
 
 	for (int i = topy; i <= bottomy; i++)
-	{
 		mvwaddnwstr(FULLSCREEN, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
-	}
 
 	wattroff(FULLSCREEN, attributes[colors]);
 }
@@ -221,13 +226,16 @@ void getfssize(int& y, int& x)
 	getmaxyx(FULLSCREEN, y, x);
 }
 
-void waitforkeyengine(WINDOW* window, bool dosetup) {
+void waitforkeyengine(WINDOW* window, bool dosetup) 
+{
 	int y, x;
 
 	wrefresh(window);
+
 	while (true)
 	{
 		getyx(window, y, x);
+	
 		if (mvwgetch(window, y, x) == KEY_RESIZE)
 		{
 			resize_term(0, 0);
@@ -296,13 +304,18 @@ void getcmdstr(char *input, int maxlength)
 	input[maxlength] = 0;
 
 	wrefresh(MAINWINDOW);
+
 	wmove(INPUTWINDOW, 0, 0);
 	clearline(INPUTWINDOW);
+
 	wattron(INPUTWINDOW, ATTR_BOLD);
 	waddstr(INPUTWINDOW, "> ");
+
 	strinp(INPUTWINDOW, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(INPUTWINDOW), -1, 0, 0);
+
 	clearline(INPUTWINDOW);
 	wmove(INPUTWINDOW, 0, 0);
+
 	wattroff(INPUTWINDOW, ATTR_BOLD);
 }
 
@@ -347,6 +360,7 @@ int agetchar(const char *allowed)
 	int x = getcurx(MAINWINDOW);
 
 	wattron(MAINWINDOW, ATTR_BOLD);
+
 	do
 	{  
 		wmove(MAINWINDOW, y, x);
@@ -355,7 +369,9 @@ int agetchar(const char *allowed)
 			input = L_ESC;
 	}
 	while (input == ' ');
+
 	wattroff(MAINWINDOW, ATTR_BOLD);
+
 	return input;
 }
 
@@ -396,6 +412,7 @@ int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char
 	int toret = 0;
 
 	inpstr = (char *) calloc((size_t)length + 1, sizeof(char));
+
 	if (!inpstr)
 		return L_ESC;
 
@@ -410,7 +427,9 @@ int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char
 		}
 	}
 	while (chckinp && (toret == EOF || !toret));
+
 	free(inpstr);
+
 	return toret;
 }
 
@@ -489,37 +508,50 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 	{  
 		wmove(win, inpy, inpx + ipos);
 		wrefresh(INPUTWINDOW);
+
 		ichar = wgetch(win);
+
 		switch (ichar)
 		{
 		case KEY_RESIZE:
+
 			resize_term(0, 0);
 			setupwindows();
 
 			break;
 
 		case KEY_LEFT: /* Arrow left */
+
 			if (ipos)
 				ipos--;
+
 			break;
 
 		case KEY_RIGHT: /* Arrow right */
+
 			if (ipos < ilen)
 				ipos++;
+
 			break;
 
 		case KEY_HOME: /* Home */
+
 			ipos = 0;
+
 			break;
 
 		case KEY_END: /* End */
+
 			ipos = ilen;
+
 			if (input[ipos] == ' ')
 				while (ipos && input[ipos - 1] == ' ')
 					ipos--;
+
 			break;
 
 		case KEY_IC: /* Insert */
+
 			ins = ins ? 0 : 1;
 /*
 			if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
@@ -529,51 +561,66 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 			break;
 */
 		case KEY_DC: /* Delete */
+
 			memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
+
 			input[ilen] = ' ';
 			wdelch(win);
+
 			break;
 
 		case KEY_UP: /* Arrow up */
 			if (curm)
 				toret = L_UP;
+
 			break;
 
 		case KEY_DOWN: /* Arrow down */
+
 			if (curm)
 				toret = L_DOWN;
+
 			break;
 
 		case KEY_BTAB: /* Shift-Tab */
+
 			if (curm)
 				toret = L_STAB;
+
 			break;
 
 		case KEY_BACKSPACE: /* Backspace */
-		#ifdef __APPLE__
-		case 127:
-		#else
-		case 8:
-		#endif
+
+			#ifdef __APPLE__
+			case 127:
+			#else
+			case 8:
+			#endif
+
 			if (ipos)
 			{  
 				memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
 				input[ilen] = ' ';
 				mvwdelch(win, inpy, inpx + --ipos);
 			}
+
 			break;
 
 		case KEY_STAB: /* Tab */
+
 			if (curm)
 				toret = L_TAB;
+
 			break;
 
 		case KEY_ENTER: /* Enter */
 		case 10:
+
 			toret = L_ENTER;
 			break;
 
 		case 27: /* Escape */
+
 			if (esc)
 				toret = L_ESC;
 			else
@@ -582,13 +629,16 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 				mvwaddstr(win, inpy, inpx, input);
 				ipos = 0;
 			}
+
 			break;
 
 		default:
+
 			if (caps > 0)
 				ichar = toupper(ichar);
 			else if (caps < 0)
 				ichar = tolower(ichar);
+
 			if (strchr(allowed, ichar))
 			{  
 				if (ins)
@@ -603,19 +653,25 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 					waddch(win, ichar);
 
 				}
+
 				input[ipos] = ichar;
+
 				if (ipos < ilen)
 					ipos++;
 			}
+
 			break;
 		}
 	}
 	while (!toret);
 //	setcursor(CURSOR_NORMAL);
+
 	if (ipos == ilen) 
 	{
 		curx++;
 	}
+
 	wmove(win, cury, curx);
+
 	return toret;
 }

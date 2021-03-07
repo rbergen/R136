@@ -12,7 +12,7 @@ add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE)
 find_package(Curses)
 
 if (NOT CURSES_FOUND)
-    find_library(CURSES_LIBRARIES pdcurses REQUIRED)
+    find_library(CURSES_LIBRARIES pdcurses HINTS bin/libraries REQUIRED)
     add_compile_definitions(PDC_WIDE)
 elseif (CURSES_HAVE_NCURSES_H)
     add_compile_definitions(HAVE_NCURSES_H)
@@ -42,10 +42,13 @@ target_compile_features(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})
+
 if (CURSES_FOUND)
     target_include_directories(${PROJECT_NAME} PUBLIC ${CURSES_INCLUDE_DIRS})
+else()
+    include(CheckIncludeFile)
+    check_include_file("curses.h" HAVE_CURSES_H)
+    if (NOT HAVE_CURSES_H)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include-external)
+    endif()
 endif() 
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)

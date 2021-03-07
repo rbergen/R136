@@ -226,8 +226,8 @@
 
 struct Room
 {
-	const char* name;
-	const char* descript;
+	const wchar_t* name;
+	const wchar_t* descript;
 	char connect[6];
 };
 
@@ -241,7 +241,7 @@ struct Living
 struct Item
 {
 	const char* name;
-	const char* descript;
+	const wchar_t* descript;
 	char room;
 	char useableon;
 };
@@ -292,6 +292,7 @@ void updatefs();
 void clrscr();
 void waitforkey();
 void waitforfskey();
+int writemw(const wchar_t *text);
 void printcentered(WINDOW* win, const char* str);
 void clearline(WINDOW *win);
 void getcmdstr(char* input, int maxlength);
