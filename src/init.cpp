@@ -1,6 +1,8 @@
 ﻿#include "r136.h"
 #include <time.h>
 
+
+
 Room rooms[ROOM_COUNT] = { // { name, descript }
 	{ L"in het bos",					L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden." },
 	{ L"in het bos",					L"Aan de zuidkant zie je een hek dat toegang geeft tot een donkere plaats." },
@@ -93,17 +95,17 @@ Room rooms[ROOM_COUNT] = { // { name, descript }
 #define LEVELCON_TOROOM		2
 
 LevelConnection level_connections[LEVELCON_COUNT] = { // { fromroom, direction, toroom }
-	{ ROOM_BEGRAAFPLAATS, Command::kDown, ROOM_KAKTUSGROT },
-	{ ROOM_RUINE, Command::kDown, ROOM_ZWARTEGROT },
-	{ ROOM_ZWARTEGROT, Command::kUp, ROOM_RUINE },
-	{ ROOM_HIEROGLIEFENGROT, Command::kDown, ROOM_PRATENDEGROT },
-	{ ROOM_STORMGROT, Command::kDown, ROOM_OGENGROT },
-	{ ROOM_WENTELTRAPGROT1, Command::kDown, ROOM_WENTELTRAPGROT2 },
-	{ ROOM_OGENGROT, Command::kUp, ROOM_STORMGROT },
-	{ ROOM_WENTELTRAPGROT2, Command::kUp, ROOM_WENTELTRAPGROT1 },
-	{ ROOM_WENTELTRAPGROT2, Command::kDown, ROOM_WENTELTRAPGROT3 },
-	{ ROOM_PRATENDEGROT, Command::kUp, ROOM_HIEROGLIEFENGROT },
-	{ ROOM_WENTELTRAPGROT3, Command::kUp, ROOM_WENTELTRAPGROT2 }
+	{ ROOM_BEGRAAFPLAATS, Command::down, ROOM_KAKTUSGROT },
+	{ ROOM_RUINE, Command::down, ROOM_ZWARTEGROT },
+	{ ROOM_ZWARTEGROT, Command::up, ROOM_RUINE },
+	{ ROOM_HIEROGLIEFENGROT, Command::down, ROOM_PRATENDEGROT },
+	{ ROOM_STORMGROT, Command::down, ROOM_OGENGROT },
+	{ ROOM_WENTELTRAPGROT1, Command::down, ROOM_WENTELTRAPGROT2 },
+	{ ROOM_OGENGROT, Command::up, ROOM_STORMGROT },
+	{ ROOM_WENTELTRAPGROT2, Command::up, ROOM_WENTELTRAPGROT1 },
+	{ ROOM_WENTELTRAPGROT2, Command::down, ROOM_WENTELTRAPGROT3 },
+	{ ROOM_PRATENDEGROT, Command::up, ROOM_HIEROGLIEFENGROT },
+	{ ROOM_WENTELTRAPGROT3, Command::up, ROOM_WENTELTRAPGROT2 }
 };
 
 #define BLOCKED_COUNT		83
@@ -111,62 +113,62 @@ LevelConnection level_connections[LEVELCON_COUNT] = { // { fromroom, direction, 
 #define BLOCKED_DIRECTION	1
 
 BlockedConnection blocked[BLOCKED_COUNT] = { // { room, direction }
-	{ROOM_NOORDMOERAS, Command::kWest}, {ROOM_NOORDMOERAS, Command::kEast}, {ROOM_NOORDMOERAS, Command::kSouth}, 
-	{ROOM_MIDDENMOERAS, Command::kWest}, {ROOM_MIDDENMOERAS, Command::kEast}, {ROOM_MIDDENMOERAS, Command::kNorth}, {ROOM_MIDDENMOERAS, Command::kSouth}, 
-	{ROOM_BOS5, Command::kEast},							  
-	{ROOM_BEGRAAFPLAATS, Command::kWest}, 
-	{ROOM_BOS11, Command::kEast}, 
-	{ROOM_OPENPLEK12, Command::kWest}, 
-	{ROOM_ZUIDMOERAS, Command::kWest}, {ROOM_ZUIDMOERAS, Command::kEast}, {ROOM_ZUIDMOERAS, Command::kNorth}, 
-	{ROOM_RUINE, Command::kWest}, 
-	{ROOM_SLIJMGROT, Command::kEast},
-	{ROOM_ZWARTEGROT, Command::kWest}, 
-	{ROOM_DRUGSGROT, Command::kEast}, {ROOM_DRUGSGROT, Command::kSouth}, 
-	{ROOM_GEILEGROT, Command::kWest}, {ROOM_GEILEGROT, Command::kEast}, 
-	{ROOM_DWANGBUISGROT, Command::kWest}, 
-	{ROOM_VERWAARLOOSDEGROT, Command::kEast}, {ROOM_VERWAARLOOSDEGROT, Command::kNorth}, 
-	{ROOM_LEGEGROT26, Command::kWest}, {ROOM_LEGEGROT26, Command::kEast}, 
-	{ROOM_HOOFDGROT, Command::kEast}, {ROOM_HOOFDGROT, Command::kWest}, {ROOM_HOOFDGROT, Command::kNorth}, 
-	{ROOM_HIEROGLIEFENGROT, Command::kWest}, 
-	{ROOM_TLGROT, Command::kSouth},
-	{ROOM_KLEINEGROT, Command::kNorth}, 
-	{ROOM_IJSGROT, Command::kEast},
-	{ROOM_KAKTUSGROT, Command::kWest}, {ROOM_KAKTUSGROT, Command::kSouth},
-	{ROOM_STORMGROT, Command::kNorth}, 							  
-	{ROOM_MISTGROT, Command::kWest}, {ROOM_MISTGROT, Command::kNorth}, {ROOM_MISTGROT, Command::kEast},
-	{ROOM_TENTAKELGROT, Command::kNorth},
-	{ROOM_VUILNISGROT, Command::kEast}, 
-	{ROOM_ECHOGROT, Command::kWest}, {ROOM_ECHOGROT, Command::kEast},
-	{ROOM_GEHEIMEGROT, Command::kWest}, {ROOM_GEHEIMEGROT, Command::kEast},
-	{ROOM_VOEDSELGROT, Command::kWest}, {ROOM_VOEDSELGROT, Command::kEast},
-	{ROOM_GNOEGROT, Command::kWest},
-	{ROOM_LEGEGROT45, Command::kNorth}, 
-	{ROOM_OGENGROT, Command::kEast}, 
-	{ROOM_ROTSGROT, Command::kWest}, 
-	{ROOM_LEEGTE, Command::kSouth}, 
-	{ROOM_VEILIGEGROT, Command::kEast}, {ROOM_VEILIGEGROT, Command::kSouth},
-	{ROOM_NAUWEROTSSPLEET, Command::kNorth}, {ROOM_NAUWEROTSSPLEET, Command::kEast}, {ROOM_NAUWEROTSSPLEET, Command::kSouth},
-	{ROOM_OLIEGROT, Command::kWest},
-	{ROOM_LEGEGROT55, Command::kEast}, 
-	{ROOM_WENTELTRAPGROT2, Command::kWest}, 
-	{ROOM_SPINNENGROT, Command::kNorth},
-	{ROOM_PRATENDEGROT, Command::kEast}, 
-	{ROOM_LAVAPUT, Command::kWest}, 
-	{ROOM_SKOEBIEGROT, Command::kEast},
-	{ROOM_RADIOACTIEVEGROT, Command::kWest}, {ROOM_RADIOACTIEVEGROT, Command::kSouth},
-	{ROOM_DODENGROT, Command::kSouth},
-	{ROOM_RGROT, Command::kNorth},	{ROOM_RGROT, Command::kSouth},
-	{ROOM_EGROT, Command::kSouth},
-	{ROOM_VERDOEMENISGROT, Command::kNorth}, {ROOM_VERDOEMENISGROT, Command::kEast},
-	{ROOM_VACUUMGROT, Command::kWest}, {ROOM_VACUUMGROT, Command::kNorth}, {ROOM_VACUUMGROT, Command::kEast},
-	{ROOM_RODEGROT, Command::kWest}, {ROOM_RODEGROT, Command::kNorth}, {ROOM_RODEGROT, Command::kEast},
-	{ROOM_NEONGROT, Command::kWest}, 
-	{ROOM_BLOEDGROT, Command::kSouth}, 
-	{ROOM_VLEERMUISGROT, Command::kNorth}, 
-	{ROOM_TELEPORTGROT, Command::kWest}, {ROOM_TELEPORTGROT, Command::kNorth}
+	{ROOM_NOORDMOERAS, Command::west}, {ROOM_NOORDMOERAS, Command::east}, {ROOM_NOORDMOERAS, Command::south}, 
+	{ROOM_MIDDENMOERAS, Command::west}, {ROOM_MIDDENMOERAS, Command::east}, {ROOM_MIDDENMOERAS, Command::north}, {ROOM_MIDDENMOERAS, Command::south}, 
+	{ROOM_BOS5, Command::east},							  
+	{ROOM_BEGRAAFPLAATS, Command::west}, 
+	{ROOM_BOS11, Command::east}, 
+	{ROOM_OPENPLEK12, Command::west}, 
+	{ROOM_ZUIDMOERAS, Command::west}, {ROOM_ZUIDMOERAS, Command::east}, {ROOM_ZUIDMOERAS, Command::north}, 
+	{ROOM_RUINE, Command::west}, 
+	{ROOM_SLIJMGROT, Command::east},
+	{ROOM_ZWARTEGROT, Command::west}, 
+	{ROOM_DRUGSGROT, Command::east}, {ROOM_DRUGSGROT, Command::south}, 
+	{ROOM_GEILEGROT, Command::west}, {ROOM_GEILEGROT, Command::east}, 
+	{ROOM_DWANGBUISGROT, Command::west}, 
+	{ROOM_VERWAARLOOSDEGROT, Command::east}, {ROOM_VERWAARLOOSDEGROT, Command::north}, 
+	{ROOM_LEGEGROT26, Command::west}, {ROOM_LEGEGROT26, Command::east}, 
+	{ROOM_HOOFDGROT, Command::east}, {ROOM_HOOFDGROT, Command::west}, {ROOM_HOOFDGROT, Command::north}, 
+	{ROOM_HIEROGLIEFENGROT, Command::west}, 
+	{ROOM_TLGROT, Command::south},
+	{ROOM_KLEINEGROT, Command::north}, 
+	{ROOM_IJSGROT, Command::east},
+	{ROOM_KAKTUSGROT, Command::west}, {ROOM_KAKTUSGROT, Command::south},
+	{ROOM_STORMGROT, Command::north}, 							  
+	{ROOM_MISTGROT, Command::west}, {ROOM_MISTGROT, Command::north}, {ROOM_MISTGROT, Command::east},
+	{ROOM_TENTAKELGROT, Command::north},
+	{ROOM_VUILNISGROT, Command::east}, 
+	{ROOM_ECHOGROT, Command::west}, {ROOM_ECHOGROT, Command::east},
+	{ROOM_GEHEIMEGROT, Command::west}, {ROOM_GEHEIMEGROT, Command::east},
+	{ROOM_VOEDSELGROT, Command::west}, {ROOM_VOEDSELGROT, Command::east},
+	{ROOM_GNOEGROT, Command::west},
+	{ROOM_LEGEGROT45, Command::north}, 
+	{ROOM_OGENGROT, Command::east}, 
+	{ROOM_ROTSGROT, Command::west}, 
+	{ROOM_LEEGTE, Command::south}, 
+	{ROOM_VEILIGEGROT, Command::east}, {ROOM_VEILIGEGROT, Command::south},
+	{ROOM_NAUWEROTSSPLEET, Command::north}, {ROOM_NAUWEROTSSPLEET, Command::east}, {ROOM_NAUWEROTSSPLEET, Command::south},
+	{ROOM_OLIEGROT, Command::west},
+	{ROOM_LEGEGROT55, Command::east}, 
+	{ROOM_WENTELTRAPGROT2, Command::west}, 
+	{ROOM_SPINNENGROT, Command::north},
+	{ROOM_PRATENDEGROT, Command::east}, 
+	{ROOM_LAVAPUT, Command::west}, 
+	{ROOM_SKOEBIEGROT, Command::east},
+	{ROOM_RADIOACTIEVEGROT, Command::west}, {ROOM_RADIOACTIEVEGROT, Command::south},
+	{ROOM_DODENGROT, Command::south},
+	{ROOM_RGROT, Command::north},	{ROOM_RGROT, Command::south},
+	{ROOM_EGROT, Command::south},
+	{ROOM_VERDOEMENISGROT, Command::north}, {ROOM_VERDOEMENISGROT, Command::east},
+	{ROOM_VACUUMGROT, Command::west}, {ROOM_VACUUMGROT, Command::north}, {ROOM_VACUUMGROT, Command::east},
+	{ROOM_RODEGROT, Command::west}, {ROOM_RODEGROT, Command::north}, {ROOM_RODEGROT, Command::east},
+	{ROOM_NEONGROT, Command::west}, 
+	{ROOM_BLOEDGROT, Command::south}, 
+	{ROOM_VLEERMUISGROT, Command::north}, 
+	{ROOM_TELEPORTGROT, Command::west}, {ROOM_TELEPORTGROT, Command::north}
 };
 
-Living living[to_underlying(AnimateID::COUNT)] = { // { room, strike }
+Animate animates[to_value(AnimateID::COUNT)] = { // { room, strike }
 	{ROOM_BOS2, 4}, 
 	{ROOM_GEILEGROT}, 
 	{ROOM_VERWAARLOOSDEGROT, 6}, 
@@ -190,35 +192,42 @@ Living living[to_underlying(AnimateID::COUNT)] = { // { room, strike }
 	{ROOM_TELEPORTGROT} 
 };
 
-Item items[ITEM_COUNT] = { // { name, descript, room, useableon }
-	{ "het hellehondvlees", L"Het is een goor stuk vlees dat naar kots ruikt.", kUndefined, AnimateID::kBarbecue },
-	{ "het hittepak", L"Dit aluminiumkleurig pak beschermt je tegen grote hitte of kou.", ROOM_BOS4, AnimateID::kUndefined },
-	{ "het groen kristal", L"Het is een helder, groengekleurd kristal. Even zie je een mysterieuze twinke-\nling", kUndefined, AnimateID::kDragonHead },
-	{ "het zwaard", L"Het is een magisch zwaard dat er niet al te sterk uit ziet, maar veel kracht\nuitstraalt. In het heft zit een paarse robijn.", ROOM_BOS5, AnimateID::kUndefined },
-	{ "het bot", L"Het is een menselijk, verbleekt dijbeen, dat er sterk uit ziet. Je kunt er veel\nkracht mee zetten.", ROOM_MOERASPAD, AnimateID::kDoor },
-	{ "de diskette", L"Het is een grijze 3,5 inch diskette van het merk 'Spirits' met daarop waar-\nschijnlijk belangrijke data.", ROOM_SLIJMGROT, AnimateID::kComputer },
-	{ "de hasj", L"Het is een zakje met spul dat lijkt op tabak.", ROOM_DRUGSGROT, AnimateID::kBarbecue },
-	{ "het rood kristal", L"Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", kUndefined, AnimateID::kDragonHead },
-	{ "de slaapmuts", L"Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", ROOM_DWANGBUISGROT, AnimateID::kDragon },
-	{ "de noekietronenbom", L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5° - 105°, Codenaam: R136.", ROOM_HOOFDGROT, AnimateID::kLava },
-	{ "de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", ROOM_TLGROT, connectToItem(ITEM_BATTERIJEN) },
-	{ "het verband", L"Het is een witte doos met een rood kruis waarin wat verband en een paar pleis-\nters zitten.", ROOM_TENTAKELGROT, AnimateID::kUndefined },
-	{ "de vlammenwerper", L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\nactivatieknop. Uit de pijp komt een klein waakvlammetje.", ROOM_VUILNISGROT, AnimateID::kTree },
-	{ "het kookboek", L"Het is een oud, vergeeld kookboek met daarin een koekjesrecept. Er staat:\n'Pak wat hellehond en wat hasj, en gooi het in de barbecue'.\nDat is alles.", ROOM_VOEDSELGROT, AnimateID::kUndefined },
-	{ "de tnt", L"De T.N.T. is een bosje rode staven met een velletje waarop staat: 'Pas op!\nSchokgevoelig!'", ROOM_LEGEGROT51, AnimateID::kUndefined },
-	{ "het mosterdgaspatroon", L"Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te activeren.", kUndefined, connectToItem(ITEM_ONTSTEKING) },
-	{ "het giftige vlees", L"Het is een stuk vlees dat er op zich lekker uit ziet, maar een paar groene\nvlekken heeft. Er zit een dode mier op.", ROOM_VEILIGEGROT, AnimateID::kGnu },
-	{ "de ontsteking", L"De ontsteking is een kastje met een T-vormige hendel erop.", ROOM_SKOEBIEGROT, connectToItem(ITEM_GASPATROON) },
-	{ "het pakje batterijen", L"Het is een pakketje met penlights. Konijntjes kunnen er uren mee trommelen.", ROOM_RADIOACTIEVEGROT, connectToItem(ITEM_ZAKLAMP) },
-	{ "het gasmasker", L"Het is een groen masker met een rond filter en 2 plastic ooggaten.", ROOM_IGROT, AnimateID::kUndefined },
-	{ "het papier", L"Het is een geel vel papier met gekrulde hoeken. Het handschrift is bijna on-\nleesbaar, en met moeite ontcijfer je: 'Voed de drakekop met de 3 gekleurde\nkristallen'.", kUndefined, AnimateID::kUndefined },
-	{ "het boekje", L"Het is een vies, kleverig boekje met op de voorkant een ontklede trol. Je\nkrijgt kotsneigingen.", ROOM_VERDOEMENISGROT, AnimateID::kRedTroll },
-	{ "het blauw kristal", L"Het is een helder, blauwgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", ROOM_RODEGROT, AnimateID::kDragonHead },
-	{ "het koekje", L"Het is een rond koekje dat naar ammoniak stinkt.", kUndefined, AnimateID::kDragon },
-	{ "de mosterdgasgranaat", L"Door het indrukken van de hendel kan het mosterdgas ontstnappen.", kUndefined, AnimateID::kSwelling }
+Item items[to_value(ItemID::COUNT)] = { // { name, descript, room, useableon }
+	{ "het hellehondvlees", L"Het is een goor stuk vlees dat naar kots ruikt.", undefined, AnimateID::barbecue },
+	{ "het hittepak", L"Dit aluminiumkleurig pak beschermt je tegen grote hitte of kou.", ROOM_BOS4, AnimateID::undefined },
+	{ "het groen kristal", L"Het is een helder, groengekleurd kristal. Even zie je een mysterieuze twinke-\nling", undefined, AnimateID::dragon_head },
+	{ "het zwaard", L"Het is een magisch zwaard dat er niet al te sterk uit ziet, maar veel kracht\nuitstraalt. In het heft zit een paarse robijn.", ROOM_BOS5, AnimateID::undefined },
+	{ "het bot", L"Het is een menselijk, verbleekt dijbeen, dat er sterk uit ziet. Je kunt er veel\nkracht mee zetten.", ROOM_MOERASPAD, AnimateID::door },
+	{ "de diskette", L"Het is een grijze 3,5 inch diskette van het merk 'Spirits' met daarop waar-\nschijnlijk belangrijke data.", ROOM_SLIJMGROT, AnimateID::computer },
+	{ "de hasj", L"Het is een zakje met spul dat lijkt op tabak.", ROOM_DRUGSGROT, AnimateID::barbecue },
+	{ "het rood kristal", L"Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", undefined, AnimateID::dragon_head },
+	{ "de slaapmuts", L"Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", ROOM_DWANGBUISGROT, AnimateID::dragon },
+	{ "de noekietronenbom", L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5° - 105°, Codenaam: R136.", ROOM_HOOFDGROT, AnimateID::lava },
+	{ "de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", ROOM_TLGROT, connectToItem(ItemID::batteries) },
+	{ "het verband", L"Het is een witte doos met een rood kruis waarin wat verband en een paar pleis-\nters zitten.", ROOM_TENTAKELGROT, AnimateID::undefined },
+	{ "de vlammenwerper", L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\nactivatieknop. Uit de pijp komt een klein waakvlammetje.", ROOM_VUILNISGROT, AnimateID::tree },
+	{ "het kookboek", L"Het is een oud, vergeeld kookboek met daarin een koekjesrecept. Er staat:\n'Pak wat hellehond en wat hasj, en gooi het in de barbecue'.\nDat is alles.", ROOM_VOEDSELGROT, AnimateID::undefined },
+	{ "de tnt", L"De T.N.T. is een bosje rode staven met een velletje waarop staat: 'Pas op!\nSchokgevoelig!'", ROOM_LEGEGROT51, AnimateID::undefined },
+	{ "het mosterdgaspatroon", L"Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te activeren.", undefined, connectToItem(ItemID::ignition) },
+	{ "het giftige vlees", L"Het is een stuk vlees dat er op zich lekker uit ziet, maar een paar groene\nvlekken heeft. Er zit een dode mier op.", ROOM_VEILIGEGROT, AnimateID::gnu },
+	{ "de ontsteking", L"De ontsteking is een kastje met een T-vormige hendel erop.", ROOM_SKOEBIEGROT, connectToItem(ItemID::gas_capsule) },
+	{ "het pakje batterijen", L"Het is een pakketje met penlights. Konijntjes kunnen er uren mee trommelen.", ROOM_RADIOACTIEVEGROT, connectToItem(ItemID::flashlight) },
+	{ "het gasmasker", L"Het is een groen masker met een rond filter en 2 plastic ooggaten.", ROOM_IGROT, AnimateID::undefined },
+	{ "het papier", L"Het is een geel vel papier met gekrulde hoeken. Het handschrift is bijna on-\nleesbaar, en met moeite ontcijfer je: 'Voed de drakekop met de 3 gekleurde\nkristallen'.", undefined, AnimateID::undefined },
+	{ "het boekje", L"Het is een vies, kleverig boekje met op de voorkant een ontklede trol. Je\nkrijgt kotsneigingen.", ROOM_VERDOEMENISGROT, AnimateID::red_troll },
+	{ "het blauw kristal", L"Het is een helder, blauwgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", ROOM_RODEGROT, AnimateID::dragon_head },
+	{ "het koekje", L"Het is een rond koekje dat naar ammoniak stinkt.", undefined, AnimateID::dragon },
+	{ "de mosterdgasgranaat", L"Door het indrukken van de hendel kan het mosterdgas ontstnappen.", undefined, AnimateID::swelling }
 };
 
-char paperroute[PAPERROUTE_LENGTH] = { ROOM_HOOFDLETTERPGROT, ROOM_AGROT, ROOM_PGROT, ROOM_IGROT, ROOM_EGROT, ROOM_RGROT };
+char paperroute[paper_route_length] = { ROOM_HOOFDLETTERPGROT, ROOM_AGROT, ROOM_PGROT, ROOM_IGROT, ROOM_EGROT, ROOM_RGROT };
+
+template <typename TKey, typename TValue>
+void fill_map(std::map<TKey, TValue> map, TValue values[], int value_count)
+{
+	for (int i = 0; i < value_count; i++)
+		map[static_cast<TKey>(i)] = values[i];
+}
 
 bool Initialize(Progdata& progdata)
 {
@@ -228,11 +237,11 @@ bool Initialize(Progdata& progdata)
 
 	progdata.status.curroom = ROOM_BOS0;
 	progdata.status.paperpos = 0;
-	progdata.status.lifepoints = MAX_LIFEPOINTS;
+	progdata.status.lifepoints = max_life_points;
 	progdata.status.lamp = false;
 	progdata.status.lamppoints = 60;
 
-	ClearWindow();
+	clear_window();
 
 	srand((int)time(NULL));
 
@@ -240,8 +249,8 @@ bool Initialize(Progdata& progdata)
 		progdata.owneditems[i] = -1;
 
 	progdata.rooms = rooms;
-	progdata.living = living;
-	progdata.items = items;
+	fill_map(progdata.animates, animates, to_value(AnimateID::COUNT));
+	fill_map(progdata.items, items, to_value(ItemID::COUNT));
 
 	return SetRoomConnections(progdata.rooms);
 }
@@ -254,11 +263,11 @@ bool SetRoomConnections(Room *rooms)
 	// Interconnect rooms with neighbours
 	for (i = 0; i < ROOM_COUNT; i++)
 	{
-		rooms[i].connect[kEast] = i + 1;
-		rooms[i].connect[kWest] = i - 1;
-		rooms[i].connect[kNorth] = i - 5;
-		rooms[i].connect[kSouth] = i + 5;
-		rooms[i].connect[kUp] = rooms[i].connect[kDown] = kUndefined;
+		rooms[i].connect[to_value(Command::east)] = i + 1;
+		rooms[i].connect[to_value(Command::west)] = i - 1;
+		rooms[i].connect[to_value(Command::north)] = i - 5;
+		rooms[i].connect[to_value(Command::south)] = i + 5;
+		rooms[i].connect[to_value(Command::up)] = rooms[i].connect[to_value(Command::down)] = undefined;
 	}
 
 	// Seperate layers
@@ -266,24 +275,24 @@ bool SetRoomConnections(Room *rooms)
 	{
 		for (j = 0; j < 16; j += 5)
 		{
-			rooms[i + j + 4].connect[to_underlying(Command::kEast)] = kUndefined;
-			rooms[i + j].connect[to_underlying(Command::kWest)] = kUndefined;
+			rooms[i + j + 4].connect[to_value(Command::east)] = undefined;
+			rooms[i + j].connect[to_value(Command::west)] = undefined;
 		}
 
 		for (j = 0; j < 5; j++)
 		{
-			rooms[i + j].connect[to_underlying(Command::kNorth)] = kUndefined;
-			rooms[i + j + 15].connect[to_underlying(Command::kSouth)] = kUndefined;
+			rooms[i + j].connect[to_value(Command::north)] = undefined;
+			rooms[i + j + 15].connect[to_value(Command::south)] = undefined;
 		}
 	}
 
 	// Connect layers
 	for (i = 0; i < LEVELCON_COUNT; i++)
-		rooms[level_connections[i][LEVELCON_FROMROOM]].connect[level_connections[i][LEVELCON_DIRECTION]] = level_connections[i][LEVELCON_TOROOM];
+		rooms[level_connections[i].from].connect[to_value(level_connections[i].direction)] = level_connections[i].to;
 	
 	// Blocked routes
 	for (i = 0; i < BLOCKED_COUNT; i++)
-		rooms[blocked[i][BLOCKED_ROOM]].connect[blocked[i][BLOCKED_DIRECTION]] = kUndefined;
+		rooms[blocked[i].room].connect[to_value(blocked[i])] = undefined;
 
 	return true;
 }

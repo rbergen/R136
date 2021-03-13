@@ -3,6 +3,7 @@
  ***************************************************************************/
 #include "r136.h"
 #include <locale.h>
+#include <map>
 
 /***************************************************************************
  * #defines of constants used by the functions
@@ -11,8 +12,8 @@
 enum class Key : char {
 	kEscape = -2,
 	kEnter = 5,
-	kUp = 8,
-	kDown = 2,
+	up = 8,
+	down = 2,
 	kTab = 6,
 	kShiftTab = 4
 };
@@ -22,28 +23,65 @@ enum class Key : char {
 	== 1: Insert on at start, use block cursor to indicate Insert on.
 	== 2: Insert off at start, use block cursor to indicate Insert off.
 	== 3: Insert on at start, use block cursor to indicate Insert off. */
-constexpr int kInsertFlag = 3;
+constexpr int insert_flag = 3;
 
-#define FG_BOLD			COLOR_WHITE
-#define FG_BANNER		COLOR_RED
-#define FG_ERROR		COLOR_RED
-#define FG_INVERSE		COLOR_BLACK
-#define FG_INVERSERED	COLOR_RED
-#define FG_NORMAL		COLOR_WHITE
-#define BG_BOLD			COLOR_BLACK
-#define BG_BANNER		COLOR_BLACK
-#define BG_ERROR		COLOR_BLACK
-#define BG_INVERSE		COLOR_WHITE
-#define BG_INVERSERED	COLOR_WHITE
-#define BG_NORMAL		COLOR_BLACK
-#define ATTR_BOLD		(COLOR_PAIR(Color::kBold) | A_BOLD)
-#define ATTR_BANNER		(COLOR_PAIR(Color::kBanner) | A_UNDERLINE)
-#define ATTR_ERROR		(COLOR_PAIR(Color::kError) | A_BOLD)
-#define ATTR_INVERSE	(COLOR_PAIR(Color::kInverse))
-#define ATTR_INVERSERED	(COLOR_PAIR(Color::kInverseRed) | A_BOLD)
-#define ATTR_NORMAL		(COLOR_PAIR(Color::kNormal))
+class ColorSet 
+{
+	static std::map<Color, ColorSet> color_sets;
 
-chtype attributes[Color::COUNT];
+	Color color;
+	short foreground, background, style;
+	chtype value;
+	bool is_initialized;
+
+public:
+	ColorSet(Color c, short fg, short bg) : ColorSet(c, fg, bg, 0) {}
+
+	ColorSet(Color c, short fg, short bg, short s) :
+		color(c),
+		foreground(fg),
+		background(bg),
+		style(s),
+		is_initialized(false)
+	{}
+
+	void initialize() 
+	{
+		auto color_value = to_value(color);
+		init_pair(color_value, foreground, background);
+		value = COLOR_PAIR(color_value) | style;
+
+		is_initialized = true;
+	}
+
+	chtype get_attrs()
+	{
+		if (!is_initialized)
+			initialize();
+
+		return value;
+	}
+
+	static void add(Color c, short fg, short bg, short s)
+	{
+		add(ColorSet(c, fg, bg, s));
+	}
+
+	static void add(Color c, short fg, short bg)
+	{
+		add(ColorSet(c, fg, bg));
+	}
+
+	static void add(ColorSet set) 
+	{
+		color_sets[set.color] = set;
+	}
+
+	static chtype get_attrs(Color color) 
+	{
+		return color_sets[color].get_attrs();
+	}
+};
 
 WINDOW *banner_window = NULL;
 WINDOW* main_window = NULL;
@@ -55,7 +93,7 @@ WINDOW* full_screen = NULL;
   * Definitions of the functions
   ***************************************************************************/
 
-void SetupWindows()
+void setup_windows()
 {
 	int height, width;
 
@@ -93,9 +131,9 @@ void SetupWindows()
 		keypad(input_window, true);
 	}
 
-	wattron(banner_window, ATTR_BANNER);
+	wattron(banner_window, ColorSet::get_attrs(Color::banner));
 	wmove(banner_window, 0, 0);
-	WriteCentered(banner_window, "Missiecode: R136");
+	write_centered(banner_window, "Missiecode: R136");
 
 	scrollok(main_window, true);
 
@@ -104,7 +142,7 @@ void SetupWindows()
 	wrefresh(input_window);
 }
 
-int PrintToMainWindow(const char* format, ...)
+int print_to_main_window(const char* format, ...)
 {
 	va_list args;
 	int return_value;
@@ -116,36 +154,24 @@ int PrintToMainWindow(const char* format, ...)
 	return return_value;
 }
 
-int WriteToMainWindow(const wchar_t *text)
+int write_to_main_window(const wchar_t *text)
 {
 	return waddwstr(main_window, text);
 }
 
-void InitializeColors()
+void initialize_colors()
 {
 	start_color();
 
-	init_pair(kBold, FG_BOLD, BG_BOLD);
-	attributes[kBold] = ATTR_BOLD;
-
-	init_pair(kBanner, FG_BANNER, BG_BANNER);
-	attributes[kBanner] = ATTR_BANNER;
-
-	init_pair(kError, FG_ERROR, BG_ERROR);
-	attributes[kError] = ATTR_ERROR;
-
-	init_pair(Color::kInverse, FG_INVERSE, BG_INVERSE);
-	attributes[Color::kInverse] = ATTR_INVERSE;
-
-	init_pair(Color::kInverseRed, FG_INVERSERED, BG_INVERSERED);
-	attributes[Color::kInverseRed] = ATTR_INVERSERED;
-
-	init_pair(kNormal, FG_NORMAL, BG_NORMAL);
-	attributes[kNormal] = ATTR_NORMAL;
-
+	ColorSet::add(Color::bold, COLOR_WHITE, COLOR_BLACK, A_BOLD);
+	ColorSet::add(Color::banner, COLOR_RED, COLOR_BLACK, A_UNDERLINE);
+	ColorSet::add(Color::error, COLOR_RED, COLOR_BLACK, A_BOLD);
+	ColorSet::add(Color::inverse, COLOR_BLACK, COLOR_WHITE);
+	ColorSet::add(Color::inverse_red, COLOR_RED, COLOR_WHITE, A_BOLD);
+	ColorSet::add(Color::normal, COLOR_WHITE, COLOR_BLACK);
 }
 
-void InitializeConsole()
+void initialize_console()
 {
 	setlocale(LC_ALL, "");
 
@@ -155,10 +181,10 @@ void InitializeConsole()
 
 	full_screen = stdscr;
 	
-	InitializeColors();
+	initialize_colors();
 }
 
-void ReleaseConsole()
+void release_console()
 {
 	if (input_window)
 		delwin(input_window);
@@ -172,56 +198,56 @@ void ReleaseConsole()
 	endwin();
 }
 
-void PrintFullScreenBlockAt(int y, int x, Color colors, const wchar_t** block, int rowcount) 
+void print_fullscreen_block(int y, int x, Color colors, const wchar_t** block, int rowcount) 
 {
-	wattron(full_screen, attributes[colors]);
+	wattron(full_screen, ColorSet::get_attrs(colors));
 	
 	for (int i  = 0; i < rowcount; i++)
 		mvwaddwstr(full_screen, y + i, x, block[i]);
 
-	wattroff(full_screen, attributes[colors]);
+	wattroff(full_screen, ColorSet::get_attrs(colors));
 }
 
-void PrintFullScreenBlockSectionAt(int y, int x, Color colors, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
+void print_fullscreen_block_section(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
 {
-	wattron(full_screen, attributes[colors]);
+	wattron(full_screen, ColorSet::get_attrs(color));
 
 	for (int i = topy; i <= bottomy; i++)
 		mvwaddnwstr(full_screen, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
 
-	wattroff(full_screen, attributes[colors]);
+	wattroff(full_screen, ColorSet::get_attrs(color));
 }
 
 
-void PrintFullScreenAt(int y, int x, Color colors, const wchar_t* text) 
+void print_fullscreen(int y, int x, Color color, const wchar_t* text) 
 {
-	wattron(full_screen, attributes[colors]);
+	wattron(full_screen, ColorSet::get_attrs(color));
 	mvwaddwstr(full_screen, y, x, text);
-	wattroff(full_screen, attributes[colors]);
+	wattroff(full_screen, ColorSet::get_attrs(color));
 }
 
-void ClearFullScreen(Color colors) 
+void clear_fullscreen(Color colors) 
 {
-	wbkgd(full_screen, attributes[colors]);
+	wbkgd(full_screen, ColorSet::get_attrs(colors));
 	werase(full_screen);
 }
 
-void UpdateFullScreen()
+void update_fullscreen()
 {
 	wrefresh(full_screen);
 }
 
-void ClearWindow()
+void clear_window()
 {
 	werase(main_window);
 }
 
-void GetFullScreenSize(int& y, int& x)
+void get_fullscreen_size(int& y, int& x)
 {
 	getmaxyx(full_screen, y, x);
 }
 
-void WaitForKeyCore(WINDOW* window, bool do_setup) 
+void wait_for_key_core(WINDOW* window, bool do_setup) 
 {
 	int y, x;
 
@@ -236,7 +262,7 @@ void WaitForKeyCore(WINDOW* window, bool do_setup)
 			resize_term(0, 0);
 			if (do_setup)
 			{
-				SetupWindows();
+				setup_windows();
 			}
 		}
 		else
@@ -244,28 +270,28 @@ void WaitForKeyCore(WINDOW* window, bool do_setup)
 	}
 }
 
-void WaitForFullScreenKey()
+void wait_for_fullscreen_key()
 {
-	WaitForKeyCore(full_screen, false);
+	wait_for_key_core(full_screen, false);
 }
 
-void WaitForKey()
+void wait_for_key()
 {
-	WaitForKeyCore(main_window, true);
+	wait_for_key_core(main_window, true);
 }
 
-void WriteCentered(WINDOW* win, const char* str)
+void write_centered(WINDOW* win, const char* str)
 {
 	int winwidth = getmaxx(win);
 	int strlength = strlen(str);
 
-	ClearLine(win);
+	clear_line(win);
 
 	int x = (winwidth - strlength) / 2;
 	mvwaddstr(win, getcury(win), x < 0 ? 0 : x, str);
 }
 
-void GetCommandString(char *input, int max_length) 
+void get_command_string(char *input, int max_length) 
 {
 	memset(input, ' ', max_length);
 	input[max_length] = 0;
@@ -273,211 +299,188 @@ void GetCommandString(char *input, int max_length)
 	wrefresh(main_window);
 
 	wmove(input_window, 0, 0);
-	ClearLine(input_window);
+	clear_line(input_window);
 
-	wattron(input_window, ATTR_BOLD);
+	wattron(input_window, ColorSet::get_attrs(Color::bold));
 	waddstr(input_window, "> ");
 
-	GetStringInput(input_window, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(input_window), -1, 0, 0);
+	get_string_input(input_window, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(input_window), -1, 0, 0);
 
-	ClearLine(input_window);
+	clear_line(input_window);
 	wmove(input_window, 0, 0);
 
-	wattroff(input_window, ATTR_BOLD);
+	wattroff(input_window, ColorSet::get_attrs(Color::bold));
 }
 
-void PrintCommandString(const char* format, ...)
+void print_command_string(const char* format, ...)
 {
 	wmove(input_window, 0, 0);
-	ClearLine(input_window);
+	clear_line(input_window);
 
 	va_list args;
 
-	wattron(input_window, ATTR_ERROR);
+	wattron(input_window, ColorSet::get_attrs(Color::error));
 
 	va_start(args, format);
 	vw_printw(input_window, format, args);
 	va_end(args);
 
-	wattroff(input_window, ATTR_ERROR);
+	wattroff(input_window, ColorSet::get_attrs(Color::error));
 
 	wrefresh(input_window);
 	wgetch(input_window);
 }
 
-int AdvancedGetChar(const char *allowed)
+int advanced_getchar(const char *allowed)
 {  
 	char input = 0;
 	int y = getcury(main_window);
 	int x = getcurx(main_window);
 
-	wattron(main_window, ATTR_BOLD);
+	wattron(main_window, ColorSet::get_attrs(Color::bold));
 
 	do
 	{  
 		wmove(main_window, y, x);
 
-		if (AdvancedScanF(main_window, 0, 1, allowed, "%c", &input) == to_underlying(Key::kEscape))
-			input = to_underlying(Key::kEscape);
+		if (advanced_scanf(main_window, 0, 1, allowed, "%c", &input) == to_value(Key::kEscape))
+			input = to_value(Key::kEscape);
 	}
 	while (input == ' ');
 
-	wattroff(main_window, ATTR_BOLD);
+	wattroff(main_window, ColorSet::get_attrs(Color::bold));
 
 	return input;
 }
 
-int AdvancedScanF(WINDOW *win, int check_input, int length, const char *allowed_characters, const char *format_string, ...)
+int advanced_scanf(WINDOW *win, int check_input, int length, const char *allowed_characters, const char *format_string, ...)
 {  
 	va_list argp;
-	char *inpstr;
-	int toret = 0;
+	char *input_string;
+	int result = 0;
 
-	inpstr = (char *) calloc((size_t)length + 1, sizeof(char));
+	input_string =  new char[length + 1];
 
-	if (!inpstr)
-		return to_underlying(Key::kEscape);
+	if (!input_string)
+		return to_value(Key::kEscape);
 
 	do
 	{  
-		memset(inpstr, ' ', length);
-		if (!((toret = GetStringInput(win, allowed_characters, inpstr, getcury(win), getcurx(win), 0, 1, 0)) == to_underlying(Key::kEscape)))
+		memset(input_string, ' ', length);
+		if (!((result = get_string_input(win, allowed_characters, input_string, getcury(win), getcurx(win), 0, 1, 0)) == to_value(Key::kEscape)))
 		{  
 			va_start(argp, format_string);
-			toret = vsscanf(inpstr, format_string, argp);
+			result = vsscanf(input_string, format_string, argp);
 			va_end(argp);
 		}
 	}
-	while (check_input && (toret == EOF || !toret));
+	while (check_input && (result == EOF || !result));
 
-	free(inpstr);
+	delete[] input_string;
 
-	return toret;
+	return result;
 }
 
-void ClearLine(WINDOW *win) 
+void clear_line(WINDOW *win) 
 {
 	wmove(win, getcury(win), 0);
 	wclrtoeol(win);
 }
 
-int GetStringInput (WINDOW *win, const char *allowed_characters, char *input, int input_y, int input_x, int capslock_forced, int enable_escape, int enable_directionals)
+int get_string_input (WINDOW *win, const char *allowed_characters, char *input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
 {
-	static int ins = 0;
-	int ilen, ipos = 0, toret = 0, curx, cury;
-	int ichar;
+	static bool insert_on = 0;
+	int input_length, input_pos = 0, result = 0, current_x, current_y;
+	int input_char;
 
-	ilen = (int)strlen(input) - 1;
-	curx = getcurx(win);
-	cury = getcury(win);
+	input_length = (int)strlen(input) - 1;
+	current_x = getcurx(win);
+	current_y = getcury(win);
 
-	ins = kInsertFlag & 1;
-
-/*
-	if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
-		setcursor(CURSOR_NORMAL);
-	else
-		setcursor(CURSOR_FULL);
-*/
+	insert_on = insert_flag & 1;
 
 	do
 	{  
-		wmove(win, input_y, input_x + ipos);
+		wmove(win, input_y, input_x + input_pos);
 		wrefresh(input_window);
 
-		ichar = wgetch(win);
+		input_char = wgetch(win);
 
-		switch (ichar)
+		switch (input_char)
 		{
 		case KEY_RESIZE:
-
 			resize_term(0, 0);
-			SetupWindows();
+			setup_windows();
 
 			break;
 
 		case KEY_LEFT: /* Arrow left */
-
-			if (ipos)
-				ipos--;
+			if (input_pos)
+				input_pos--;
 
 			break;
 
 		case KEY_RIGHT: /* Arrow right */
-
-			if (ipos < ilen)
-				ipos++;
+			if (input_pos < input_length)
+				input_pos++;
 
 			break;
 
 		case KEY_HOME: /* Home */
-
-			ipos = 0;
+			input_pos = 0;
 
 			break;
 
 		case KEY_END: /* End */
+			input_pos = input_length;
 
-			ipos = ilen;
-
-			if (input[ipos] == ' ')
-				while (ipos && input[ipos - 1] == ' ')
-					ipos--;
+			if (input[input_pos] == ' ')
+				while (input_pos && input[input_pos - 1] == ' ')
+					input_pos--;
 
 			break;
 
 		case KEY_IC: /* Insert */
+			insert_on = !insert_on;
 
-			ins = ins ? 0 : 1;
-/*
-			if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
-				setcursor(CURSOR_NORMAL);
-			else
-				setcursor(CURSOR_FULL);
-			break;
-*/
 		case KEY_DC: /* Delete */
+			memmove(input + input_pos, input + input_pos + 1, (size_t)input_length - input_pos);
 
-			memmove(input + ipos, input + ipos + 1, (size_t)ilen - ipos);
-
-			input[ilen] = ' ';
+			input[input_length] = ' ';
 			wdelch(win);
 
 			break;
 
 		case KEY_UP: /* Arrow up */
 			if (enable_directionals)
-				toret = to_underlying(Key::kUp);
+				result = to_value(Key::up);
 
 			break;
 
 		case KEY_DOWN: /* Arrow down */
-
 			if (enable_directionals)
-				toret = to_underlying(Key::kDown);
+				result = to_value(Key::down);
 
 			break;
 
 		case KEY_BTAB: /* Shift-Tab */
-
 			if (enable_directionals)
-				toret = to_underlying(Key::kShiftTab);
+				result = to_value(Key::kShiftTab);
 
 			break;
 
 		case KEY_BACKSPACE: /* Backspace */
-
 			#ifdef __APPLE__
 			case 127:
 			#else
 			case 8:
 			#endif
 
-			if (ipos)
+			if (input_pos)
 			{  
-				memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
-				input[ilen] = ' ';
-				mvwdelch(win, input_y, input_x + --ipos);
+				memmove(input + input_pos - 1, input + input_pos, (size_t)input_length - input_pos + 1);
+				input[input_length] = ' ';
+				mvwdelch(win, input_y, input_x + --input_pos);
 			}
 
 			break;
@@ -485,69 +488,64 @@ int GetStringInput (WINDOW *win, const char *allowed_characters, char *input, in
 		case KEY_STAB: /* Tab */
 
 			if (enable_directionals)
-				toret = to_underlying(Key::kTab);
+				result = to_value(Key::kTab);
 
 			break;
 
 		case KEY_ENTER: /* Enter */
 		case 10:
-
-			toret = to_underlying(Key::kEnter);
+			result = to_value(Key::kEnter);
 			break;
 
 		case 27: /* Escape */
-
 			if (enable_escape)
-				toret = to_underlying(Key::kEscape);
+				result = to_value(Key::kEscape);
 			else
 			{
-				memset(input, ' ', ilen);
+				memset(input, ' ', input_length);
 				mvwaddstr(win, input_y, input_x, input);
-				ipos = 0;
+				input_pos = 0;
 			}
 
 			break;
 
 		default:
+			if (force_case > 0)
+				input_char = toupper(input_char);
+			else if (force_case < 0)
+				input_char = tolower(input_char);
 
-			if (capslock_forced > 0)
-				ichar = toupper(ichar);
-			else if (capslock_forced < 0)
-				ichar = tolower(ichar);
-
-			if (strchr(allowed_characters, ichar))
+			if (strchr(allowed_characters, input_char))
 			{  
-				if (ins)
+				if (insert_on)
 				{  
-					memmove(input + ipos + 1, input + ipos, (size_t)ilen - ipos);
+					memmove(input + input_pos + 1, input + input_pos, (size_t)input_length - input_pos);
 
-					mvwdelch(win, input_y, input_x + ilen);
-					mvwinsch(win, input_y, input_x + ipos, ichar);
+					mvwdelch(win, input_y, input_x + input_length);
+					mvwinsch(win, input_y, input_x + input_pos, input_char);
 				}
 				else 
 				{
-					waddch(win, ichar);
+					waddch(win, input_char);
 
 				}
 
-				input[ipos] = ichar;
+				input[input_pos] = input_char;
 
-				if (ipos < ilen)
-					ipos++;
+				if (input_pos < input_length)
+					input_pos++;
 			}
 
 			break;
 		}
 	}
-	while (!toret);
+	while (!result);
 //	setcursor(CURSOR_NORMAL);
 
-	if (ipos == ilen) 
-	{
-		curx++;
-	}
+	if (input_pos == input_length) 
+		current_x++;
 
-	wmove(win, cury, curx);
+	wmove(win, current_y, current_x);
 
-	return toret;
+	return result;
 }

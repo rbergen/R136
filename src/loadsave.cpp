@@ -4,7 +4,7 @@ const char* LOADSAVEDATAPATH = "r136data.rip";
 
 void HandleFailedWrite(FILE *fp)
 {
-	PrintToMainWindow("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
+	print_to_main_window("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 
 	fclose(fp);
 	remove(LOADSAVEDATAPATH);
@@ -15,22 +15,22 @@ void SaveStatus(Progdata &progdata)
 	FILE *fp;
 	int i;
 
-	PrintToMainWindow("\n\nWil je je huidige status opslaan? ");
+	print_to_main_window("\n\nWil je je huidige status opslaan? ");
 
-	if (tolower(AdvancedGetChar("jJnN")) != 'j')
+	if (tolower(advanced_getchar("jJnN")) != 'j')
 	{
-		PrintToMainWindow("\n");
+		print_to_main_window("\n");
 
 		return;
 	}
 
 	while (!(fp = fopen(LOADSAVEDATAPATH, "wb")))
 	{
-		PrintToMainWindow("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+		print_to_main_window("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 
-		if (tolower(AdvancedGetChar("jJnN")) != 'j')
+		if (tolower(advanced_getchar("jJnN")) != 'j')
 		{
-			PrintToMainWindow("\n\nStatus niet opgeslagen!\n");
+			print_to_main_window("\n\nStatus niet opgeslagen!\n");
 
 			remove(LOADSAVEDATAPATH);
 
@@ -38,7 +38,7 @@ void SaveStatus(Progdata &progdata)
 		}
 	}
 
-	PrintToMainWindow("\n");
+	print_to_main_window("\n");
 
 	for (i = 0; i < 25; i++)
 	{
@@ -60,7 +60,7 @@ void SaveStatus(Progdata &progdata)
 
 	for (i = 0; i < 21; i++)
 	{
-		if (fp != 0 && fwrite(&progdata.living[i], sizeof(Living), 1, fp) < 1)
+		if (fp != 0 && fwrite(&progdata.animates[i], sizeof(Animate), 1, fp) < 1)
 		{
 			HandleFailedWrite(fp);
 			return;
@@ -85,12 +85,12 @@ void SaveStatus(Progdata &progdata)
 
 void HandleFailedRead(Progdata &progdata, FILE *fp)
 {
-	PrintToMainWindow("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
+	print_to_main_window("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 
 	fclose(fp);
 	remove(LOADSAVEDATAPATH);
 
-	WaitForKey();
+	wait_for_key();
 
 	Initialize(progdata);
 }
@@ -102,15 +102,15 @@ bool LoadStatus(Progdata &progdata)
 
 	if (!(fp = fopen(LOADSAVEDATAPATH, "rb")))
 	{
-		WriteCentered(main_window, "Druk op een toets om te beginnen");
+		write_centered(main_window, "Druk op een toets om te beginnen");
 
-		WaitForKey();
+		wait_for_key();
 		return false;
 	}
 
-	WriteCentered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+	write_centered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
 
-	if (tolower(AdvancedGetChar("12")) != '2')
+	if (tolower(advanced_getchar("12")) != '2')
 	{
 		if (fp != 0) 
 			fclose(fp);
@@ -120,7 +120,7 @@ bool LoadStatus(Progdata &progdata)
 		return false;
 	}
 
-	PrintToMainWindow("\n");
+	print_to_main_window("\n");
 
 	for (i = 0; i < 25; i++)
 	{
@@ -142,7 +142,7 @@ bool LoadStatus(Progdata &progdata)
 
 	for (i = 0; i < 21; i++)
 	{
-		if (fp != 0 && fread(&progdata.living[i], sizeof(Living), 1, fp) < 1)
+		if (fp != 0 && fread(&progdata.animates[i], sizeof(Animate), 1, fp) < 1)
 		{
 			HandleFailedRead(progdata, fp);
 			return false;
@@ -161,7 +161,7 @@ bool LoadStatus(Progdata &progdata)
 		return false;
 	}
 
-	PrintToMainWindow("\n");
+	print_to_main_window("\n");
 	
 	if (fp != 0)
 		fclose(fp);

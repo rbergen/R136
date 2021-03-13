@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <type_traits>
+#include <map>
 
 
 #if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
@@ -28,13 +29,14 @@
 // This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32
 #include <windows.h>
-constexpr void mssleep(int n) 
+void sleep_ms(int n) 
 {
 	Sleep(n);
 }
 #else
 #include <unistd.h>
-constexpr void mssleep(int n)
+#include <map>
+void sleep_ms(int n)
 {
 	usleep(n * 1000);
 }
@@ -42,7 +44,7 @@ constexpr void mssleep(int n)
 #endif
 
 template <typename E>
-constexpr auto to_underlying(E e) noexcept
+constexpr auto to_value(E e) noexcept
 {
 	return static_cast<std::underlying_type_t<E>>(e);
 }
@@ -50,101 +52,103 @@ constexpr auto to_underlying(E e) noexcept
 /*
 	Defines
 */
-enum class Color : char 
+enum class Color : short 
 {
-	kBold,
-	kBanner,
-	kError,
-	kInverse,
-	kInverseRed,
-	kNormal,
+	bold,
+	banner,
+	error,
+	inverse,
+	inverse_red,
+	normal,
 	COUNT
 };
 
 enum class Cursor : char
 {
-	kNormal,
-	KBlock
+	normal,
+	block
 };
 
-constexpr int kUndefined		= -1;
+constexpr int undefined	= -1;
 
 enum class Command : char
 {
-	kEast = 0,
-	kWest,
-	kNorth,
-	kSouth,
-	kUp,
-	kDown,
-	kUse,
-	kCombine,
-	kPickup,
-	kLayDown,
-	kInspect,
-	kWait,
-	kFinish,
-	kStatus,
-	kHelp,
+	east = 0,
+	west,
+	north,
+	south,
+	up,
+	down,
+	use,
+	combine,
+	pickup,
+	lay_down,
+	inspect,
+	wait,
+	finish,
+	status,
+	help,
 	COUNT
 };
 
 enum class AnimateID : char
 {
-	kHellHound = 0,
-	kRedTroll,
-	kPlant,
-	kGnu,
-	kDragon,
-	kSwelling,
-	kDoor,
-	kVoices,
-	kBarbecue,
-	kTree,
-	kGreenCrystal,
-	kComputer,
-	kDragonHead,
-	kLava,
-	kVacuum,
-	kPaper,
-	kNorthSwamp,
-	kMiddleSwamp,
-	kSouthSwamp,
-	kMist,
-	kTeleporter,
+	hellhound = 0,
+	red_troll,
+	plant,
+	gnu,
+	dragon,
+	swelling,
+	door,
+	voices,
+	barbecue,
+	tree,
+	green_crystal,
+	computer,
+	dragon_head,
+	lava,
+	vacuum,
+	hatch,
+	north_swamp,
+	middle_swamp,
+	south_swamp,
+	mist,
+	teleporter,
 	COUNT,
-	kUndefined
+	undefined
 };
 
-#define ITEM_COUNT			25
-#define ITEM_HONDVLEES		0
-#define ITEM_HITTEPAK		1
-#define ITEM_GROENKRISTAL	2
-#define ITEM_ZWAARD			3
-#define ITEM_BOT			4
-#define ITEM_DISKETTE		5
-#define ITEM_HASJ			6
-#define ITEM_ROODKRISTAL	7
-#define ITEM_SLAAPMUTS		8
-#define ITEM_BOM			9
-#define ITEM_ZAKLAMP		10
-#define ITEM_VERBAND		11
-#define ITEM_VLAMMENWERPER	12
-#define ITEM_KOOKBOEK		13
-#define ITEM_TNT			14
-#define ITEM_GASPATROON		15
-#define ITEM_GIFTIGVLEES	16
-#define ITEM_ONTSTEKING		17
-#define ITEM_BATTERIJEN		18
-#define ITEM_GASMASKER		19
-#define ITEM_PAPIERITEM		20
-#define ITEM_BOEKJE			21
-#define ITEM_BLAUWKRISTAL	22
-#define ITEM_KOEKJE			23
-#define ITEM_GASGRANAAT		24
+enum class ItemID : char
+{
+	hound_meat,
+	thermal_suit,
+	green_crystal,
+	sword,
+	bone,
+	diskette,
+	hashis,
+	red_crystal,
+	nightcap,
+	bomb,
+	flashlight,
+	bandage,
+	flamethrower,
+	cookbook,
+	tnt,
+	gas_capsule,
+	poisined_meat,
+	ignition,
+	batteries,
+	gasmask,
+	hatch,
+	booklet,
+	blue_crystal,
+	cookie,
+	gas_grenade,
+	COUNT
+};
 
-template<typename T>
-constexpr AnimateID connectToItem(T n) { return static_cast<AnimateID>(-(n + 2)); }
+constexpr AnimateID connectToItem(ItemID item) { return static_cast<AnimateID>(-(to_value(item) + 2)); }
 
 #define ROOM_COUNT				80
 #define ROOM_BOS0				0
@@ -228,28 +232,32 @@ constexpr AnimateID connectToItem(T n) { return static_cast<AnimateID>(-(n + 2))
 #define ROOM_GLIBBERGROT		78
 #define ROOM_TELEPORTGROT		79
 
-#define PAPERROUTE_LENGTH		6
-#define MAX_LIFEPOINTS			20
-#define MAX_OWNEDITEMS			10
+constexpr char paper_route_length = 6;
+constexpr char max_life_points = 20;
+constexpr char max_owned_items = 10;
 
-#define STATUS_LIVING_DEAD				3
-#define STATUS_PAPIER_OPENING			1
-#define STATUS_DEUR_OPEN				1
-#define STATUS_BARBECUE_INITIALBURN		0
-#define STATUS_BARBECUE_HASJONFIRE		1
-#define STATUS_BARBECUE_VLEESONFIRE		2
-#define STATUS_BARBECUE_INGREDIENTBURN	3
-#define STATUS_BARBECUE_KOEKJEBAKING	4
-#define STATUS_COMPUTER_READING			2
-#define STATUS_DRAAK_KOEKJETHROWN		3
-#define STATUS_DRAAK_LIGHTSLEEPING		4
-#define STATUS_DRAAK_SLAAPMUTSONHEAD	5
-#define STATUS_LAVA_BOMDROPPED			1
-#define STATUS_BOOM_SETONFIRE			1
-#define STATUS_GNOE_GIFTIGVLEESFED		2
-#define STATUS_RODETROL_BOEKJETHROWN	4
-#define STATUS_GEZWEL_GASSED			2
-#define STATUS_ITEM_OWNED				-2
+enum class AnimateStatus : char {
+	dead = 3,
+	hatch_opening = 1,
+	door_open = 1,
+	initial_burn = 0,
+	hashis_on_fire = 1,
+	meat_on_fire = 2,
+	ingredients_burning = 3,
+	cookie_is_baking = 4,
+	computer_is_reading = 2,
+	cookie_is_thrown = 3,
+	sleeping_lightly = 4,
+	nightcap_on_head = 5,
+	bomb_dropped = 1,
+	tree_on_fire = 1,
+	poisonous_meat_fed = 2,
+	booklet_thrown = 4,
+	swelling_gassed = 2
+};
+
+
+#define item_owned				-2
 
 /*
 	Structures
@@ -275,7 +283,7 @@ struct Room
 	char connect[6];
 };
 
-struct Living
+struct Animate
 {
 	char room;
 	char strike;
@@ -302,9 +310,9 @@ struct Status
 struct Progdata
 {
 	Room* rooms;
-	Living* living;
-	Item* items;
-	char owneditems[MAX_OWNEDITEMS];
+	std::map<AnimateID, Animate> animates;
+	std::map<ItemID, Item> items;
+	char owneditems[max_owned_items];
 	char* paperroute;
 	Status status;
 };
@@ -322,28 +330,28 @@ struct Parsedata
 	Functions
 */
 
-int GetRandomNumber(int max);
-void SetupWindows();
-int PrintToMainWindow(const char* fmt, ...);
-void InitializeConsole();
-void ReleaseConsole();
-void PrintFullScreenBlockAt(int y, int x, Color colors, const wchar_t** block, int rowcount);
-void PrintFullScreenBlockSectionAt(int y, int x, Color colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
-void PrintFullScreenAt(int y, int x, Color colors, const wchar_t* text);
-void ClearFullScreen(Color colors);
-void GetFullScreenSize(int& y, int& x);
-void UpdateFullScreen();
-void ClearWindow();
-void WaitForKey();
-void WaitForFullScreenKey();
-int WriteToMainWindow(const wchar_t *text);
-void WriteCentered(WINDOW* win, const char* str);
-void ClearLine(WINDOW *win);
-void GetCommandString(char* input, int maxlength);
-void PrintCommandString(const char* fmt, ...);
-int AdvancedGetChar(const char *allowed);
-int AdvancedScanF(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
-int GetStringInput (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+int get_random_number(int max);
+void setup_windows();
+int print_to_main_window(const char* fmt, ...);
+void initialize_console();
+void release_console();
+void print_fullscreen_block(int y, int x, Color colors, const wchar_t** block, int rowcount);
+void print_fullscreen_block_section(int y, int x, Color colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
+void print_fullscreen(int y, int x, Color colors, const wchar_t* text);
+void clear_fullscreen(Color colors);
+void get_fullscreen_size(int& y, int& x);
+void update_fullscreen();
+void clear_window();
+void wait_for_key();
+void wait_for_fullscreen_key();
+int write_to_main_window(const wchar_t *text);
+void write_centered(WINDOW* win, const char* str);
+void clear_line(WINDOW *win);
+void get_command_string(char* input, int maxlength);
+void print_command_string(const char* fmt, ...);
+int advanced_getchar(const char *allowed);
+int advanced_scanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
+int get_string_input (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
 void RunIntro();
 
@@ -371,29 +379,29 @@ int FindOwnedItemNum(Progdata &progdata, const char *itemname);
 bool IsRoomLit(Status& status);
 int FindLayingItemNum(Progdata &progdata, const char *itemname);
 
-void ShowSplashScreen(void);
-void ShowStartMessage(void);
-void ForceExit(void);
+void show_splashscreen(void);
+void show_start_message(void);
+void force_exit(void);
 
-void RoomStatus(Progdata &progdata);
-void ShowDirString(char *connect);
-void ShowItems(Progdata &progdata);
-bool LivingStatus(Progdata &progdata);
-void HellehondStatus(Progdata &progdata);
-void RodeTrolStatus(Progdata &progdata);
-void PlantStatus(Progdata &progdata);
-void GnoeStatus(Progdata &progdata);
-void DraakStatus(Progdata &progdata);
-void GezwelStatus(Progdata &progdata);
-void DeurStatus(Progdata &progdata);
-void StemmenStatus(Progdata &progdata);
-void BarbecueStatus(Progdata &progdata);
-void BoomStatus(Progdata &progdata);
-void GroenKristalStatus(Progdata &progdata);
-void ComputerStatus(Progdata &progdata);
-void DrakeKopStatus(Progdata &progdata);
-bool LavaStatus(Progdata &progdata);
-void PapierStatus(Progdata &progdata);
+void show_room_status(Progdata &progdata);
+void show_open_directions(char *connect);
+void show_items(Progdata &progdata);
+bool progress_animate_status(Progdata &progdata);
+void progress_hellhound_status(Progdata &progdata);
+void progress_red_troll_status(Progdata &progdata);
+void progress_plant_status(Progdata &progdata);
+void progress_gnu_status(Progdata &progdata);
+void progress_dragon_status(Progdata &progdata);
+void progress_swelling_status(Progdata &progdata);
+void progress_door_status(Progdata &progdata);
+void progress_voices_status(Progdata &progdata);
+void progress_barbecue_status(Progdata &progdata);
+void progress_tree_status(Progdata &progdata);
+void progress_green_crystal_status(Progdata &progdata);
+void progress_computer_status(Progdata &progdata);
+void progress_dragon_head_status(Progdata &progdata);
+bool progress_lava_status(Progdata &progdata);
+void progress_hatch_status(Progdata &progdata);
 
 extern const char* LOADSAVEDATAPATH;
 extern WINDOW* banner_window;
