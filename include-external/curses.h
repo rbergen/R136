@@ -1012,7 +1012,7 @@ PDCEX  int     pair_content(short, short *, short *);
 PDCEX  int     pechochar(WINDOW *, chtype);
 PDCEX  int     pnoutrefresh(WINDOW *, int, int, int, int, int, int);
 PDCEX  int     prefresh(WINDOW *, int, int, int, int, int, int);
-PDCEX  int     printmw(const char *, ...);
+PDCEX  int     PrintToMainWindow(const char *, ...);
 PDCEX  int     putwin(WINDOW *, FILE *);
 PDCEX  void    qiflush(void);
 PDCEX  int     raw(void);

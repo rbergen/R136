@@ -1,6 +1,6 @@
 #include "r136.h"
 
-int random(int max)
+int GetRandomNumber(int max)
 {
 	return rand() % max;
 }

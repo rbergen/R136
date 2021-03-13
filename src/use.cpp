@@ -15,10 +15,10 @@ bool DoAction(Progdata &progdata)
 
 	if (progdata.status.lifepoints <= 0)
 	{
-		printmw("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
-		printmw("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
-		printmw("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
-		printmw("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.\n\n");
+		PrintToMainWindow("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
+		PrintToMainWindow("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
+		PrintToMainWindow("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
+		PrintToMainWindow("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.\n\n");
 		ForceExit();
 	}
 
@@ -27,10 +27,10 @@ bool DoAction(Progdata &progdata)
 		switch(--progdata.status.lamppoints)
 		{
 		case 10:
-			printmw("De zaklamp gaat zwakker branden.\n\n");
+			PrintToMainWindow("De zaklamp gaat zwakker branden.\n\n");
 			break;
 		case 0:
-			printmw("De batterijen van de zaklamp zijn uitgeput. Langzaam dooft hij.\n\n");
+			PrintToMainWindow("De batterijen van de zaklamp zijn uitgeput. Langzaam dooft hij.\n\n");
 			progdata.status.lamp = false;
 			break;
 		}
@@ -42,42 +42,42 @@ bool DoAction(Progdata &progdata)
 
 		do 
 		{
-			getcmdstr(inpstr, 64);
+			GetCommandString(inpstr, 64);
 			ParseInput(progdata, inpstr, parsedata);
 		} 
 		while (parsedata.parseerror);
 
-		printcentered(MAINWINDOW, "---***---");
-		printmw("\n\n");
+		WriteCentered(main_window, "---***---");
+		PrintToMainWindow("\n\n");
 
 		switch(parsedata.selected)
 		{
-		case DO_EAST:
-		case DO_WEST:
-		case DO_NORTH:
-		case DO_SOUTH:
-		case DO_UP:
-		case DO_DOWN:
+		case kEast:
+		case kWest:
+		case kNorth:
+		case kSouth:
+		case kUp:
+		case kDown:
 			if (progdata.rooms[progdata.status.curroom].connect[parsedata.selected] >= 0)
 			{
-				if (progdata.living[LIVING_GNOE].room == progdata.status.curroom && progdata.living[LIVING_GNOE].status != STATUS_LIVING_DEAD)
+				if (progdata.living[kGnu].room == progdata.status.curroom && progdata.living[kGnu].status != STATUS_LIVING_DEAD)
 				{
-					switch (random(5))
+					switch (GetRandomNumber(5))
 					{
 					case 0:
-						progdata.living[LIVING_GNOE].room = ROOM_GNOEGROT;
+						progdata.living[kGnu].room = ROOM_GNOEGROT;
 						break;
 					case 1:
-						progdata.living[LIVING_GNOE].room = ROOM_ROTSGROT;
+						progdata.living[kGnu].room = ROOM_ROTSGROT;
 						break;
 					case 2:
-						progdata.living[LIVING_GNOE].room = ROOM_LEEGTE;
+						progdata.living[kGnu].room = ROOM_LEEGTE;
 						break;
 					case 3:
-						progdata.living[LIVING_GNOE].room = ROOM_ZANDBANK;
+						progdata.living[kGnu].room = ROOM_ZANDBANK;
 						break;
 					case 4:
-						progdata.living[LIVING_GNOE].room = ROOM_OLIEGROT;
+						progdata.living[kGnu].room = ROOM_OLIEGROT;
 						break;
 					}
 				}
@@ -92,48 +92,48 @@ bool DoAction(Progdata &progdata)
 						progdata.status.paperpos = 0;
 
 					if (progdata.status.paperpos == PAPERROUTE_LENGTH)
-						progdata.living[LIVING_PAPIER].status = STATUS_PAPIER_OPENING;
+						progdata.living[kPaper].status = STATUS_PAPIER_OPENING;
 				}
 				return true;
 			}
 			else
-				printmw("Daar kun je niet heen.\n");
+				PrintToMainWindow("Daar kun je niet heen.\n");
 			break;
-		case DO_GEBRUIK:
+		case kUse:
 			DoGebruik(progdata, parsedata);
 			break;
-		case DO_COMBINEER:
+		case kCombine:
 			DoCombineer(progdata, parsedata);
 			break;
-		case DO_PAK:
+		case kPickup:
 			DoPak(progdata, parsedata);
 			break;
-		case DO_LEG:
+		case kLayDown:
 			DoLeg(progdata, parsedata);
 			break;
-		case DO_BEKIJK:
+		case kInspect:
 			DoBekijk(progdata, parsedata);
 			break;
-		case DO_AFWACHTEN:
+		case kWait:
 			DoAfwachten();
 			break;
-		case DO_EINDE:
-			printmw("Weet je zeker dat je de aarde laat vergaan? ");
-			if (tolower(agetchar("jJnN")) == 'j')
+		case kFinish:
+			PrintToMainWindow("Weet je zeker dat je de aarde laat vergaan? ");
+			if (tolower(AdvancedGetChar("jJnN")) == 'j')
 				return false;
-			printmw("\nMooi zo!\n");
+			PrintToMainWindow("\nMooi zo!\n");
 			break;
-		case DO_STATUS:
+		case kStatus:
 			DoStatus(progdata);
 			break;
-		case DO_HELP:
+		case kHelp:
 			DoHelp();
 			break;
 		}
 
-		printmw("\n");
+		PrintToMainWindow("\n");
 	}
-	while (parsedata.selected == DO_STATUS || parsedata.selected == DO_HELP || parsedata.selected == DO_EINDE);
+	while (parsedata.selected == kStatus || parsedata.selected == kHelp || parsedata.selected == kFinish);
 
 	return true;
 }
@@ -146,45 +146,45 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 
 		int monster;
 
-		if (progdata.living[LIVING_HELLEHOND].room == progdata.status.curroom && progdata.living[LIVING_HELLEHOND].strike)
-			monster = LIVING_HELLEHOND;
-		else if (progdata.living[LIVING_PLANT].room == progdata.status.curroom && progdata.living[LIVING_PLANT].strike)
-			monster = LIVING_PLANT;
+		if (progdata.living[kHellHound].room == progdata.status.curroom && progdata.living[kHellHound].strike)
+			monster = kHellHound;
+		else if (progdata.living[kPlant].room == progdata.status.curroom && progdata.living[kPlant].strike)
+			monster = kPlant;
 		else
 		{
-			printmw("Dat heeft geen zin.\n\n");
+			PrintToMainWindow("Dat heeft geen zin.\n\n");
 			return;
 		}
 
 		while (true)
 		{
-			printmw("Je haalt uit met je zwaard");
+			PrintToMainWindow("Je haalt uit met je zwaard");
 
-			if (random(100) > 70)
-				printmw(", maar het monster ontwijkt.\n");
+			if (GetRandomNumber(100) > 70)
+				PrintToMainWindow(", maar het monster ontwijkt.\n");
 			else
 			{
-				printmw(" en je raakt het monster hard.\n");
+				PrintToMainWindow(" en je raakt het monster hard.\n");
 				progdata.living[monster].strike--;
 			}
 
 			if (progdata.living[monster].strike == 1)
-				printmw("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
+				PrintToMainWindow("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
 
-			if (!progdata.living[monster].strike || random(100) > 30)
+			if (!progdata.living[monster].strike || GetRandomNumber(100) > 30)
 				break;
 
-			printmw("\nJe kunt nog een slag uitdelen. Wil je dat? ");
+			PrintToMainWindow("\nJe kunt nog een slag uitdelen. Wil je dat? ");
 
-			if (tolower(agetchar("jJnN")) != 'j')
+			if (tolower(AdvancedGetChar("jJnN")) != 'j')
 			{
-				printmw("\n");
+				PrintToMainWindow("\n");
 				break;
 			}
 
-			printmw("\n");
+			PrintToMainWindow("\n");
 		}
-		printmw("\n");
+		PrintToMainWindow("\n");
 
 		if (!progdata.living[monster].strike)
 		{
@@ -192,7 +192,7 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 			LivingStatus(progdata);
 		}
 
-		waitforkey();
+		WaitForKey();
 		break;
 
 	case ITEM_ZAKLAMP:
@@ -200,17 +200,17 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 		if (progdata.status.lamp)
 		{
 			progdata.status.lamp = !progdata.status.lamp;
-			printmw("Je zet de zaklamp uit.%s", IsRoomLit(progdata.status) ? "\n" : " Je ziet niets meer.\n");
+			PrintToMainWindow("Je zet de zaklamp uit.%s", IsRoomLit(progdata.status) ? "\n" : " Je ziet niets meer.\n");
 			break;
 		}
 
 		if (progdata.status.lamppoints)
 		{
 			progdata.status.lamp = !progdata.status.lamp;
-			printmw("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
+			PrintToMainWindow("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
 		}
 		else
-			printmw("Zonder nieuwe batterijen doet'ie het niet...\n");
+			PrintToMainWindow("Zonder nieuwe batterijen doet'ie het niet...\n");
 
 		break;
 
@@ -218,41 +218,41 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 
 		if (progdata.status.lifepoints == MAX_LIFEPOINTS)
 		{
-			printmw("Je bent nog helemaal heel!\n");
+			PrintToMainWindow("Je bent nog helemaal heel!\n");
 			break;
 		}
 
-		printmw("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even\n"
+		PrintToMainWindow("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even\n"
 				 "op je lippen van de pijn als het verband je nog bloedende wonden raakt.\n\n"
 				 "Je bent weer zo goed als nieuw.\n");
 
 		progdata.status.lifepoints = MAX_LIFEPOINTS;
-		progdata.items[ITEM_VERBAND].room = UNDEFINED;
-		progdata.owneditems[parsedata.object1] = UNDEFINED;
+		progdata.items[ITEM_VERBAND].room = kUndefined;
+		progdata.owneditems[parsedata.object1] = kUndefined;
 
-		waitforkey();
+		WaitForKey();
 		break;
 
 	case ITEM_TNT:
 
-		printmw("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\n"
+		PrintToMainWindow("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\n"
 				 "gaat met een harde knal. Je wordt even verblind door de flits van de ontplof-\n"
 				 "fing. Door de klap val je even flauw.\n");
 
 		progdata.status.lifepoints--;
 
-		waitforkey();
+		WaitForKey();
 		break;
 
 	case ITEM_HITTEPAK:
 
-		printmw("Je hebt het pak al aan.\n");
+		PrintToMainWindow("Je hebt het pak al aan.\n");
 
 		break;
 
 	case ITEM_GASMASKER:
 
-		printmw("Je hebt het gasmasker al op.\n");
+		PrintToMainWindow("Je hebt het gasmasker al op.\n");
 
 		break;
 
@@ -261,7 +261,7 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 		if (progdata.items[progdata.owneditems[parsedata.object1]].useableon < 0
 			 || progdata.living[progdata.items[progdata.owneditems[parsedata.object1]].useableon].room != progdata.status.curroom)
 		{
-			printmw("Dat heeft geen zin.\n\n");
+			PrintToMainWindow("Dat heeft geen zin.\n\n");
 			break;
 		}
 
@@ -270,26 +270,26 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 
 		case ITEM_BOT:
 
-			progdata.living[LIVING_DEUR].status = STATUS_DEUR_OPEN;
+			progdata.living[kDoor].status = STATUS_DEUR_OPEN;
 
 			break;
 
 		case ITEM_DISKETTE:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_COMPUTER, STATUS_COMPUTER_READING);
+			UseItemToStatus(progdata, parsedata.object1, kComputer, STATUS_COMPUTER_READING);
 
 			break;
 
 		case ITEM_HASJ:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_BARBECUE, progdata.living[LIVING_BARBECUE].status == STATUS_BARBECUE_INITIALBURN
+			UseItemToStatus(progdata, parsedata.object1, kBarbecue, progdata.living[kBarbecue].status == STATUS_BARBECUE_INITIALBURN
 				? STATUS_BARBECUE_HASJONFIRE : STATUS_BARBECUE_KOEKJEBAKING);
 
 			break;
 
 		case ITEM_HONDVLEES:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_BARBECUE, progdata.living[LIVING_BARBECUE].status == STATUS_BARBECUE_INITIALBURN
+			UseItemToStatus(progdata, parsedata.object1, kBarbecue, progdata.living[kBarbecue].status == STATUS_BARBECUE_INITIALBURN
 				? STATUS_BARBECUE_VLEESONFIRE : STATUS_BARBECUE_KOEKJEBAKING);
 
 			break;
@@ -298,70 +298,70 @@ void DoGebruik(Progdata &progdata, Parsedata &parsedata)
 		case ITEM_GROENKRISTAL:
 		case ITEM_BLAUWKRISTAL:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_DRAKEKOP, progdata.living[LIVING_DRAKEKOP].status + 1);
+			UseItemToStatus(progdata, parsedata.object1, kDragonHead, progdata.living[kDragonHead].status + 1);
 
 			break;
 
 		case ITEM_KOEKJE:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_DRAAK, STATUS_DRAAK_KOEKJETHROWN);
+			UseItemToStatus(progdata, parsedata.object1, kDragon, STATUS_DRAAK_KOEKJETHROWN);
 
 			break;
 
 		case ITEM_SLAAPMUTS:
 
-			if (progdata.living[LIVING_DRAAK].status != STATUS_DRAAK_LIGHTSLEEPING)
+			if (progdata.living[kDragon].status != STATUS_DRAAK_LIGHTSLEEPING)
 			{
-				printmw("Dat heeft geen zin.\n\n");
+				PrintToMainWindow("Dat heeft geen zin.\n\n");
 				return;
 			}
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_DRAAK, STATUS_DRAAK_SLAAPMUTSONHEAD);
+			UseItemToStatus(progdata, parsedata.object1, kDragon, STATUS_DRAAK_SLAAPMUTSONHEAD);
 
 			break;
 
 		case ITEM_BOM:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_LAVA, STATUS_LAVA_BOMDROPPED);
+			UseItemToStatus(progdata, parsedata.object1, kLava, STATUS_LAVA_BOMDROPPED);
 
 			break;
 
 		case ITEM_VLAMMENWERPER:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_BOOM, STATUS_BOOM_SETONFIRE);
+			UseItemToStatus(progdata, parsedata.object1, kTree, STATUS_BOOM_SETONFIRE);
 
 			break;
 
 		case ITEM_GIFTIGVLEES:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_GNOE, STATUS_GNOE_GIFTIGVLEESFED);
+			UseItemToStatus(progdata, parsedata.object1, kGnu, STATUS_GNOE_GIFTIGVLEESFED);
 
 			break;
 
 		case ITEM_BOEKJE:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_RODETROL, STATUS_RODETROL_BOEKJETHROWN);
+			UseItemToStatus(progdata, parsedata.object1, kRedTroll, STATUS_RODETROL_BOEKJETHROWN);
 
 			break;
 
 		case ITEM_GASGRANAAT:
 
-			UseItemToStatus(progdata, parsedata.object1, LIVING_GEZWEL, STATUS_GEZWEL_GASSED);
+			UseItemToStatus(progdata, parsedata.object1, kSwelling, STATUS_GEZWEL_GASSED);
 
 			break;
 		}
 
 		LivingStatus(progdata);
 
-		waitforkey();
+		WaitForKey();
 		break;
 	}
 }
 
 void UseItemToStatus(Progdata &progdata, int ownedindex, int beast, int status)
 {
-	progdata.items[progdata.owneditems[ownedindex]].room = UNDEFINED;
-	progdata.owneditems[ownedindex] = UNDEFINED;
+	progdata.items[progdata.owneditems[ownedindex]].room = kUndefined;
+	progdata.owneditems[ownedindex] = kUndefined;
 	progdata.living[beast].status = status;
 }
 
@@ -370,7 +370,7 @@ void DoCombineer(Progdata &progdata, Parsedata &parsedata)
 	if (progdata.items[progdata.owneditems[parsedata.object1]].useableon > -2
 		 || connectToItem(progdata.items[progdata.owneditems[parsedata.object1]].useableon) != progdata.owneditems[parsedata.object2])
 	{
-		printmw("Dat levert niets bruikbaars op.\n");
+		PrintToMainWindow("Dat levert niets bruikbaars op.\n");
 		return;
 	}
 
@@ -379,33 +379,33 @@ void DoCombineer(Progdata &progdata, Parsedata &parsedata)
 	case ITEM_ZAKLAMP:
 	case ITEM_BATTERIJEN:
 
-		printmw("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen\n"
+		PrintToMainWindow("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen\n"
 				 "vallen. Daarna steek je de \"trommelbatterijen\" erin en schroeft de lamp weer\n"
 				 "dicht. Nadat je een paar keer op de zaklantaarn hebt geslagen zie je dat hij\n"
 				 "het doet.\n");
 
-		progdata.status.lamppoints = UNDEFINED;
-		progdata.items[ITEM_BATTERIJEN].room = UNDEFINED;
+		progdata.status.lamppoints = kUndefined;
+		progdata.items[ITEM_BATTERIJEN].room = kUndefined;
 
 		if (progdata.owneditems[parsedata.object1] == ITEM_BATTERIJEN)
-			progdata.owneditems[parsedata.object1] = UNDEFINED;
+			progdata.owneditems[parsedata.object1] = kUndefined;
 		else
-			progdata.owneditems[parsedata.object2] = UNDEFINED;
+			progdata.owneditems[parsedata.object2] = kUndefined;
 
 		break;
 
 	case ITEM_GASPATROON:
 	case ITEM_ONTSTEKING:
 
-		printmw("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\n"
+		PrintToMainWindow("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\n"
 				 "resultaat een werkende mosterdgasgranaat.\n");
 
-		progdata.items[ITEM_GASPATROON].room = UNDEFINED;
-		progdata.items[ITEM_ONTSTEKING].room = UNDEFINED;
+		progdata.items[ITEM_GASPATROON].room = kUndefined;
+		progdata.items[ITEM_ONTSTEKING].room = kUndefined;
 		progdata.items[ITEM_GASGRANAAT].room = STATUS_ITEM_OWNED;
 
 		progdata.owneditems[parsedata.object1] = ITEM_GASGRANAAT;
-		progdata.owneditems[parsedata.object2] = UNDEFINED;
+		progdata.owneditems[parsedata.object2] = kUndefined;
 
 		break;
 	}
@@ -415,7 +415,7 @@ void DoLeg(Progdata &progdata, Parsedata &parsedata)
 {
 	if (progdata.owneditems[parsedata.object1] == ITEM_ZAKLAMP)
 	{
-		printmw("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt\n"
+		PrintToMainWindow("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt\n"
 				 "missen.\n");
 
 		return;
@@ -423,16 +423,16 @@ void DoLeg(Progdata &progdata, Parsedata &parsedata)
 
 	if (progdata.owneditems[parsedata.object1] == ITEM_BATTERIJEN)
 	{
-		printmw("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt\n"
+		PrintToMainWindow("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt\n"
 				 "missen.\n");
 
 		return;
 	}
 
-	printmw("Je legt %s neer.\n", progdata.items[progdata.owneditems[parsedata.object1]].name);
+	PrintToMainWindow("Je legt %s neer.\n", progdata.items[progdata.owneditems[parsedata.object1]].name);
 
 	progdata.items[progdata.owneditems[parsedata.object1]].room = progdata.status.curroom;
-	progdata.owneditems[parsedata.object1] = UNDEFINED;
+	progdata.owneditems[parsedata.object1] = kUndefined;
 }
 
 void DoPak(Progdata &progdata, Parsedata &parsedata)
@@ -440,16 +440,16 @@ void DoPak(Progdata &progdata, Parsedata &parsedata)
 	int i;
 
 	for (i = 0; i < 10; i++)
-		if (progdata.owneditems[i] == UNDEFINED)
+		if (progdata.owneditems[i] == kUndefined)
 			break;
 
 	if (i == 10)
 	{
-		printmw("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", progdata.items[parsedata.object1].name);
+		PrintToMainWindow("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", progdata.items[parsedata.object1].name);
 		return;
 	}
 
-	printmw("Je pakt %s op en steekt deze in een van je zakken.\n", progdata.items[parsedata.object1].name);
+	PrintToMainWindow("Je pakt %s op en steekt deze in een van je zakken.\n", progdata.items[parsedata.object1].name);
 
 	progdata.items[parsedata.object1].room = STATUS_ITEM_OWNED;
 	progdata.owneditems[i] = parsedata.object1;
@@ -459,41 +459,41 @@ void DoBekijk(Progdata &progdata, Parsedata &parsedata)
 {
 	if (!IsRoomLit(progdata.status))
 	{
-		printmw("Het is veel te donker om wat dan ook te bekijken.\n");
+		PrintToMainWindow("Het is veel te donker om wat dan ook te bekijken.\n");
 		return;
 	}
 
-	writemw(progdata.items[progdata.owneditems[parsedata.object1]].descript);
-	printmw("\n");
+	WriteToMainWindow(progdata.items[progdata.owneditems[parsedata.object1]].descript);
+	PrintToMainWindow("\n");
 }
 
 void DoAfwachten(void)
 {
-	switch(random(5))
+	switch(GetRandomNumber(5))
 	{
 	case 0:
 
-		printmw("Je pulkt wat in je neus.\n");
+		PrintToMainWindow("Je pulkt wat in je neus.\n");
 		break;
 
 	case 1:
 
-		printmw("Je krabt wat achter je oren.\n");
+		PrintToMainWindow("Je krabt wat achter je oren.\n");
 		break;
 
 	case 2:
 
-		printmw("Je gaapt even uitgebreid.\n");
+		PrintToMainWindow("Je gaapt even uitgebreid.\n");
 		break;
 
 	case 3:
 
-		printmw("Je trekt je broek even op.\n");
+		PrintToMainWindow("Je trekt je broek even op.\n");
 		break;
 
 	case 4:
 
-		printmw("Je pulkt wat smeer uit je oren.\n");
+		PrintToMainWindow("Je pulkt wat smeer uit je oren.\n");
 		break;
 
 	}
@@ -504,46 +504,46 @@ void DoStatus(Progdata &progdata)
 	int i;
 	int count = 0;
 
-	printmw("--- STATUSRAPPORT ---\n\n");
-	printmw("Je hebt nog %d levenspunten.\n", progdata.status.lifepoints);
+	PrintToMainWindow("--- STATUSRAPPORT ---\n\n");
+	PrintToMainWindow("Je hebt nog %d levenspunten.\n", progdata.status.lifepoints);
 
 	if (progdata.items[ITEM_ZAKLAMP].room == STATUS_ITEM_OWNED)
-		printmw("Je zaklamp staat %s.\n", progdata.status.lamp ? "aan" : "uit");
+		PrintToMainWindow("Je zaklamp staat %s.\n", progdata.status.lamp ? "aan" : "uit");
 
 	for (i = 0; i < 10; i++)
-		if (progdata.owneditems[i] != UNDEFINED)
+		if (progdata.owneditems[i] != kUndefined)
 			count++;
 
 	if (!count)
-		printmw("Je draagt niets.\n");
+		PrintToMainWindow("Je draagt niets.\n");
 	else
 	{
-		printmw("Je hebt in je bezit:\n");
+		PrintToMainWindow("Je hebt in je bezit:\n");
 		for (i = 0; i < 10; i++)
-			if (progdata.owneditems[i] != UNDEFINED)
-				printmw("    %s\n", progdata.items[progdata.owneditems[i]].name);
+			if (progdata.owneditems[i] != kUndefined)
+				PrintToMainWindow("    %s\n", progdata.items[progdata.owneditems[i]].name);
 	}
 }
 
 void DoHelp(void)
 {
-	printmw("--- HELP ---\n\n");
-	printmw("Commando's:\n");
-	printmw("   oost\n");
-	printmw("   west\n");
-	printmw("   noord\n");
-	printmw("   zuid\n");
-	printmw("   klim\n");
-	printmw("   daal\n");
-	printmw("   gebruik <voorwerp>\n");
-	printmw("   combineer <voorwerp> en/met <voorwerp>\n");
-	printmw("   pak <voorwerp>\n");
-	printmw("   leg <voorwerp>\n");
-	printmw("   bekijk <voorwerp>\n");
-	printmw("   afwachten\n");
-	printmw("   einde\n");
-	printmw("   status\n");
-	printmw("   help\n");
+	PrintToMainWindow("--- HELP ---\n\n");
+	PrintToMainWindow("Commando's:\n");
+	PrintToMainWindow("   oost\n");
+	PrintToMainWindow("   west\n");
+	PrintToMainWindow("   noord\n");
+	PrintToMainWindow("   zuid\n");
+	PrintToMainWindow("   klim\n");
+	PrintToMainWindow("   daal\n");
+	PrintToMainWindow("   gebruik <voorwerp>\n");
+	PrintToMainWindow("   combineer <voorwerp> en/met <voorwerp>\n");
+	PrintToMainWindow("   pak <voorwerp>\n");
+	PrintToMainWindow("   leg <voorwerp>\n");
+	PrintToMainWindow("   bekijk <voorwerp>\n");
+	PrintToMainWindow("   afwachten\n");
+	PrintToMainWindow("   einde\n");
+	PrintToMainWindow("   status\n");
+	PrintToMainWindow("   help\n");
 }
 
 void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
@@ -573,16 +573,16 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 		parsedata.parseerror = true;
 
 		if (eoword == curp)
-			printcmdstr("< geen commando gegeven");
+			PrintCommandString("< geen commando gegeven");
 		else
-			printcmdstr("< ongeldig commando gegeven");
+			PrintCommandString("< ongeldig commando gegeven");
 
 		return;
 	}
 
-	parsedata.selected = UNDEFINED;
+	parsedata.selected = kUndefined;
 
-	for (i = 0; parsedata.selected == UNDEFINED && i < COMMAND_COUNT; i++)
+	for (i = 0; parsedata.selected == kUndefined && i < COMMAND_COUNT; i++)
 	{
 		// this search assumes that the commands each start with a different letter
 		// it finds the first command that starts with whatever is the command (abbreviation) entered by the user 
@@ -592,29 +592,29 @@ void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata)
 
 	switch (parsedata.selected)
 	{
-	case UNDEFINED:
+	case kUndefined:
 
-		printcmdstr("< ongeldig commando gegeven");
+		PrintCommandString("< ongeldig commando gegeven");
 		parsedata.parseerror = true;
 		return;
 
-	case DO_GEBRUIK:
-	case DO_LEG:
-	case DO_BEKIJK:
+	case kUse:
+	case kLayDown:
+	case kInspect:
 
 		ParseSingleOwnedItemCommandParam(progdata, parsedata, cmds[parsedata.selected], eoword);	
 		break;
 
-	case DO_COMBINEER:
+	case kCombine:
 
 		ParseCombineItemsParameters(progdata, parsedata, eoword);
 		break;
 
-	case DO_PAK:
+	case kPickup:
 
 		if (*eoword != ' ')
 		{
-			printcmdstr("< syntax: pak <voorwerp>");
+			PrintCommandString("< syntax: pak <voorwerp>");
 			parsedata.parseerror = true;
 
 			return;
@@ -634,7 +634,7 @@ void ParseCombineItemsParameters(Progdata &progdata, Parsedata& parsedata, const
 
 	if (*currentMatch != ' ' || (!strstr(currentMatch + 1, " en ") && !strstr(currentMatch + 1, " met ")))
 	{
-		printcmdstr("< syntax: combineer <voorwerp> en/met <voorwerp>");
+		PrintCommandString("< syntax: combineer <voorwerp> en/met <voorwerp>");
 		parsedata.parseerror = true;
 
 		return;
@@ -677,7 +677,7 @@ void ParseCombineItemsParameters(Progdata &progdata, Parsedata& parsedata, const
 	
 	if (parsedata.object1 == parsedata.object2)
 	{
-		printcmdstr("< je kunt een voorwerp niet met zichzelf combineren");
+		PrintCommandString("< je kunt een voorwerp niet met zichzelf combineren");
 		parsedata.parseerror = true;
 	}
 }
@@ -686,7 +686,7 @@ bool ParseSingleOwnedItemCommandParam(Progdata &progdata, Parsedata& parsedata, 
 {
 	if (*parseString != ' ')
 	{
-		printcmdstr("< syntax: %s <voorwerp>", command);
+		PrintCommandString("< syntax: %s <voorwerp>", command);
 		parsedata.parseerror = true;
 
 		return false;
@@ -701,16 +701,16 @@ bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, 
 {
 	switch (itemNum)
 	{
-	case UNDEFINED:
+	case kUndefined:
 
-		printcmdstr(undefinedItemFormatString, itemname);
+		PrintCommandString(undefinedItemFormatString, itemname);
 		parsedata.parseerror = true;
 
 		return false;
 
 	case AMBIGUOUS:
 
-		printcmdstr("< de afkorting \"%s\" is dubbelzinnig", itemname);
+		PrintCommandString("< de afkorting \"%s\" is dubbelzinnig", itemname);
 		parsedata.parseerror = true;
 
 		return false;
@@ -721,13 +721,13 @@ bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, 
 
 int FindOwnedItemNum(Progdata &progdata, const char *itemname)
 {
-	int item = UNDEFINED;
+	int item = kUndefined;
 	int i;
 
 	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
 	for (i = 0; i < 10 && item != AMBIGUOUS; i++)
-		if (progdata.owneditems[i] != UNDEFINED && strstr(progdata.items[progdata.owneditems[i]].name, itemname))
-			item = ((item == UNDEFINED) ? i : AMBIGUOUS);
+		if (progdata.owneditems[i] != kUndefined && strstr(progdata.items[progdata.owneditems[i]].name, itemname))
+			item = ((item == kUndefined) ? i : AMBIGUOUS);
 
 	return item;
 }
@@ -740,16 +740,16 @@ bool IsRoomLit(Status& status)
 
 int FindLayingItemNum(Progdata &progdata, const char *itemname)
 {
-	int item = UNDEFINED;
+	int item = kUndefined;
 	int i;
 
 	if (!IsRoomLit(progdata.status))
-		return UNDEFINED;
+		return kUndefined;
 
 	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
 	for (i = 0; i < ITEM_COUNT && item != AMBIGUOUS; i++)
 		if (progdata.status.curroom == progdata.items[i].room && strstr(progdata.items[i].name, itemname))
-			item = ((item == UNDEFINED) ? i : AMBIGUOUS);
+			item = ((item == kUndefined) ? i : AMBIGUOUS);
 
 	return item;
 }

@@ -4,7 +4,7 @@ const char* LOADSAVEDATAPATH = "r136data.rip";
 
 void HandleFailedWrite(FILE *fp)
 {
-	printmw("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
+	PrintToMainWindow("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 
 	fclose(fp);
 	remove(LOADSAVEDATAPATH);
@@ -15,22 +15,22 @@ void SaveStatus(Progdata &progdata)
 	FILE *fp;
 	int i;
 
-	printmw("\n\nWil je je huidige status opslaan? ");
+	PrintToMainWindow("\n\nWil je je huidige status opslaan? ");
 
-	if (tolower(agetchar("jJnN")) != 'j')
+	if (tolower(AdvancedGetChar("jJnN")) != 'j')
 	{
-		printmw("\n");
+		PrintToMainWindow("\n");
 
 		return;
 	}
 
 	while (!(fp = fopen(LOADSAVEDATAPATH, "wb")))
 	{
-		printmw("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+		PrintToMainWindow("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 
-		if (tolower(agetchar("jJnN")) != 'j')
+		if (tolower(AdvancedGetChar("jJnN")) != 'j')
 		{
-			printmw("\n\nStatus niet opgeslagen!\n");
+			PrintToMainWindow("\n\nStatus niet opgeslagen!\n");
 
 			remove(LOADSAVEDATAPATH);
 
@@ -38,7 +38,7 @@ void SaveStatus(Progdata &progdata)
 		}
 	}
 
-	printmw("\n");
+	PrintToMainWindow("\n");
 
 	for (i = 0; i < 25; i++)
 	{
@@ -85,12 +85,12 @@ void SaveStatus(Progdata &progdata)
 
 void HandleFailedRead(Progdata &progdata, FILE *fp)
 {
-	printmw("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
+	PrintToMainWindow("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 
 	fclose(fp);
 	remove(LOADSAVEDATAPATH);
 
-	waitforkey();
+	WaitForKey();
 
 	Initialize(progdata);
 }
@@ -102,15 +102,15 @@ bool LoadStatus(Progdata &progdata)
 
 	if (!(fp = fopen(LOADSAVEDATAPATH, "rb")))
 	{
-		printcentered(MAINWINDOW, "Druk op een toets om te beginnen");
+		WriteCentered(main_window, "Druk op een toets om te beginnen");
 
-		waitforkey();
+		WaitForKey();
 		return false;
 	}
 
-	printcentered(MAINWINDOW, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+	WriteCentered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
 
-	if (tolower(agetchar("12")) != '2')
+	if (tolower(AdvancedGetChar("12")) != '2')
 	{
 		if (fp != 0) 
 			fclose(fp);
@@ -120,7 +120,7 @@ bool LoadStatus(Progdata &progdata)
 		return false;
 	}
 
-	printmw("\n");
+	PrintToMainWindow("\n");
 
 	for (i = 0; i < 25; i++)
 	{
@@ -161,7 +161,7 @@ bool LoadStatus(Progdata &progdata)
 		return false;
 	}
 
-	printmw("\n");
+	PrintToMainWindow("\n");
 	
 	if (fp != 0)
 		fclose(fp);

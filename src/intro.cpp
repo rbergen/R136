@@ -105,9 +105,9 @@ void LowerSpider(int spiderx)
 	{
 		for (spiderswitch = 0; spiderswitch < 2; spiderswitch++)
 		{
-			printfsblocksectionat(0, spiderx, COLORS_INVERSE, spider[spiderswitch], dropindex - 1, 0, spiderbottomy, spiderrightx);
+			PrintFullScreenBlockSectionAt(0, spiderx, Color::kInverse, spider[spiderswitch], dropindex - 1, 0, spiderbottomy, spiderrightx);
 
-			updatefs();
+			UpdateFullScreen();
 			mssleep(50);
 		}
 	}
@@ -115,13 +115,13 @@ void LowerSpider(int spiderx)
 	// Lower it to its final place, leaving a silk thread
 	for (dropindex = 0; dropindex < SPIDER_DROPHEIGHT; dropindex++)
 	{
-		printfsat(dropindex, spiderx, COLORS_INVERSE, linesection);
+		PrintFullScreenAt(dropindex, spiderx, Color::kInverse, linesection);
 
 		for (spiderswitch = 0; spiderswitch < 2; spiderswitch++)
 		{
-			printfsblockat(dropindex + 1, spiderx, COLORS_INVERSE, spider[spiderswitch], BLOCK_ROW_COUNT);
+			PrintFullScreenBlockAt(dropindex + 1, spiderx, Color::kInverse, spider[spiderswitch], BLOCK_ROW_COUNT);
 
-			updatefs();
+			UpdateFullScreen();
 			mssleep(50);
 		}
 	}
@@ -136,10 +136,10 @@ void SwoopInLetters(int screenrightx, int screenmiddlex, int leftletterfinalx)
 	// Introduce letters from either side of the screen
 	for (flowindex = 0; flowindex < LETTER_WIDTH; flowindex++)
 	{
-		printfsblocksectionat(2, 0, COLORS_INVERSE, letters[LETTER_R], 0, letterrightx - flowindex, letterbottomy, letterrightx);
-		printfsblocksectionat(2, screenrightx - flowindex, COLORS_INVERSE, letters[LETTER_P], 0, 0, letterbottomy, flowindex);
+		PrintFullScreenBlockSectionAt(2, 0, Color::kInverse, letters[LETTER_R], 0, letterrightx - flowindex, letterbottomy, letterrightx);
+		PrintFullScreenBlockSectionAt(2, screenrightx - flowindex, Color::kInverse, letters[LETTER_P], 0, 0, letterbottomy, flowindex);
 
-		updatefs();
+		UpdateFullScreen();
 	}
 
 	rightletterfirstx = screenrightx - LETTER_WIDTH;
@@ -147,29 +147,29 @@ void SwoopInLetters(int screenrightx, int screenmiddlex, int leftletterfinalx)
 	// Bring the letters to the center
 	for (flowindex = 0; flowindex < leftletterfinalx; flowindex++)
 	{
-		printfsblockat(2, flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
-		printfsblockat(2, flowindex + 1, COLORS_INVERSE, letters[LETTER_R], BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, flowindex, Color::kInverse, verticalspace, BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, flowindex + 1, Color::kInverse, letters[LETTER_R], BLOCK_ROW_COUNT);
 
-		printfsblockat(2, rightletterfirstx - flowindex, COLORS_INVERSE, letters[LETTER_P], BLOCK_ROW_COUNT);
-		printfsblockat(2, screenrightx - flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, rightletterfirstx - flowindex, Color::kInverse, letters[LETTER_P], BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, screenrightx - flowindex, Color::kInverse, verticalspace, BLOCK_ROW_COUNT);
 
-		updatefs();
+		UpdateFullScreen();
 	}
 
 	// If the silk thread is just left of center due to screen width, bump the P one more place to the left
 	if ((screenrightx % 2) == 0)
 	{
-		printfsblockat(2, rightletterfirstx - flowindex, COLORS_INVERSE, letters[LETTER_P], BLOCK_ROW_COUNT);
-		printfsblockat(2, screenrightx - flowindex, COLORS_INVERSE, verticalspace, BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, rightletterfirstx - flowindex, Color::kInverse, letters[LETTER_P], BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(2, screenrightx - flowindex, Color::kInverse, verticalspace, BLOCK_ROW_COUNT);
 
-		updatefs();
+		UpdateFullScreen();
 	}
 
 	// Cut the silk thread to create the letter I
-	printfsat(1, screenmiddlex, COLORS_INVERSE, L"▀");
-	printfsat(1 + BLOCK_ROW_COUNT, screenmiddlex, COLORS_INVERSE, L"▄");
+	PrintFullScreenAt(1, screenmiddlex, Color::kInverse, L"▀");
+	PrintFullScreenAt(1 + BLOCK_ROW_COUNT, screenmiddlex, Color::kInverse, L"▄");
 
-	updatefs();
+	UpdateFullScreen();
 }
 
 void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int spiderx, int leftletterfinalx)
@@ -181,35 +181,35 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 		letterstopy = 2;
 
 	// clear everything except for the R
-	printfsat(0, screenmiddlex, COLORS_INVERSE, L" ");
-	printfsat(1, screenmiddlex, COLORS_INVERSE, L" ");
+	PrintFullScreenAt(0, screenmiddlex, Color::kInverse, L" ");
+	PrintFullScreenAt(1, screenmiddlex, Color::kInverse, L" ");
 	for (int i = 2; i < 2 + BLOCK_ROW_COUNT; i++)
 	{
-		printfsat(i, screenmiddlex, COLORS_INVERSE, clearrightletterspaces);
+		PrintFullScreenAt(i, screenmiddlex, Color::kInverse, clearrightletterspaces);
 	}
 
 	for (int i = 2 + BLOCK_ROW_COUNT; i < SPIDER_DROPHEIGHT; i++)
 	{
-		printfsat(i, screenmiddlex, COLORS_INVERSE, L" ");
+		PrintFullScreenAt(i, screenmiddlex, Color::kInverse, L" ");
 	}
 
 	for (int i = SPIDER_DROPHEIGHT; i < SPIDER_DROPHEIGHT + BLOCK_ROW_COUNT; i++)
 	{
-		printfsat(i, spiderx, COLORS_INVERSE, clearspiderspaces);
+		PrintFullScreenAt(i, spiderx, Color::kInverse, clearspiderspaces);
 	}
 
 	// Lower the R to the vertical middle of the screen
 	for (int i = 2; i < letterstopy; i++)
 	{
-		printfsblockat(i, leftletterfinalx, COLORS_INVERSE, letters[LETTER_R_LOW], BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(i, leftletterfinalx, Color::kInverse, letters[LETTER_R_LOW], BLOCK_ROW_COUNT);
 
-		updatefs();
+		UpdateFullScreen();
 		mssleep(5);
 
-		printfsat(i, leftletterfinalx, COLORS_INVERSE, clearleftletterspaces);
-		printfsblockat(i + 1, leftletterfinalx, COLORS_INVERSE, letters[LETTER_R], BLOCK_ROW_COUNT);
+		PrintFullScreenAt(i, leftletterfinalx, Color::kInverse, clearleftletterspaces);
+		PrintFullScreenBlockAt(i + 1, leftletterfinalx, Color::kInverse, letters[LETTER_R], BLOCK_ROW_COUNT);
 
-		updatefs();
+		UpdateFullScreen();
 		mssleep(5);
 	}
 
@@ -219,18 +219,18 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 	// Introduce the digits from the right-hand side of the screen
 	for (flowindex = 0; flowindex < DIGITS_WIDTH; flowindex++)
 	{
-		printfsblocksectionat(letterstopy, screenrightx - flowindex, COLORS_INVERSERED, digits, 0, 0, digitsbottomy, flowindex);
+		PrintFullScreenBlockSectionAt(letterstopy, screenrightx - flowindex, Color::kInverseRed, digits, 0, 0, digitsbottomy, flowindex);
 
-		updatefs();
+		UpdateFullScreen();
 	}
 
 	// Bring the digits to the center
 	for (flowindex = screenrightx - DIGITS_WIDTH; flowindex >= digitsfinalx; flowindex--)
 	{
-		printfsblockat(letterstopy, flowindex, COLORS_INVERSERED, digits, BLOCK_ROW_COUNT);
-		printfsblockat(letterstopy, flowindex + DIGITS_WIDTH, COLORS_INVERSERED, verticalspace, BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(letterstopy, flowindex, Color::kInverseRed, digits, BLOCK_ROW_COUNT);
+		PrintFullScreenBlockAt(letterstopy, flowindex + DIGITS_WIDTH, Color::kInverseRed, verticalspace, BLOCK_ROW_COUNT);
 
-		updatefs();
+		UpdateFullScreen();
 	}
 }
 
@@ -239,10 +239,10 @@ void RunIntro()
 	int screenbottomy, screenrightx, screenmiddlex;
 	int spiderx, leftletterfinalx;
 
-	getfssize(screenbottomy, screenrightx);
+	GetFullScreenSize(screenbottomy, screenrightx);
 	screenrightx--;
 
-	clrfs(COLORS_INVERSE);
+	ClearFullScreen(Color::kInverse);
 
 	spiderx = (screenrightx - SPIDER_WIDTH) / 2;
 
@@ -262,6 +262,6 @@ void RunIntro()
 
 	mssleep(2500);
 
-	clrfs(COLORS_NORMAL);
+	ClearFullScreen(Color::kNormal);
 }
 

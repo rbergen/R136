@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <type_traits>
+
 
 #if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
 	#error (PD)Curses must be built with wide-character support
@@ -26,65 +28,93 @@
 // This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32
 #include <windows.h>
-#define mssleep(n)	Sleep((n))	
+constexpr void mssleep(int n) 
+{
+	Sleep(n);
+}
 #else
 #include <unistd.h>
-#define mssleep(n)	usleep((n) * 1000)
+constexpr void mssleep(int n)
+{
+	usleep(n * 1000);
+}
+
 #endif
+
+template <typename E>
+constexpr auto to_underlying(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
 
 /*
 	Defines
 */
-#define COLORS_BOLD			1
-#define COLORS_BANNER		2
-#define COLORS_ERROR		3
-#define COLORS_INVERSE		4
-#define COLORS_INVERSERED	5
-#define COLORS_NORMAL		6
+enum class Color : char 
+{
+	kBold,
+	kBanner,
+	kError,
+	kInverse,
+	kInverseRed,
+	kNormal,
+	COUNT
+};
 
-#define CURSOR_NORMAL		0
-#define CURSOR_FULL			1
+enum class Cursor : char
+{
+	kNormal,
+	KBlock
+};
 
-#define UNDEFINED	-1
+constexpr int kUndefined		= -1;
 
-#define DO_EAST			0
-#define DO_WEST			1
-#define DO_NORTH		2
-#define DO_SOUTH		3
-#define DO_UP			4
-#define DO_DOWN			5
-#define DO_GEBRUIK		6
-#define DO_COMBINEER	7
-#define DO_PAK			8
-#define DO_LEG			9
-#define DO_BEKIJK		10
-#define DO_AFWACHTEN	11
-#define DO_EINDE		12
-#define DO_STATUS		13
-#define DO_HELP			14
+enum class Command : char
+{
+	kEast = 0,
+	kWest,
+	kNorth,
+	kSouth,
+	kUp,
+	kDown,
+	kUse,
+	kCombine,
+	kPickup,
+	kLayDown,
+	kInspect,
+	kWait,
+	kFinish,
+	kStatus,
+	kHelp,
+	COUNT
+};
 
-#define LIVING_COUNT		21
-#define LIVING_HELLEHOND	0
-#define LIVING_RODETROL		1
-#define LIVING_PLANT		2
-#define LIVING_GNOE			3
-#define LIVING_DRAAK		4
-#define LIVING_GEZWEL		5
-#define LIVING_DEUR			6
-#define LIVING_STEMMEN		7
-#define LIVING_BARBECUE		8
-#define LIVING_BOOM			9
-#define LIVING_GROENKRISTAL	10
-#define LIVING_COMPUTER		11
-#define LIVING_DRAKEKOP		12
-#define LIVING_LAVA			13
-#define LIVING_VACUUM		14
-#define LIVING_PAPIER		15
-#define LIVING_NOORDMOERAS	16
-#define LIVING_MIDDENMOERAS	17
-#define LIVING_ZUIDMOERAS	18
-#define LIVING_MISTGROT		19
-#define LIVING_TELEPORT		20
+enum class AnimateID : char
+{
+	kHellHound = 0,
+	kRedTroll,
+	kPlant,
+	kGnu,
+	kDragon,
+	kSwelling,
+	kDoor,
+	kVoices,
+	kBarbecue,
+	kTree,
+	kGreenCrystal,
+	kComputer,
+	kDragonHead,
+	kLava,
+	kVacuum,
+	kPaper,
+	kNorthSwamp,
+	kMiddleSwamp,
+	kSouthSwamp,
+	kMist,
+	kTeleporter,
+	COUNT,
+	kUndefined
+};
 
 #define ITEM_COUNT			25
 #define ITEM_HONDVLEES		0
@@ -113,7 +143,8 @@
 #define ITEM_KOEKJE			23
 #define ITEM_GASGRANAAT		24
 
-#define connectToItem(n)	(-((n) + 2))
+template<typename T>
+constexpr AnimateID connectToItem(T n) { return static_cast<AnimateID>(-(n + 2)); }
 
 #define ROOM_COUNT				80
 #define ROOM_BOS0				0
@@ -224,6 +255,19 @@
 	Structures
 */
 
+struct LevelConnection 
+{
+	char from;
+	Command direction;
+	char to;
+};
+
+struct BlockedConnection
+{
+	char room;
+	Command direction;
+};
+
 struct Room
 {
 	const wchar_t* name;
@@ -243,7 +287,7 @@ struct Item
 	const char* name;
 	const wchar_t* descript;
 	char room;
-	char useableon;
+	AnimateID useableon;
 };
 
 struct Status
@@ -278,28 +322,28 @@ struct Parsedata
 	Functions
 */
 
-int random(int max);
-void setupwindows();
-int printmw(const char* fmt, ...);
-void initconsole();
-void releaseconsole();
-void printfsblockat(int y, int x, int colors, const wchar_t** block, int rowcount);
-void printfsblocksectionat(int y, int x, int colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
-void printfsat(int y, int x, int colors, const wchar_t* text);
-void clrfs(int colors);
-void getfssize(int& y, int& x);
-void updatefs();
-void clrscr();
-void waitforkey();
-void waitforfskey();
-int writemw(const wchar_t *text);
-void printcentered(WINDOW* win, const char* str);
-void clearline(WINDOW *win);
-void getcmdstr(char* input, int maxlength);
-void printcmdstr(const char* fmt, ...);
-int agetchar(const char *allowed);
-int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
-int strinp (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+int GetRandomNumber(int max);
+void SetupWindows();
+int PrintToMainWindow(const char* fmt, ...);
+void InitializeConsole();
+void ReleaseConsole();
+void PrintFullScreenBlockAt(int y, int x, Color colors, const wchar_t** block, int rowcount);
+void PrintFullScreenBlockSectionAt(int y, int x, Color colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
+void PrintFullScreenAt(int y, int x, Color colors, const wchar_t* text);
+void ClearFullScreen(Color colors);
+void GetFullScreenSize(int& y, int& x);
+void UpdateFullScreen();
+void ClearWindow();
+void WaitForKey();
+void WaitForFullScreenKey();
+int WriteToMainWindow(const wchar_t *text);
+void WriteCentered(WINDOW* win, const char* str);
+void ClearLine(WINDOW *win);
+void GetCommandString(char* input, int maxlength);
+void PrintCommandString(const char* fmt, ...);
+int AdvancedGetChar(const char *allowed);
+int AdvancedScanF(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
+int GetStringInput (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
 
 void RunIntro();
 
@@ -352,9 +396,9 @@ bool LavaStatus(Progdata &progdata);
 void PapierStatus(Progdata &progdata);
 
 extern const char* LOADSAVEDATAPATH;
-extern WINDOW* BANNERWINDOW;
-extern WINDOW* MAINWINDOW;
-extern WINDOW* INPUTWINDOW;
+extern WINDOW* banner_window;
+extern WINDOW* main_window;
+extern WINDOW* input_window;
 
 #endif // !R136_INCLUDE
 

@@ -8,24 +8,21 @@
  * #defines of constants used by the functions
  ***************************************************************************/
 
-/* Value used to indicate Escape keypress */
-#define L_ESC     -2
-/* Value used to indicate Enter keypress */
-#define L_ENTER    5
-/* Value used to indicate arrow up keypress */
-#define L_UP       8
-/* Value used to indicate arrow down keypress */
-#define L_DOWN     2
-/* Value used to indicate Tab keypress */
-#define L_TAB      6
-/* Value used to indicate Shift Tab keypress */
-#define L_STAB     4
+enum class Key : char {
+	kEscape = -2,
+	kEnter = 5,
+	kUp = 8,
+	kDown = 2,
+	kTab = 6,
+	kShiftTab = 4
+};
+
 /* Value that determines the settings for Insert for all functions.
 	== 0: Insert off at start, use block cursor to indicate Insert on.
 	== 1: Insert on at start, use block cursor to indicate Insert on.
 	== 2: Insert off at start, use block cursor to indicate Insert off.
 	== 3: Insert on at start, use block cursor to indicate Insert off. */
-#define L_INSFLAG  3
+constexpr int kInsertFlag = 3;
 
 #define FG_BOLD			COLOR_WHITE
 #define FG_BANNER		COLOR_RED
@@ -39,118 +36,116 @@
 #define BG_INVERSE		COLOR_WHITE
 #define BG_INVERSERED	COLOR_WHITE
 #define BG_NORMAL		COLOR_BLACK
-#define ATTR_BOLD		(COLOR_PAIR(COLORS_BOLD) | A_BOLD)
-#define ATTR_BANNER		(COLOR_PAIR(COLORS_BANNER) | A_UNDERLINE)
-#define ATTR_ERROR		(COLOR_PAIR(COLORS_ERROR) | A_BOLD)
-#define ATTR_INVERSE	(COLOR_PAIR(COLORS_INVERSE))
-#define ATTR_INVERSERED	(COLOR_PAIR(COLORS_INVERSERED) | A_BOLD)
-#define ATTR_NORMAL		(COLOR_PAIR(COLORS_NORMAL))
+#define ATTR_BOLD		(COLOR_PAIR(Color::kBold) | A_BOLD)
+#define ATTR_BANNER		(COLOR_PAIR(Color::kBanner) | A_UNDERLINE)
+#define ATTR_ERROR		(COLOR_PAIR(Color::kError) | A_BOLD)
+#define ATTR_INVERSE	(COLOR_PAIR(Color::kInverse))
+#define ATTR_INVERSERED	(COLOR_PAIR(Color::kInverseRed) | A_BOLD)
+#define ATTR_NORMAL		(COLOR_PAIR(Color::kNormal))
 
-chtype attributes[7];
+chtype attributes[Color::COUNT];
 
-WINDOW *BANNERWINDOW = NULL;
-WINDOW* MAINWINDOW = NULL;
-WINDOW *INPUTWINDOW = NULL;
-WINDOW* FULLSCREEN = NULL;
+WINDOW *banner_window = NULL;
+WINDOW* main_window = NULL;
+WINDOW *input_window = NULL;
+WINDOW* full_screen = NULL;
 
 
  /***************************************************************************
   * Definitions of the functions
   ***************************************************************************/
 
-void setupwindows()
+void SetupWindows()
 {
 	int height, width;
 
 	getmaxyx(stdscr, height, width);
 
-	if (BANNERWINDOW)
+	if (banner_window)
 	{
-		wresize(BANNERWINDOW, 2, width);
-		touchwin(BANNERWINDOW);
+		wresize(banner_window, 2, width);
+		touchwin(banner_window);
 	}
 	else
-		BANNERWINDOW = subwin(stdscr, 2, width, 0, 0);
+		banner_window = subwin(stdscr, 2, width, 0, 0);
 
-	if (MAINWINDOW)
+	if (main_window)
 	{
-		wresize(MAINWINDOW, height - 3, width);
-		touchwin(MAINWINDOW);
+		wresize(main_window, height - 3, width);
+		touchwin(main_window);
 	}
 	else 
 	{
-		MAINWINDOW = subwin(stdscr, height - 3, width, 2, 0);
-		keypad(MAINWINDOW, TRUE);
-		touchwin(MAINWINDOW);
+		main_window = subwin(stdscr, height - 3, width, 2, 0);
+		keypad(main_window, TRUE);
+		touchwin(main_window);
 	}
 
-	if (INPUTWINDOW)
+	if (input_window)
 	{
-		wresize(INPUTWINDOW, 1, width);
-		mvwin(INPUTWINDOW, height - 1, 0);
-		touchwin(INPUTWINDOW);
+		wresize(input_window, 1, width);
+		mvwin(input_window, height - 1, 0);
+		touchwin(input_window);
 	}
 	else 
 	{
-		INPUTWINDOW = subwin(stdscr, 1, width, height - 1, 0);
-		keypad(INPUTWINDOW, true);
+		input_window = subwin(stdscr, 1, width, height - 1, 0);
+		keypad(input_window, true);
 	}
 
-	wattron(BANNERWINDOW, ATTR_BANNER);
-	wmove(BANNERWINDOW, 0, 0);
-	printcentered(BANNERWINDOW, "Missiecode: R136");
+	wattron(banner_window, ATTR_BANNER);
+	wmove(banner_window, 0, 0);
+	WriteCentered(banner_window, "Missiecode: R136");
 
-	scrollok(MAINWINDOW, true);
+	scrollok(main_window, true);
 
-	wrefresh(BANNERWINDOW);
-	wrefresh(MAINWINDOW);
-	wrefresh(INPUTWINDOW);
+	wrefresh(banner_window);
+	wrefresh(main_window);
+	wrefresh(input_window);
 }
 
-int printmw(const char* fmt, ...)
+int PrintToMainWindow(const char* format, ...)
 {
 	va_list args;
-	int retval;
+	int return_value;
 
-	va_start(args, fmt);
-	retval = vw_printw(MAINWINDOW, fmt, args);
+	va_start(args, format);
+	return_value = vw_printw(main_window, format, args);
 	va_end(args);
 
-	return retval;
+	return return_value;
 }
 
-int writemw(const wchar_t *text)
+int WriteToMainWindow(const wchar_t *text)
 {
-	return waddwstr(MAINWINDOW, text);
+	return waddwstr(main_window, text);
 }
 
-
-
-void initcolors()
+void InitializeColors()
 {
 	start_color();
 
-	init_pair(COLORS_BOLD, FG_BOLD, BG_BOLD);
-	attributes[COLORS_BOLD] = ATTR_BOLD;
+	init_pair(kBold, FG_BOLD, BG_BOLD);
+	attributes[kBold] = ATTR_BOLD;
 
-	init_pair(COLORS_BANNER, FG_BANNER, BG_BANNER);
-	attributes[COLORS_BANNER] = ATTR_BANNER;
+	init_pair(kBanner, FG_BANNER, BG_BANNER);
+	attributes[kBanner] = ATTR_BANNER;
 
-	init_pair(COLORS_ERROR, FG_ERROR, BG_ERROR);
-	attributes[COLORS_ERROR] = ATTR_ERROR;
+	init_pair(kError, FG_ERROR, BG_ERROR);
+	attributes[kError] = ATTR_ERROR;
 
-	init_pair(COLORS_INVERSE, FG_INVERSE, BG_INVERSE);
-	attributes[COLORS_INVERSE] = ATTR_INVERSE;
+	init_pair(Color::kInverse, FG_INVERSE, BG_INVERSE);
+	attributes[Color::kInverse] = ATTR_INVERSE;
 
-	init_pair(COLORS_INVERSERED, FG_INVERSERED, BG_INVERSERED);
-	attributes[COLORS_INVERSERED] = ATTR_INVERSERED;
+	init_pair(Color::kInverseRed, FG_INVERSERED, BG_INVERSERED);
+	attributes[Color::kInverseRed] = ATTR_INVERSERED;
 
-	init_pair(COLORS_NORMAL, FG_NORMAL, BG_NORMAL);
-	attributes[COLORS_NORMAL] = ATTR_NORMAL;
+	init_pair(kNormal, FG_NORMAL, BG_NORMAL);
+	attributes[kNormal] = ATTR_NORMAL;
 
 }
 
-void initconsole()
+void InitializeConsole()
 {
 	setlocale(LC_ALL, "");
 
@@ -158,75 +153,75 @@ void initconsole()
 	noecho();
 	keypad(stdscr, true);
 
-	FULLSCREEN = stdscr;
+	full_screen = stdscr;
 	
-	initcolors();
+	InitializeColors();
 }
 
-void releaseconsole()
+void ReleaseConsole()
 {
-	if (INPUTWINDOW)
-		delwin(INPUTWINDOW);
+	if (input_window)
+		delwin(input_window);
 
-	if (MAINWINDOW)
-		delwin(MAINWINDOW);
+	if (main_window)
+		delwin(main_window);
 
-	if (BANNERWINDOW)
-		delwin(BANNERWINDOW);
+	if (banner_window)
+		delwin(banner_window);
 
 	endwin();
 }
 
-void printfsblockat(int y, int x, int colors, const wchar_t** block, int rowcount) 
+void PrintFullScreenBlockAt(int y, int x, Color colors, const wchar_t** block, int rowcount) 
 {
-	wattron(FULLSCREEN, attributes[colors]);
+	wattron(full_screen, attributes[colors]);
 	
 	for (int i  = 0; i < rowcount; i++)
-		mvwaddwstr(FULLSCREEN, y + i, x, block[i]);
+		mvwaddwstr(full_screen, y + i, x, block[i]);
 
-	wattroff(FULLSCREEN, attributes[colors]);
+	wattroff(full_screen, attributes[colors]);
 }
 
-void printfsblocksectionat(int y, int x, int colors, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
+void PrintFullScreenBlockSectionAt(int y, int x, Color colors, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
 {
-	wattron(FULLSCREEN, attributes[colors]);
+	wattron(full_screen, attributes[colors]);
 
 	for (int i = topy; i <= bottomy; i++)
-		mvwaddnwstr(FULLSCREEN, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
+		mvwaddnwstr(full_screen, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
 
-	wattroff(FULLSCREEN, attributes[colors]);
+	wattroff(full_screen, attributes[colors]);
 }
 
 
-void printfsat(int y, int x, int colors, const wchar_t* text) 
+void PrintFullScreenAt(int y, int x, Color colors, const wchar_t* text) 
 {
-	wattron(FULLSCREEN, attributes[colors]);
-	mvwaddwstr(FULLSCREEN, y, x, text);
-	wattroff(FULLSCREEN, attributes[colors]);
+	wattron(full_screen, attributes[colors]);
+	mvwaddwstr(full_screen, y, x, text);
+	wattroff(full_screen, attributes[colors]);
 }
 
-void clrfs(int colors) 
+void ClearFullScreen(Color colors) 
 {
-	wbkgd(FULLSCREEN, attributes[colors]);
-	werase(FULLSCREEN);
+	wbkgd(full_screen, attributes[colors]);
+	werase(full_screen);
 }
 
-void updatefs()
+void UpdateFullScreen()
 {
-	wrefresh(FULLSCREEN);
+	wrefresh(full_screen);
 }
 
-void clrscr()
+void ClearWindow()
 {
-	werase(MAINWINDOW);
+	werase(main_window);
 }
 
-void getfssize(int& y, int& x)
+void GetFullScreenSize(int& y, int& x)
 {
-	getmaxyx(FULLSCREEN, y, x);
+	getmaxyx(full_screen, y, x);
 }
 
-void waitforkeyengine(WINDOW* window, bool dosetup) 
+void WaitForKeyCore(WINDOW* window, bool do_setup) 
 {
 	int y, x;
 
@@ -239,9 +234,9 @@ void waitforkeyengine(WINDOW* window, bool dosetup)
 		if (mvwgetch(window, y, x) == KEY_RESIZE)
 		{
 			resize_term(0, 0);
-			if (dosetup)
+			if (do_setup)
 			{
-				setupwindows();
+				SetupWindows();
 			}
 		}
 		else
@@ -249,163 +244,90 @@ void waitforkeyengine(WINDOW* window, bool dosetup)
 	}
 }
 
-void waitforfskey()
+void WaitForFullScreenKey()
 {
-	waitforkeyengine(FULLSCREEN, false);
+	WaitForKeyCore(full_screen, false);
 }
 
-void waitforkey()
+void WaitForKey()
 {
-	waitforkeyengine(MAINWINDOW, true);
+	WaitForKeyCore(main_window, true);
 }
 
-void printcentered(WINDOW* win, const char* str)
+void WriteCentered(WINDOW* win, const char* str)
 {
 	int winwidth = getmaxx(win);
 	int strlength = strlen(str);
 
-	clearline(win);
+	ClearLine(win);
 
 	int x = (winwidth - strlength) / 2;
 	mvwaddstr(win, getcury(win), x < 0 ? 0 : x, str);
 }
 
-/*
-void setcursor(int mode)
+void GetCommandString(char *input, int max_length) 
 {
-	static int normalcursorheight = UNDEFINED;
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO cursor;
+	memset(input, ' ', max_length);
+	input[max_length] = 0;
 
-	GetConsoleCursorInfo(console, &cursor);
+	wrefresh(main_window);
 
-	if (normalcursorheight == UNDEFINED)
-	{
-		normalcursorheight = cursor.dwSize;
-	}
+	wmove(input_window, 0, 0);
+	ClearLine(input_window);
 
-	switch (mode)
-	{
-	case CURSOR_NORMAL:
-		cursor.dwSize = normalcursorheight;
-		SetConsoleCursorInfo(console, &cursor);
-		break;
-	case CURSOR_FULL:
-		cursor.dwSize = 100;
-		SetConsoleCursorInfo(console, &cursor);
-		break;
-	}
-}
-*/
+	wattron(input_window, ATTR_BOLD);
+	waddstr(input_window, "> ");
 
-void getcmdstr(char *input, int maxlength) 
-{
-	memset(input, ' ', maxlength);
-	input[maxlength] = 0;
+	GetStringInput(input_window, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(input_window), -1, 0, 0);
 
-	wrefresh(MAINWINDOW);
+	ClearLine(input_window);
+	wmove(input_window, 0, 0);
 
-	wmove(INPUTWINDOW, 0, 0);
-	clearline(INPUTWINDOW);
-
-	wattron(INPUTWINDOW, ATTR_BOLD);
-	waddstr(INPUTWINDOW, "> ");
-
-	strinp(INPUTWINDOW, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(INPUTWINDOW), -1, 0, 0);
-
-	clearline(INPUTWINDOW);
-	wmove(INPUTWINDOW, 0, 0);
-
-	wattroff(INPUTWINDOW, ATTR_BOLD);
+	wattroff(input_window, ATTR_BOLD);
 }
 
-void printcmdstr(const char* fmt, ...)
+void PrintCommandString(const char* format, ...)
 {
-	wmove(INPUTWINDOW, 0, 0);
-	clearline(INPUTWINDOW);
+	wmove(input_window, 0, 0);
+	ClearLine(input_window);
 
 	va_list args;
 
-	wattron(INPUTWINDOW, ATTR_ERROR);
+	wattron(input_window, ATTR_ERROR);
 
-	va_start(args, fmt);
-	vw_printw(INPUTWINDOW, fmt, args);
+	va_start(args, format);
+	vw_printw(input_window, format, args);
 	va_end(args);
 
-	wattroff(INPUTWINDOW, ATTR_ERROR);
+	wattroff(input_window, ATTR_ERROR);
 
-	wrefresh(INPUTWINDOW);
-	wgetch(INPUTWINDOW);
+	wrefresh(input_window);
+	wgetch(input_window);
 }
 
-/*=========================================================================*
- * function: int agetchar(char *allowed)
- * description: gets a character from the keyboard. It only accepts
- *              characters that are in the string allowed points to.
- * parameters: allowed: pointer to string that contains valid characters.
- *                      Characters that are not in this string will be
- *                      ignored.
- * return: the character that is entered, or L_ESC if Escape is pressed.
- * remarks: 1. before return, the function sets the cursor position to what it
- *             was before the function was called.
- *          2. Unlike the standard getchar function, agetchar waits for Enter
- *             to be pressed.
- *
- * example: y_or_n = agetchar("yYnN");
- *=========================================================================*/
-int agetchar(const char *allowed)
+int AdvancedGetChar(const char *allowed)
 {  
 	char input = 0;
-	int y = getcury(MAINWINDOW);
-	int x = getcurx(MAINWINDOW);
+	int y = getcury(main_window);
+	int x = getcurx(main_window);
 
-	wattron(MAINWINDOW, ATTR_BOLD);
+	wattron(main_window, ATTR_BOLD);
 
 	do
 	{  
-		wmove(MAINWINDOW, y, x);
+		wmove(main_window, y, x);
 
-		if (ascanf(MAINWINDOW, 0, 1, allowed, "%c", &input) == L_ESC)
-			input = L_ESC;
+		if (AdvancedScanF(main_window, 0, 1, allowed, "%c", &input) == to_underlying(Key::kEscape))
+			input = to_underlying(Key::kEscape);
 	}
 	while (input == ' ');
 
-	wattroff(MAINWINDOW, ATTR_BOLD);
+	wattroff(main_window, ATTR_BOLD);
 
 	return input;
 }
 
-/*=========================================================================*
- * function: int ascanf(int chckinp, int length, char *allowed, char *frmstr,
- *                      ...)
- * description: extended version of scanf. Allows you to specify how many
- *              and which characters can be used for input.
- * parameters:  chckinp: 0: don't check if input was succesful, always exit
- *                           after Enter is pressed.
- *                       != 0: check if input was succesful. If not, repeat
- *                             the input process until it is.
- *              length: number of characters that can be entered during input.
- *              allowed: pointer to string that contains valid input-
- *                       characters. Characters that are not in this string
- *                       will be ignored.
- *              frmstr: format string that specifies the types of variables
- *                      to which the given input must be written, equal to the
- *                      format string of for instance scanf.
- *              ...: parameters to which the input has to be written, similar
- *                   to those of scanf.
- * return: L_ESC: Escape was pressed during input.
- *         EOF: error occured during writing input to parameters.
- *         other: number of input fields scanned.
- * remarks: 1. the function does not check if the input is too long for one
- *             line. If you make length so great that the last part of the
- *             input field runs off the screen line the results are undefined,
- *             but messy.
- *          2. before return, the function sets the cursor position to what
- *             it was before the function was called.
- *
- * example: ascanf(1, 25, "1234567890.", "%d %f", &intvar, &floatvar);
- *=========================================================================*/
-int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...)
+int AdvancedScanF(WINDOW *win, int check_input, int length, const char *allowed_characters, const char *format_string, ...)
 {  
 	va_list argp;
 	char *inpstr;
@@ -414,78 +336,32 @@ int ascanf(WINDOW *win, int chckinp, int length, const char *allowed, const char
 	inpstr = (char *) calloc((size_t)length + 1, sizeof(char));
 
 	if (!inpstr)
-		return L_ESC;
+		return to_underlying(Key::kEscape);
 
 	do
 	{  
 		memset(inpstr, ' ', length);
-		if (!((toret = strinp(win, allowed, inpstr, getcury(win), getcurx(win), 0, 1, 0)) == L_ESC))
+		if (!((toret = GetStringInput(win, allowed_characters, inpstr, getcury(win), getcurx(win), 0, 1, 0)) == to_underlying(Key::kEscape)))
 		{  
-			va_start(argp, frmstr);
-			toret = vsscanf(inpstr, frmstr, argp);
+			va_start(argp, format_string);
+			toret = vsscanf(inpstr, format_string, argp);
 			va_end(argp);
 		}
 	}
-	while (chckinp && (toret == EOF || !toret));
+	while (check_input && (toret == EOF || !toret));
 
 	free(inpstr);
 
 	return toret;
 }
 
-void clearline(WINDOW *win) 
+void ClearLine(WINDOW *win) 
 {
 	wmove(win, getcury(win), 0);
 	wclrtoeol(win);
 }
 
-/*=========================================================================*
- * function: int strinp (unsigned char *allowed, unsigned char *input,
- *                       int inpx, int inpy, int caps, int esc, int curm)
- * description: routine to read a string from stdin. It accepts all 'standard'
- *              editing keys (arrow right & left, BS, DEL, Home, End, INS).
- *              The characters that are valid for input can be specified,
- *              they can be auto-converted to upper- or lowercase and it is
- *              possible to make strinp return if arrow up, arrow down, Tab
- *              or Shift-Tab are pressed.
- * parameters:  allowed: pointer to string that contains valid input-
- *                       characters. Characters that are not in this string
- *                       will be ignored.
- *              input: pointer to string that has to be edited. Input is
- *                     started using this string as a basis. Any characters
- *                     that are entered are immediately processed into this
- *                     string.
- *              inpx: x-position where the first character of the input field
- *                    will be placed.
- *              inpy: y-position where the first character of the input field
- *                    will be placed.
- *              caps: < 0: all characters received from keyboard will be auto-
- *                         converted to lower case.
- *                    == 0: no converting will take place.
- *                    > 0: all characters received from keyboard will be auto-
- *                         converted to upper case.
- *              esc: == 0: Escape-keypresses will be ignored.
- *                   != 0: strinp will return on Escape-keypress.
- *              curm: == 0: strikes of Arrow up & down, Tab and Shift-Tab will
- *                          be ignored.
- *                    != 0: strikes of Arrow up & down, Tab and Shift-Tab will
- *                          make strinp return.
- * return: L_ESC: Escape was pressed during input and esc != 0.
- *         L_UP: Arrow up was pressed during input and curm != 0.
- *         L_DOWN: Arrow down was pressed during input and curm != 0.
- *         L_TAB: Tab was pressed during input and curm != 0.
- *         L_STAB: Shift-Tab was pressed during input and curm != 0.
- *         L_ENTER: strinp returned after Enter being pressed.
- * remarks: 1. the function does not check if the input is too long for one
- *             line. If you make length so great that the last part of the
- *             input field runs off the screen line the results are undefined,
- *             but messy.
- *          2. before return, the function sets the cursor position to what
- *             it was before the function was called.
- *
- * example: whyreturn = strinp("1234567890.", myinp, 10, 12, 0, 1, 1);
- *=========================================================================*/
-int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, int caps, int esc, int curm)
+int GetStringInput (WINDOW *win, const char *allowed_characters, char *input, int input_y, int input_x, int capslock_forced, int enable_escape, int enable_directionals)
 {
 	static int ins = 0;
 	int ilen, ipos = 0, toret = 0, curx, cury;
@@ -495,7 +371,7 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 	curx = getcurx(win);
 	cury = getcury(win);
 
-	ins = L_INSFLAG & 1;
+	ins = kInsertFlag & 1;
 
 /*
 	if ((ins && L_INSFLAG & 2) || (!ins && !(L_INSFLAG & 2)))
@@ -506,8 +382,8 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 
 	do
 	{  
-		wmove(win, inpy, inpx + ipos);
-		wrefresh(INPUTWINDOW);
+		wmove(win, input_y, input_x + ipos);
+		wrefresh(input_window);
 
 		ichar = wgetch(win);
 
@@ -516,7 +392,7 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 		case KEY_RESIZE:
 
 			resize_term(0, 0);
-			setupwindows();
+			SetupWindows();
 
 			break;
 
@@ -570,22 +446,22 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 			break;
 
 		case KEY_UP: /* Arrow up */
-			if (curm)
-				toret = L_UP;
+			if (enable_directionals)
+				toret = to_underlying(Key::kUp);
 
 			break;
 
 		case KEY_DOWN: /* Arrow down */
 
-			if (curm)
-				toret = L_DOWN;
+			if (enable_directionals)
+				toret = to_underlying(Key::kDown);
 
 			break;
 
 		case KEY_BTAB: /* Shift-Tab */
 
-			if (curm)
-				toret = L_STAB;
+			if (enable_directionals)
+				toret = to_underlying(Key::kShiftTab);
 
 			break;
 
@@ -601,32 +477,32 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 			{  
 				memmove(input + ipos - 1, input + ipos, (size_t)ilen - ipos + 1);
 				input[ilen] = ' ';
-				mvwdelch(win, inpy, inpx + --ipos);
+				mvwdelch(win, input_y, input_x + --ipos);
 			}
 
 			break;
 
 		case KEY_STAB: /* Tab */
 
-			if (curm)
-				toret = L_TAB;
+			if (enable_directionals)
+				toret = to_underlying(Key::kTab);
 
 			break;
 
 		case KEY_ENTER: /* Enter */
 		case 10:
 
-			toret = L_ENTER;
+			toret = to_underlying(Key::kEnter);
 			break;
 
 		case 27: /* Escape */
 
-			if (esc)
-				toret = L_ESC;
+			if (enable_escape)
+				toret = to_underlying(Key::kEscape);
 			else
 			{
 				memset(input, ' ', ilen);
-				mvwaddstr(win, inpy, inpx, input);
+				mvwaddstr(win, input_y, input_x, input);
 				ipos = 0;
 			}
 
@@ -634,19 +510,19 @@ int strinp (WINDOW *win, const char *allowed, char *input, int inpy, int inpx, i
 
 		default:
 
-			if (caps > 0)
+			if (capslock_forced > 0)
 				ichar = toupper(ichar);
-			else if (caps < 0)
+			else if (capslock_forced < 0)
 				ichar = tolower(ichar);
 
-			if (strchr(allowed, ichar))
+			if (strchr(allowed_characters, ichar))
 			{  
 				if (ins)
 				{  
 					memmove(input + ipos + 1, input + ipos, (size_t)ilen - ipos);
 
-					mvwdelch(win, inpy, inpx + ilen);
-					mvwinsch(win, inpy, inpx + ipos, ichar);
+					mvwdelch(win, input_y, input_x + ilen);
+					mvwinsch(win, input_y, input_x + ipos, ichar);
 				}
 				else 
 				{
