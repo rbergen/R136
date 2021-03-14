@@ -232,10 +232,12 @@ void fill_map(std::map<TKey, TValue> map, TValue values[], int value_count)
 	{
 		TKey id = static_cast<TKey>(i);
 
-		if (is_entity)
-			static_cast<Entity<TKey>>(values[i]).id = id;
+		if (is_entity) 
+		{
+			((TEntity<TKey>)values[i]).id = id;
+		}
 
-		map[id] = values[i];
+		map.emplace( = values[i];
 	}
 
 }

@@ -32,6 +32,9 @@
     <ClInclude Include="src\init.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">

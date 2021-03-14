@@ -329,23 +329,11 @@ struct Room : Entity<RoomID>
 		is_forest(f)
 	{}
 
-	Room(const wchar_t* n, const wchar_t* d) :
-		name(n),
-		description(d),
-		is_forest(false)
-	{}
+	Room(const wchar_t* n, const wchar_t* d) : Room(n, d, false) {}
 
-	Room(const wchar_t* n, bool f) :
-		name(n),
-		description(nullptr),
-		is_forest(f)
-	{}
+	Room(const wchar_t* n, bool f) : Room(n, nullptr, f) {}
 
-	Room(const wchar_t* n) :
-		name(n),
-		description(nullptr),
-		is_forest(false)
-	{}
+	Room(const wchar_t* n) : Room(n, nullptr, false) {}
 
 };
 
@@ -355,17 +343,15 @@ struct Animate : Entity<AnimateID>
 	char strikes_left;
 	AnimateStatus status;
 
+	Animate() : Animate(RoomID::undefined, 0) {}
+
 	Animate(RoomID r, char s) :
 		room(r),
 		strikes_left(s),
 		status(AnimateStatus::initial)
 	{}
 
-	Animate(RoomID r) :
-		room(r),
-		strikes_left(0),
-		status(AnimateStatus::initial)
-	{}
+	Animate(RoomID r) : Animate(r, 0) {}
 };
 
 struct Item : Entity<ItemID>
@@ -382,26 +368,11 @@ struct Item : Entity<ItemID>
 		usable_on(u)
 	{}
 
-	Item(const char* n, const wchar_t* d, RoomID r) :
-		name(n),
-		description(d),
-		room(r),
-		usable_on(AnimateID::undefined)
-	{}
+	Item(const char* n, const wchar_t* d, RoomID r) : Item(n, d, r, AnimateID::undefined) {}
 
-	Item(const char* n, const wchar_t* d, AnimateID u) :
-		name(n),
-		description(d),
-		room(RoomID::undefined),
-		usable_on(u)
-	{}
+	Item(const char* n, const wchar_t* d, AnimateID u) : Item(n, d, RoomID::undefined, u) {}
 
-	Item(const char* n, const wchar_t* d) :
-		name(n),
-		description(d),
-		room(RoomID::undefined),
-		usable_on(AnimateID::undefined)
-	{}
+	Item(const char* n, const wchar_t* d) : Item(n, d, RoomID::undefined, AnimateID::undefined)	{}
 
 };
 
@@ -413,6 +384,17 @@ struct Status
 	bool is_lamp_on;
 	char lamp_points;
 	bool has_tree_burned;
+};
+
+template<class TKey, class TValue>
+class EntityMap
+{
+	std::map<TKey, TValue*> map;
+
+public:
+	void add_or_set(TKey key, TValue& value);
+	bool contains(TKey key);
+	TValue& operator[](TKey key);
 };
 
 template<typename TEntity>
@@ -428,8 +410,8 @@ public:
 	bool contains(TEntity item) const;
 	bool add(TEntity item);
 	bool remove(TEntity item);
-	std::vector<TEntity>::iterator begin();
-	std::vector<TEntity>::iterator end();
+	typename std::vector<TEntity>::iterator begin();
+	typename std::vector<TEntity>::iterator end();
 };
 
 class Inventory : public BoundedCollection<ItemID> 

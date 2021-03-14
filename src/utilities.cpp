@@ -64,18 +64,18 @@ bool RoomConnections::set(Command direction, RoomID room)
 }
 
 
-template<typename TEntity>
+template<class TEntity >
 BoundedCollection<TEntity>::BoundedCollection(int capacity) :
 	max_item_count(capacity)
 {}
 
-template<typename TEntity>
+template<class TEntity>
 bool BoundedCollection<TEntity>::is_full() const
 {
 	return items.size() >= max_item_count;
 }
 
-template<typename TEntity>
+template<class TEntity>
 bool BoundedCollection<TEntity>::contains(TEntity item) const
 {
 	for (auto& element : items)
@@ -85,7 +85,7 @@ bool BoundedCollection<TEntity>::contains(TEntity item) const
 	return false;
 }
 
-template<typename TEntity>
+template<class TEntity>
 bool BoundedCollection<TEntity>::add(TEntity item)
 {
 	if (is_full())
@@ -95,7 +95,7 @@ bool BoundedCollection<TEntity>::add(TEntity item)
 	return true;
 }
 
-template<typename TEntity>
+template<class TEntity>
 bool BoundedCollection<TEntity>::remove(TEntity item)
 {
 	for (auto element = items.begin(); element != items.end(); ++element)
@@ -110,20 +110,20 @@ bool BoundedCollection<TEntity>::remove(TEntity item)
 	return false;
 }
 
-template<typename TEntity>
+template<class TEntity>
 size_t BoundedCollection<TEntity>::count() const
 {
 	return items.size();
 }
 
-template<typename TEntity>
-std::vector<TEntity>::iterator BoundedCollection<TEntity>::begin()
+template<class TEntity>
+typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::begin()
 {
 	return items.begin();
 }
 
-template<typename TEntity>
-std::vector<TEntity>::iterator BoundedCollection<TEntity>::end()
+template<class TEntity>
+typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::end()
 {
 	return items.end();
 }
@@ -146,4 +146,26 @@ bool Inventory::remove(Item item)
 
 	item.room = RoomID::undefined;
 	return true;
+}
+
+template<class TKey, class TValue>
+void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue& value)
+{
+	auto &element = map.find(key);
+	if (element == map.end())
+		map.insert(std::make_pair(key, &value));
+	else
+		element->second = &value;
+}
+
+template<class TKey, class TValue>
+bool EntityMap<TKey, TValue>::contains(TKey key)
+{
+	return map.find(key) != map.end();
+}
+
+template<class TKey, class TValue>
+TValue& EntityMap<TKey, TValue>::operator[](TKey key)
+{
+	// TODO: insert return statement here
 }

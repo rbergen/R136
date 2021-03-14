@@ -62,7 +62,7 @@ public:
 		return value;
 	}
 
-	static void add(Color c, short fg, short bg, short s)
+	static void add(Color c, short fg, short bg, chtype s)
 	{
 		add(ColorSet(c, fg, bg, s));
 	}
