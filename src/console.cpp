@@ -1,7 +1,7 @@
 /***************************************************************************
  * Includes necessary for functions to work
  ***************************************************************************/
-#include "r136.h"
+#include "console.h"
 #include <locale.h>
 #include <map>
 
@@ -30,14 +30,14 @@ class ColorSet
 	static std::map<Color, ColorSet> color_sets;
 
 	Color color;
-	short foreground, background, style;
-	chtype value;
+	short foreground, background;
+	chtype style, value;
 	bool is_initialized;
 
 public:
 	ColorSet(Color c, short fg, short bg) : ColorSet(c, fg, bg, 0) {}
 
-	ColorSet(Color c, short fg, short bg, short s) :
+	ColorSet(Color c, short fg, short bg, chtype s) :
 		color(c),
 		foreground(fg),
 		background(bg),
@@ -83,9 +83,9 @@ public:
 	}
 };
 
-WINDOW *banner_window = NULL;
+WINDOW* banner_window = NULL;
 WINDOW* main_window = NULL;
-WINDOW *input_window = NULL;
+WINDOW* input_window = NULL;
 WINDOW* full_screen = NULL;
 
 
@@ -154,7 +154,7 @@ int print_to_main_window(const char* format, ...)
 	return return_value;
 }
 
-int write_to_main_window(const wchar_t *text)
+int write_to_main_window(const wchar_t* text)
 {
 	return waddwstr(main_window, text);
 }
@@ -213,7 +213,7 @@ void print_fullscreen_block_section(int y, int x, Color color, const wchar_t** b
 	wattron(full_screen, ColorSet::get_attrs(color));
 
 	for (int i = topy; i <= bottomy; i++)
-		mvwaddnwstr(full_screen, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
+		mvwaddnwstr(full_screen, y + i - topy, x,& block[i][leftx], rightx - leftx + 1);
 
 	wattroff(full_screen, ColorSet::get_attrs(color));
 }
@@ -260,10 +260,9 @@ void wait_for_key_core(WINDOW* window, bool do_setup)
 		if (mvwgetch(window, y, x) == KEY_RESIZE)
 		{
 			resize_term(0, 0);
+
 			if (do_setup)
-			{
 				setup_windows();
-			}
 		}
 		else
 			break;
@@ -291,7 +290,7 @@ void write_centered(WINDOW* win, const char* str)
 	mvwaddstr(win, getcury(win), x < 0 ? 0 : x, str);
 }
 
-void get_command_string(char *input, int max_length) 
+void get_command_string(char* input, int max_length) 
 {
 	memset(input, ' ', max_length);
 	input[max_length] = 0;
@@ -331,7 +330,7 @@ void print_command_string(const char* format, ...)
 	wgetch(input_window);
 }
 
-int advanced_getchar(const char *allowed)
+int advanced_getchar(const char* allowed)
 {  
 	char input = 0;
 	int y = getcury(main_window);
@@ -343,7 +342,7 @@ int advanced_getchar(const char *allowed)
 	{  
 		wmove(main_window, y, x);
 
-		if (advanced_scanf(main_window, 0, 1, allowed, "%c", &input) == to_value(Key::kEscape))
+		if (advanced_scanf(main_window, 0, 1, allowed, "%c",& input) == to_value(Key::kEscape))
 			input = to_value(Key::kEscape);
 	}
 	while (input == ' ');
@@ -353,10 +352,10 @@ int advanced_getchar(const char *allowed)
 	return input;
 }
 
-int advanced_scanf(WINDOW *win, int check_input, int length, const char *allowed_characters, const char *format_string, ...)
+int advanced_scanf(WINDOW* win, int check_input, int length, const char* allowed_characters, const char* format_string, ...)
 {  
 	va_list argp;
-	char *input_string;
+	char* input_string;
 	int result = 0;
 
 	input_string =  new char[length + 1];
@@ -381,13 +380,13 @@ int advanced_scanf(WINDOW *win, int check_input, int length, const char *allowed
 	return result;
 }
 
-void clear_line(WINDOW *win) 
+void clear_line(WINDOW* win) 
 {
 	wmove(win, getcury(win), 0);
 	wclrtoeol(win);
 }
 
-int get_string_input (WINDOW *win, const char *allowed_characters, char *input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
+int get_string_input (WINDOW* win, const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
 {
 	static bool insert_on = 0;
 	int input_length, input_pos = 0, result = 0, current_x, current_y;
@@ -525,10 +524,7 @@ int get_string_input (WINDOW *win, const char *allowed_characters, char *input, 
 					mvwinsch(win, input_y, input_x + input_pos, input_char);
 				}
 				else 
-				{
 					waddch(win, input_char);
-
-				}
 
 				input[input_pos] = input_char;
 

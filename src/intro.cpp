@@ -234,7 +234,7 @@ void SwoopInDigits(int screenbottomy, int screenrightx, int screenmiddlex, int s
 	}
 }
 
-void RunIntro()
+void run_intro()
 {
 	int screenbottomy, screenrightx, screenmiddlex;
 	int spiderx, leftletterfinalx;

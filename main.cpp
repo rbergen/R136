@@ -2,30 +2,30 @@
 
 int main()
 {
-	Progdata progdata;
+	CoreData core;
 
 	initialize_console();
 
-	RunIntro();
+	run_intro();
 
 	setup_windows();
 
-	Initialize(progdata);
+	initialize(core);
 
 	show_splashscreen();
 
-	if (!LoadStatus(progdata))
+	if (!load_status(core))
 		show_start_message();
 
 	while (true)
 	{
-		show_room_status(progdata);
-		if (progress_animate_status(progdata))
-			if (!DoAction(progdata))
+		show_room_status(core);
+		if (progress_animate_status(core))
+			if (!perform_command(core))
 				break;
 	}
 
-	SaveStatus(progdata);
+	save_status(core);
 
 	wait_for_key();
 
@@ -133,7 +133,7 @@ void force_exit(void)
 {
 	wait_for_key();
 
-	remove(LOADSAVEDATAPATH);
+	remove(saved_status_path);
 
 	clear_window();
 

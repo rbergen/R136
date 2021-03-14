@@ -157,6 +157,10 @@
   <ItemGroup>
     <ClInclude Include="include-external\curses.h" />
     <ClInclude Include="include\r136.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\act.h" />
+    <ClInclude Include="src\console.h" />
+    <ClInclude Include="src\init.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -166,7 +170,8 @@
     <ClCompile Include="src\loadsave.cpp" />
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\status.cpp" />
-    <ClCompile Include="src\use.cpp" />
+    <ClCompile Include="src\act.cpp" />
+    <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -20,6 +20,18 @@
     <ClInclude Include="include-external\curses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\act.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\init.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
@@ -40,10 +52,13 @@
     <ClCompile Include="src\status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\use.cpp">
+    <ClCompile Include="src\act.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

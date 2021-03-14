@@ -1,19 +1,18 @@
 #include "r136.h"
 
-const char* LOADSAVEDATAPATH = "r136data.rip";
+const char* saved_status_path = "r136data.rip";
 
-void HandleFailedWrite(FILE *fp)
+void HandleFailedWrite(FILE* fp)
 {
 	print_to_main_window("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 
 	fclose(fp);
-	remove(LOADSAVEDATAPATH);
+	remove(saved_status_path);
 }
 
-void SaveStatus(Progdata &progdata)
+void save_status(CoreData& core)
 {
-	FILE *fp;
-	int i;
+	FILE* fp;
 
 	print_to_main_window("\n\nWil je je huidige status opslaan? ");
 
@@ -24,7 +23,7 @@ void SaveStatus(Progdata &progdata)
 		return;
 	}
 
-	while (!(fp = fopen(LOADSAVEDATAPATH, "wb")))
+	while (!(fp = fopen(saved_status_path, "wb")))
 	{
 		print_to_main_window("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 
@@ -32,7 +31,7 @@ void SaveStatus(Progdata &progdata)
 		{
 			print_to_main_window("\n\nStatus niet opgeslagen!\n");
 
-			remove(LOADSAVEDATAPATH);
+			remove(saved_status_path);
 
 			return;
 		}
@@ -40,40 +39,52 @@ void SaveStatus(Progdata &progdata)
 
 	print_to_main_window("\n");
 
-	for (i = 0; i < 25; i++)
+	for (int i = 0; i < to_value(ItemID::COUNT); i++)
 	{
-		if (fp != 0 && fwrite(&progdata.items[i].room, sizeof(char), 1, fp) < 1)
+		if (fp != 0 && fwrite(&core.items[static_cast<ItemID>(i)].room, sizeof(RoomID), 1, fp) < 1)
 		{
 			HandleFailedWrite(fp);
 			return;
 		}
 	}
 
-	for (i = 0; i < 80; i++)
+	for (int i = 0; i < to_value(RoomID::COUNT); i++)
 	{
-		if (fp != 0 && fwrite(progdata.rooms[i].connect, sizeof(char) * 6, 1, fp) < 1)
+		for (int j = 0; j < 6; j++) 
+		{
+			RoomID connected_room = core.rooms[static_cast<RoomID>(i)].connections[static_cast<Command>(j)];
+			if (fp != 0 && fwrite(&connected_room, sizeof(RoomID), 1, fp) < 1)
+			{
+				HandleFailedWrite(fp);
+				return;
+			}
+		}
+	}
+
+	for (int i = 0; i < to_value(AnimateID::COUNT); i++)
+	{
+		if (fp != 0 && fwrite(&core.animates[static_cast<AnimateID>(i)], sizeof(Animate), 1, fp) < 1)
 		{
 			HandleFailedWrite(fp);
 			return;
 		}
 	}
 
-	for (i = 0; i < 21; i++)
-	{
-		if (fp != 0 && fwrite(&progdata.animates[i], sizeof(Animate), 1, fp) < 1)
-		{
-			HandleFailedWrite(fp);
-			return;
-		}
-	}
-
-	if (fp != 0 && fwrite(progdata.owneditems, sizeof(char), 10, fp) < 10)
+	size_t inventory_size = core.inventory.count();
+	if (fp != 0 && fwrite(&inventory_size, sizeof(size_t), 1, fp) < 1)
 	{
 		HandleFailedWrite(fp);
 		return;
 	}
 
-	if (fp != 0 && fwrite(&progdata.status, sizeof(Status), 1, fp) < 1)
+	for ()
+	if (fp != 0 && fwrite(core.inventory, sizeof(char), 10, fp) < 10)
+	{
+		HandleFailedWrite(fp);
+		return;
+	}
+
+	if (fp != 0 && fwrite(&core.status, sizeof(Status), 1, fp) < 1)
 	{
 		HandleFailedWrite(fp);
 		return;
@@ -83,24 +94,24 @@ void SaveStatus(Progdata &progdata)
 		fclose(fp);
 }
 
-void HandleFailedRead(Progdata &progdata, FILE *fp)
+void HandleFailedRead(CoreData& core, FILE* fp)
 {
 	print_to_main_window("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 
 	fclose(fp);
-	remove(LOADSAVEDATAPATH);
+	remove(saved_status_path);
 
 	wait_for_key();
 
-	Initialize(progdata);
+	initialize(core);
 }
 
-bool LoadStatus(Progdata &progdata)
+bool load_status(CoreData& core)
 {
-	FILE *fp;
+	FILE* fp;
 	int i;
 
-	if (!(fp = fopen(LOADSAVEDATAPATH, "rb")))
+	if (!(fp = fopen(saved_status_path, "rb")))
 	{
 		write_centered(main_window, "Druk op een toets om te beginnen");
 
@@ -115,7 +126,7 @@ bool LoadStatus(Progdata &progdata)
 		if (fp != 0) 
 			fclose(fp);
 
-		remove(LOADSAVEDATAPATH);
+		remove(saved_status_path);
 
 		return false;
 	}
@@ -124,40 +135,40 @@ bool LoadStatus(Progdata &progdata)
 
 	for (i = 0; i < 25; i++)
 	{
-		if (fp != 0 && fread(&progdata.items[i].room, sizeof(char), 1, fp) < 1)
+		if (fp != 0 && fread(&core.items[i].room, sizeof(char), 1, fp) < 1)
 		{
-			HandleFailedRead(progdata, fp);
+			HandleFailedRead(core, fp);
 			return false;
 		}
 	}
 
 	for (i = 0; i < 80; i++)
 	{
-		if (fp != 0 && fread(progdata.rooms[i].connect, sizeof(char) * 6, 1, fp) < 1)
+		if (fp != 0 && fread(core.rooms[i].connections, sizeof(char) * 6, 1, fp) < 1)
 		{
-			HandleFailedRead(progdata, fp);
+			HandleFailedRead(core, fp);
 			return false;
 		}
 	}
 
 	for (i = 0; i < 21; i++)
 	{
-		if (fp != 0 && fread(&progdata.animates[i], sizeof(Animate), 1, fp) < 1)
+		if (fp != 0 && fread(&core.animates[i], sizeof(Animate), 1, fp) < 1)
 		{
-			HandleFailedRead(progdata, fp);
+			HandleFailedRead(core, fp);
 			return false;
 		}
 	}
 
-	if (fp != 0 && fread(progdata.owneditems, sizeof(char), 10, fp) < 10)
+	if (fp != 0 && fread(core.inventory, sizeof(char), 10, fp) < 10)
 	{
-		HandleFailedRead(progdata, fp);
+		HandleFailedRead(core, fp);
 		return false;
 	}
 
-	if (fp != 0 && fread(&progdata.status, sizeof(Status), 1, fp) < 1)
+	if (fp != 0 && fread(&core.status, sizeof(Status), 1, fp) < 1)
 	{
-		HandleFailedRead(progdata, fp);
+		HandleFailedRead(core, fp);
 		return false;
 	}
 
