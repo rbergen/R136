@@ -9,6 +9,7 @@
 #include <string.h>
 #include <type_traits>
 #include <map>
+#include <vector>
 
 
 #if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
@@ -26,7 +27,7 @@
 	#include <curses.h>
 #endif
 
-// This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021 on one approach to idle-wait for a number of milliseconds
+// This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021, on one approach to idle-wait for a number of milliseconds
 #ifdef _WIN32
 #include <windows.h>
 void sleep_ms(int n) 
@@ -38,7 +39,7 @@ void sleep_ms(int n)
 #include <map>
 void sleep_ms(int n)
 {
-	usleep(n * 1000);
+	usleep(n * 1000,);
 }
 
 #endif
@@ -88,7 +89,8 @@ enum class Command : char
 	finish,
 	status,
 	help,
-	COUNT
+	COUNT,
+	undefined = -1
 };
 
 enum class AnimateID : char
@@ -115,7 +117,7 @@ enum class AnimateID : char
 	mist,
 	teleporter,
 	COUNT,
-	undefined
+	undefined = -1
 };
 
 enum class ItemID : char
@@ -140,189 +142,320 @@ enum class ItemID : char
 	ignition,
 	batteries,
 	gasmask,
-	hatch,
+	paper,
 	booklet,
 	blue_crystal,
 	cookie,
 	gas_grenade,
-	COUNT
+	COUNT,
+	undefined = -1,
+	ambiguous = -2
 };
 
-constexpr AnimateID connectToItem(ItemID item) { return static_cast<AnimateID>(-(to_value(item) + 2)); }
+template<typename L>
+constexpr L combines_with(L value) { return -(value + 2); }
 
-#define ROOM_COUNT				80
-#define ROOM_BOS0				0
-#define ROOM_BOS1				1
-#define ROOM_BOS2				2
-#define ROOM_NOORDMOERAS		3
-#define ROOM_BOS4				4
-#define ROOM_BOS5				5
-#define ROOM_BEGRAAFPLAATS		6
-#define ROOM_BOS7				7
-#define ROOM_MIDDENMOERAS		8
-#define ROOM_OPENPLEK9			9
-#define ROOM_BOS10				10
-#define ROOM_BOS11				11
-#define ROOM_OPENPLEK12			12
-#define ROOM_MOERASPAD			13
-#define ROOM_OPENPLEK14			14
-#define ROOM_BOS15				15
-#define ROOM_BOS16				16
-#define ROOM_OPENPLEK17			17
-#define ROOM_ZUIDMOERAS			18
-#define ROOM_RUINE				19
-#define ROOM_SLIJMGROT			20
-#define ROOM_ZWARTEGROT			21
-#define ROOM_DRUGSGROT			22
-#define ROOM_GEILEGROT			23
-#define ROOM_DWANGBUISGROT		24
-#define ROOM_VERWAARLOOSDEGROT	25
-#define ROOM_LEGEGROT26			26
-#define ROOM_HOOFDGROT			27
-#define ROOM_HIEROGLIEFENGROT	28
-#define ROOM_STANKGROT			29
-#define ROOM_TROOSTELOZEGROT	30
-#define ROOM_TLGROT				31
-#define ROOM_KLEINEGROT			32
-#define ROOM_IJSGROT			33
-#define ROOM_KAKTUSGROT			34
-#define ROOM_STALAGMIETENGROT	35
-#define ROOM_STORMGROT			36
-#define ROOM_MISTGROT			37
-#define ROOM_WENTELTRAPGROT1	38
-#define ROOM_TENTAKELGROT		39
-#define ROOM_VUILNISGROT		40
-#define ROOM_ECHOGROT			41
-#define ROOM_GEHEIMEGROT		42
-#define ROOM_VOEDSELGROT		43
-#define ROOM_GNOEGROT			44
-#define ROOM_LEGEGROT45			45
-#define ROOM_OGENGROT			46
-#define ROOM_ROTSGROT			47
-#define ROOM_LEEGTE				48
-#define ROOM_ZANDBANK			49
-#define ROOM_MARTELGROT			50
-#define ROOM_LEGEGROT51			51 
-#define ROOM_VEILIGEGROT		52
-#define ROOM_NAUWEROTSSPLEET	53
-#define ROOM_OLIEGROT			54 
-#define ROOM_LEGEGROT55			55 
-#define ROOM_WENTELTRAPGROT2	56 
-#define ROOM_SPINNENGROT		57 
-#define ROOM_PRATENDEGROT		58
-#define ROOM_LAVAPUT			59 
-#define ROOM_SKOEBIEGROT		60
-#define ROOM_RADIOACTIEVEGROT 	61 
-#define ROOM_IGROT				62
-#define ROOM_PGROT				63
-#define ROOM_AGROT				64
-#define ROOM_DODENGROT			65
-#define ROOM_RGROT				66
-#define ROOM_EGROT				67
-#define ROOM_WENTELTRAPGROT3	68
-#define ROOM_HOOFDLETTERPGROT	69
-#define ROOM_VERDOEMENISGROT	70
-#define ROOM_VACUUMGROT			71
-#define ROOM_RODEGROT			72
-#define ROOM_NEONGROT			73
-#define ROOM_BLOEDGROT			74
-#define ROOM_VLEERMUISGROT		75
-#define ROOM_SLANGENGROT		76
-#define ROOM_KWABBENGROT		77
-#define ROOM_GLIBBERGROT		78
-#define ROOM_TELEPORTGROT		79
+constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }
+constexpr ItemID combines_with(AnimateID animate) { return static_cast<ItemID>(combines_with(to_value(animate))); }
 
-constexpr char paper_route_length = 6;
+enum class RoomID : char {
+	forest0 = 0,
+	forest1,
+	forest2,
+	north_swamp,
+	forest4,
+	forest5,
+	cemetery,
+	forest7,
+	middle_swamp,
+	open_space9,
+	forest10,
+	forest11,
+	open_space12,
+	swamp_path,
+	open_space14,
+	forest15,
+	forest16,
+	open_space17,
+	south_swamp,
+	ruin,
+	slime_cave,
+	black_cave,
+	drugs_cave,
+	horny_cave,
+	straitjacket_cave,
+	neglected_cave,
+	empty_cave26,
+	main_cave,
+	hieroglyphs_cave,
+	stench_cave,
+	gloomy_cave,
+	fluorescent_cave,
+	small_cave,
+	ice_cave,
+	cactus_cave,
+	stalagmite_cave,
+	storm_cave,
+	mist_cave,
+	stairwell_cave1,
+	tentacle_cave,
+	garbage_cave,
+	echo_cave,
+	secret_cave,
+	food_cave,
+	gnu_cave,
+	empty_cave45,
+	eyes_cave,
+	rock_cave,
+	emptiness,
+	sandbank,
+	torture_cave,
+	empty_cave51,
+	safe_cave,
+	narrow_cleft,
+	oil_cave,
+	empty_cave55,
+	stairwell_cave2,
+	spider_cave,
+	talking_cave,
+	lava_pit,
+	scooby_cave,
+	radioactive_cave,
+	i_cave,
+	p_cave,
+	a_cave,
+	death_cave,
+	r_cave,
+	e_cave,
+	stairwell_cave3,
+	capital_p_cave,
+	damnation_cave,
+	vacuum_cave,
+	red_cave,
+	neon_cave,
+	blood_cave,
+	bat_cave,
+	snake_cave,
+	lobe_cave,
+	slippery_cave,
+	teleport_cave,
+	COUNT,
+	undefined = -1,
+	owned = -2
+};
+
 constexpr char max_life_points = 20;
+constexpr char max_lamp_points = 60;
 constexpr char max_owned_items = 10;
 
 enum class AnimateStatus : char {
-	dead = 3,
+	initial = 0,
+	initial_burn = 0,
+
+	status_1 = 1,
+	hashis_on_fire = 1,
 	hatch_opening = 1,
 	door_open = 1,
-	initial_burn = 0,
-	hashis_on_fire = 1,
-	meat_on_fire = 2,
-	ingredients_burning = 3,
-	cookie_is_baking = 4,
-	computer_is_reading = 2,
-	cookie_is_thrown = 3,
-	sleeping_lightly = 4,
-	nightcap_on_head = 5,
 	bomb_dropped = 1,
 	tree_on_fire = 1,
+	visible = 1,
+
+	status_2 = 2,
+	meat_on_fire = 2,
+	computer_is_reading = 2,
 	poisonous_meat_fed = 2,
+	swelling_gassed = 2,
+
+	status_3 = 3,
+	dead = 3,
+	ingredient_burning = 3,
+	cookie_is_thrown = 3,
+
+	status_4 = 4,
+	cookie_is_baking = 4,
+	sleeping_lightly = 4,
 	booklet_thrown = 4,
-	swelling_gassed = 2
+
+	status_5 = 5,
+	nightcap_on_head = 5,
+
+	status_6 = 6
 };
 
+AnimateStatus next_status(AnimateStatus status) 
+{
+	return static_cast<AnimateStatus>(to_value(status) + 1);
+}
 
-#define item_owned				-2
+AnimateStatus operator++(AnimateStatus& status)
+{
+	return next_status(status);
+}
 
 /*
 	Structures
 */
 
-struct LevelConnection 
-{
-	char from;
-	Command direction;
-	char to;
+class RoomConnections {
+	std::map<Command, RoomID> connections;
+	bool is_direction_command(Command command) const;
+
+public:
+	size_t count() const;
+	RoomID operator[](Command direction) const;
+	bool is_open(Command direction) const;
+	bool set(Command direction, RoomID room);
+	bool erase(Command direction);
+	std::map<Command, RoomID>::iterator begin();
+	std::map<Command, RoomID>::iterator end();
 };
 
-struct BlockedConnection
+template<typename Tid>
+struct Entity
 {
-	char room;
-	Command direction;
+	Tid id;
 };
 
-struct Room
+struct Room : Entity<RoomID>
 {
 	const wchar_t* name;
-	const wchar_t* descript;
-	char connect[6];
+	const wchar_t* description;
+	bool is_forest;
+	RoomConnections connections;
+
+	Room(const wchar_t* n, const wchar_t* d, bool f) :
+		name(n),
+		description(d),
+		is_forest(f)
+	{}
+
+	Room(const wchar_t* n, const wchar_t* d) :
+		name(n),
+		description(d),
+		is_forest(false)
+	{}
+
+	Room(const wchar_t* n, bool f) :
+		name(n),
+		description(nullptr),
+		is_forest(f)
+	{}
+
+	Room(const wchar_t* n) :
+		name(n),
+		description(nullptr),
+		is_forest(false)
+	{}
+
 };
 
-struct Animate
+struct Animate : Entity<AnimateID>
 {
-	char room;
-	char strike;
-	char status;
+	RoomID room;
+	char strikes_left;
+	AnimateStatus status;
+
+	Animate(RoomID r, char s) :
+		room(r),
+		strikes_left(s),
+		status(AnimateStatus::initial)
+	{}
+
+	Animate(RoomID r) :
+		room(r),
+		strikes_left(0),
+		status(AnimateStatus::initial)
+	{}
 };
 
-struct Item
+struct Item : Entity<ItemID>
 {
 	const char* name;
-	const wchar_t* descript;
-	char room;
-	AnimateID useableon;
+	const wchar_t* description;
+	RoomID room;
+	AnimateID usable_on;
+
+	Item(const char* n, const wchar_t* d, RoomID r, AnimateID u) :
+		name(n),
+		description(d),
+		room(r),
+		usable_on(u)
+	{}
+
+	Item(const char* n, const wchar_t* d, RoomID r) :
+		name(n),
+		description(d),
+		room(r),
+		usable_on(AnimateID::undefined)
+	{}
+
+	Item(const char* n, const wchar_t* d, AnimateID u) :
+		name(n),
+		description(d),
+		room(RoomID::undefined),
+		usable_on(u)
+	{}
+
+	Item(const char* n, const wchar_t* d) :
+		name(n),
+		description(d),
+		room(RoomID::undefined),
+		usable_on(AnimateID::undefined)
+	{}
+
 };
 
 struct Status
 {
-	char paperpos;
-	char curroom;
-	char lifepoints;
-	bool lamp;
-	char lamppoints;
+	char paper_route_pos;
+	RoomID current_room;
+	char life_points;
+	bool is_lamp_on;
+	char lamp_points;
+	bool has_tree_burned;
 };
 
-struct Progdata
+template<typename TEntity>
+class BoundedCollection
 {
-	Room* rooms;
+	std::vector<TEntity> items;
+	int max_item_count;
+
+public:
+	BoundedCollection(int capacity);
+	size_t count() const;
+	bool is_full() const;
+	bool contains(TEntity item) const;
+	bool add(TEntity item);
+	bool remove(TEntity item);
+	std::vector<TEntity>::iterator begin();
+	std::vector<TEntity>::iterator end();
+};
+
+class Inventory : public BoundedCollection<ItemID> 
+{
+public:
+	Inventory(int capacity);
+	bool add(Item item);
+	bool remove(Item item);
+};
+
+struct CoreData
+{
+	std::map<RoomID, Room> rooms;
 	std::map<AnimateID, Animate> animates;
 	std::map<ItemID, Item> items;
-	char owneditems[max_owned_items];
-	char* paperroute;
+	Inventory inventory = Inventory(max_owned_items);
+	std::vector<RoomID> paperroute;
 	Status status;
 };
 
-struct Parsedata
+struct ParseData
 {
-	char selected;
-	char object1;
-	char object2;
-	bool parseerror;
+	Command command;
+	ItemID item1;
+	ItemID item2;
+	bool parse_error;
 };
 
 
@@ -331,6 +464,9 @@ struct Parsedata
 */
 
 int get_random_number(int max);
+AnimateStatus get_random_status(int lowest, int highest);
+AnimateStatus get_random_status(AnimateStatus lowest, AnimateStatus highest);
+
 void setup_windows();
 int print_to_main_window(const char* fmt, ...);
 void initialize_console();
@@ -343,67 +479,27 @@ void get_fullscreen_size(int& y, int& x);
 void update_fullscreen();
 void clear_window();
 void wait_for_key();
-void wait_for_fullscreen_key();
-int write_to_main_window(const wchar_t *text);
+int write_to_main_window(const wchar_t* text);
 void write_centered(WINDOW* win, const char* str);
-void clear_line(WINDOW *win);
 void get_command_string(char* input, int maxlength);
 void print_command_string(const char* fmt, ...);
-int advanced_getchar(const char *allowed);
-int advanced_scanf(WINDOW *win, int chckinp, int length, const char *allowed, const char *frmstr, ...);
-int get_string_input (WINDOW *win, const char *allowed, char *input, int inpx, int inpy, int caps, int esc, int curm);
+int advanced_getchar(const char* allowed);
 
-void RunIntro();
+void run_intro();
 
-void SaveStatus(Progdata &progdata);
-bool LoadStatus(Progdata &progdata);
+void save_status(CoreData& core);
+bool load_status(CoreData& core);
 
-bool Initialize(Progdata &progdata);
-bool SetRoomConnections(Room *rooms);
+bool initialize(CoreData& core);
 
-bool DoAction(Progdata &progdata);
-void DoGebruik(Progdata &progdata, Parsedata &parsedata);
-void UseItemToStatus(Progdata &progdata, int ownedindex, int beast, int status);
-void DoCombineer(Progdata &progdata, Parsedata &parsedata);
-void DoLeg(Progdata &progdata, Parsedata &parsedata);
-void DoPak(Progdata &progdata, Parsedata &parsedata);
-void DoBekijk(Progdata &progdata, Parsedata &parsedata);
-void DoAfwachten(void);
-void DoStatus(Progdata &progdata);
-void DoHelp(void);
-void ParseInput(Progdata &progdata, char *inpstr, Parsedata &parsedata);
-void ParseCombineItemsParameters(Progdata& progdata, Parsedata& parsedata, const char* currentMatch);
-bool CheckFoundObject(Parsedata& parsedata, char itemNum, const char* itemname, const char* undefinedItemFormatString);
-bool ParseSingleOwnedItemCommandParam(Progdata& progdata, Parsedata& parsedata, const char* command, const char* parseString);
-int FindOwnedItemNum(Progdata &progdata, const char *itemname);
-bool IsRoomLit(Status& status);
-int FindLayingItemNum(Progdata &progdata, const char *itemname);
+bool perform_command(CoreData& core);
 
-void show_splashscreen(void);
-void show_start_message(void);
 void force_exit(void);
 
-void show_room_status(Progdata &progdata);
-void show_open_directions(char *connect);
-void show_items(Progdata &progdata);
-bool progress_animate_status(Progdata &progdata);
-void progress_hellhound_status(Progdata &progdata);
-void progress_red_troll_status(Progdata &progdata);
-void progress_plant_status(Progdata &progdata);
-void progress_gnu_status(Progdata &progdata);
-void progress_dragon_status(Progdata &progdata);
-void progress_swelling_status(Progdata &progdata);
-void progress_door_status(Progdata &progdata);
-void progress_voices_status(Progdata &progdata);
-void progress_barbecue_status(Progdata &progdata);
-void progress_tree_status(Progdata &progdata);
-void progress_green_crystal_status(Progdata &progdata);
-void progress_computer_status(Progdata &progdata);
-void progress_dragon_head_status(Progdata &progdata);
-bool progress_lava_status(Progdata &progdata);
-void progress_hatch_status(Progdata &progdata);
+void show_room_status(CoreData& core);
+bool progress_animate_status(CoreData& core);
 
-extern const char* LOADSAVEDATAPATH;
+extern const char* saved_status_path;
 extern WINDOW* banner_window;
 extern WINDOW* main_window;
 extern WINDOW* input_window;

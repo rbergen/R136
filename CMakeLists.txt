@@ -33,7 +33,8 @@ add_executable(
     src/loadsave.cpp 
     src/random.cpp 
     src/status.cpp 
-    src/use.cpp
+    src/act.cpp
+    src/utilities.cpp
 )
 
 target_compile_features(${PROJECT_NAME}

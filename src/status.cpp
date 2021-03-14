@@ -1,99 +1,99 @@
 ﻿#include "r136.h"
 
-void show_room_status(Progdata &progdata)
+void show_room_status(CoreData& core)
 {
-	static const wchar_t *youreatFormat = L"Je bevindt je %ls.\n";
-	const wchar_t *roomName;
-	wchar_t *youreatBuffer;
-	size_t youreatBufferLength;
+	static const wchar_t* youre_at_format = L"Je bevindt je %ls.\n";
+	static const wchar_t* smoldering_forest_description = L"Om je heen zie je de smeulende resten van wat eens bos was.";
 
-	roomName = progdata.rooms[progdata.status.curroom].name;
+	auto current_room = core.status.current_room;
+	const wchar_t* current_room_name = core.rooms[current_room].name;
 
-	youreatBufferLength = wcslen(youreatFormat) + wcslen(roomName);
-	youreatBuffer = (wchar_t *)calloc(youreatBufferLength, sizeof(wchar_t));
-	swprintf(youreatBuffer, youreatBufferLength, youreatFormat, roomName);
+	size_t youre_at_buffer_length = wcslen(youre_at_format) + wcslen(current_room_name);
+	wchar_t* youre_at_buffer = new wchar_t[youre_at_buffer_length];
+	swprintf(youre_at_buffer, youre_at_buffer_length, youre_at_format, current_room_name);
 	
-	write_to_main_window(youreatBuffer);
+	write_to_main_window(youre_at_buffer);
 
-	free(youreatBuffer);
+	delete youre_at_buffer;
 
-	if (progdata.status.curroom != ROOM_RADIOACTIEVEGROT && progdata.status.curroom != ROOM_TLGROT && progdata.status.curroom >= 20 && !progdata.status.lamp)
+	if (current_room != RoomID::radioactive_cave && current_room != RoomID::fluorescent_cave
+		&& to_value(current_room) >= 20 && !core.status.is_lamp_on)
+	{
 		print_to_main_window("Het is stekedonker en je ziet geen hand voor ogen.\n");
+	}
 	else
 	{
-		if (progdata.rooms[progdata.status.curroom].descript)
-			write_to_main_window(progdata.rooms[progdata.status.curroom].descript);
+		const wchar_t* description = core.status.has_tree_burned && core.rooms[current_room].is_forest 
+			? smoldering_forest_description
+			: core.rooms[current_room].description;
+
+		if (description)
+			write_to_main_window(description);
 		
 		print_to_main_window("\n");
-		show_items(progdata);
+		show_items(core);
 	}
 
-	show_open_directions(progdata.rooms[progdata.status.curroom].connect);
+	show_open_directions(core.rooms[current_room].connections);
 	print_to_main_window("\n");
 }
 
-void show_open_directions(char *connect)
+void show_open_directions(RoomConnections connections)
 {
-	int count = 0;
-	int i;
-
-	for (i = 0; i < 6; i++)
-		if (connect[i] != undefined)
-			count++;
+	size_t count = connections.count();
 
 	if (!count)
 		return;
 
 	print_to_main_window("Je kunt naar ");
 
-	for (i = 0; i < 6; i++)
-		if (connect[i] != undefined)
+	for (auto& element : connections)
+	{
+		switch (element.first)
 		{
-			switch(static_cast<Command>(i))
-			{
-			case Command::east:
-				print_to_main_window("het oosten");
-				break;
-			case Command::west:
-				print_to_main_window("het westen");
-				break;
-			case Command::north:
-				print_to_main_window("het noorden");
-				break;
-			case Command::south:
-				print_to_main_window("het zuiden");
-				break;
-			case Command::up:
-				print_to_main_window("boven");
-				break;
-			case Command::down:
-				print_to_main_window("beneden");
-				break;
-			}
-			switch(--count)
-			{
-			case 0:
-				break;
-			case 1:
-				print_to_main_window(" en ");
-				break;
-			default:
-				print_to_main_window(", ");
-				break;
-			}
+		case Command::east:
+			print_to_main_window("het oosten");
+			break;
+		case Command::west:
+			print_to_main_window("het westen");
+			break;
+		case Command::north:
+			print_to_main_window("het noorden");
+			break;
+		case Command::south:
+			print_to_main_window("het zuiden");
+			break;
+		case Command::up:
+			print_to_main_window("boven");
+			break;
+		case Command::down:
+			print_to_main_window("beneden");
+			break;
 		}
+
+		switch (--count)
+		{
+		case 0:
+			break;
+		case 1:
+			print_to_main_window(" en ");
+			break;
+		default:
+			print_to_main_window(", ");
+			break;
+		}
+	}
 
 	print_to_main_window(".\n");
 }
 
-void show_items(Progdata &progdata)
+void show_items(CoreData& core)
 {
 	int count = 0;
-	int i;
 	auto item_count = to_value(ItemID::COUNT);
 
-	for (auto &element : progdata.items) 
-		if (element.second.room == progdata.status.curroom)
+	for (auto& element : core.items) 
+		if (element.second.room == core.status.current_room)
 			count++;
 
 	if (!count)
@@ -101,27 +101,28 @@ void show_items(Progdata &progdata)
 
 	print_to_main_window("Hier lig%s ", count > 1 ? "gen" : "t");
 
-	for (auto& element : progdata.items) 
+	for (auto& element : core.items) 
 	{
-		auto item = element.second;
+		auto& item = element.second;
 
-		if (item.room == progdata.status.curroom)
+		if (item.room != core.status.current_room)
+			continue;
+
+		if (getcurx(stdscr) > 54)
+			print_to_main_window("\n");
+
+		print_to_main_window(item.name);
+
+		switch (--count)
 		{
-			if (getcurx(stdscr) > 54)
-				print_to_main_window("\n");
-			print_to_main_window(item.name);
-
-			switch (--count)
-			{
-			case 0:
-				break;
-			case 1:
-				print_to_main_window(" en ");
-				break;
-			default:
-				print_to_main_window(", ");
-				break;
-			}
+		case 0:
+			break;
+		case 1:
+			print_to_main_window(" en ");
+			break;
+		default:
+			print_to_main_window(", ");
+			break;
 		}
 	}
 
@@ -129,86 +130,88 @@ void show_items(Progdata &progdata)
 }
 
 
-bool progress_animate_status(Progdata &progdata)
+bool progress_animate_status(CoreData& core)
 {
 	AnimateID present_animate = AnimateID::undefined;
 
-	for (auto& element : progdata.animates) 
-		if (element.second.room == progdata.status.curroom)
+	for (auto& element : core.animates)
+	{
+		if (element.second.room == core.status.current_room)
 		{
 			present_animate = element.first;
 			break;
 		}
+	}
 
 	switch (present_animate)
 	{
 	case AnimateID::hellhound:
-		progress_hellhound_status(progdata);
+		progress_hellhound_status(core);
 		break;
 	
 	case AnimateID::red_troll:
-		progress_red_troll_status(progdata);
+		progress_red_troll_status(core);
 		break;
 	
 	case AnimateID::plant:
-		progress_plant_status(progdata);
+		progress_plant_status(core);
 		break;
 	
 	case AnimateID::gnu:
-		progress_gnu_status(progdata);
+		progress_gnu_status(core);
 		break;
 	
 	case AnimateID::dragon:
-		progress_dragon_status(progdata);
+		progress_dragon_status(core);
 		break;
 	
 	case AnimateID::swelling:
-		progress_swelling_status(progdata);
+		progress_swelling_status(core);
 		break;
 	
 	case AnimateID::door:
-		progress_door_status(progdata);
+		progress_door_status(core);
 		break;
 	
 	case AnimateID::voices:
-		progress_voices_status(progdata);
+		progress_voices_status(core);
 		break;
 	
 	case AnimateID::barbecue:
-		progress_barbecue_status(progdata);
+		progress_barbecue_status(core);
 		break;
 	
 	case AnimateID::tree:
-		progress_tree_status(progdata);
+		progress_tree_status(core);
 		break;
 	
 	case AnimateID::green_crystal:
-		progress_green_crystal_status(progdata);
+		progress_green_crystal_status(core);
 		break;
 	
 	case AnimateID::computer:
-		progress_computer_status(progdata);
+		progress_computer_status(core);
 		break;
 	
 	case AnimateID::dragon_head:
-		progress_dragon_head_status(progdata);
+		progress_dragon_head_status(core);
 		break;
 	
 	case AnimateID::lava:
-		return progress_lava_status(progdata);
+		return progress_lava_status(core);
 	
 	case AnimateID::vacuum:
 		print_to_main_window("Doordat er in deze grot geen lucht is, klappen allebei je longen dicht. Een\n");
 		print_to_main_window("verschrikkelijke pijn kraakt als een bliksem door je lijf. Je valt naar achte-\n");
 		print_to_main_window("ren de grot uit, en daar val je even flauw.\n\n");
 
-		progdata.status.lifepoints -= 4; //   Levenswond
-		progdata.status.curroom = ROOM_SLANGENGROT; //   Grot terug
+		core.status.life_points -= 4; //   Levenswond
+		core.status.current_room = RoomID::snake_cave; //   Grot terug
 	
 		return false;
 	
 	case AnimateID::hatch:
-		progress_hatch_status(progdata);
+		progress_hatch_status(core);
 		break;
 	
 	case AnimateID::north_swamp:
@@ -221,18 +224,18 @@ bool progress_animate_status(Progdata &progdata)
 		print_to_main_window("en na enige tijd verlies je je bewustzijn.\n");
 		print_to_main_window("Als je weer bijkomt merk je dat je op een harde ondergrond ligt... in een grot.\n\n");
 
-		switch (progdata.status.curroom)
+		switch (core.status.current_room)
 		{
-		case ROOM_NOORDMOERAS:
-			progdata.status.curroom = ROOM_LEGEGROT51;
+		case RoomID::north_swamp:
+			core.status.current_room = RoomID::empty_cave51;
 			break;
 	
-		case ROOM_MIDDENMOERAS:
-			progdata.status.curroom = ROOM_TROOSTELOZEGROT;
+		case RoomID::middle_swamp:
+			core.status.current_room = RoomID::gloomy_cave;
 			break;
 	
-		case ROOM_ZUIDMOERAS:
-			progdata.status.curroom = ROOM_ROTSGROT;
+		case RoomID::south_swamp:
+			core.status.current_room = RoomID::rock_cave;
 			break;
 		}
 	
@@ -248,15 +251,15 @@ bool progress_animate_status(Progdata &progdata)
 		switch(get_random_number(3))
 		{
 		case 0:
-			progdata.status.curroom = ROOM_STORMGROT;
+			core.status.current_room = RoomID::storm_cave;
 			break;
 	
 		case 1:
-			progdata.status.curroom = ROOM_KLEINEGROT;
+			core.status.current_room = RoomID::small_cave;
 			break;
 	
 		case 2:
-			progdata.status.curroom = ROOM_WENTELTRAPGROT1;
+			core.status.current_room = RoomID::stairwell_cave1;
 			break;
 		}
 	
@@ -274,7 +277,7 @@ bool progress_animate_status(Progdata &progdata)
 		print_to_main_window("Als je weer kunt zien, merk je dat de lampen en de machine zijn verdwenen.\n");
 		print_to_main_window("Sterker nog, je ligt buiten...\n\n");
 
-		progdata.status.curroom = ROOM_BOS1;
+		core.status.current_room = RoomID::forest1;
 
 		return false;
 	}
@@ -282,113 +285,102 @@ bool progress_animate_status(Progdata &progdata)
 	return true;
 }
 
-void progress_hellhound_status(Progdata &progdata)
+void progress_hellhound_status(CoreData& core)
 {
-	switch (progdata.animates[AnimateID::hellhound].status)
+	switch (core.animates[AnimateID::hellhound].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er staat hier een reusachtige hellehond die je de weg verspert. Zijn scherpe\n");
 		print_to_main_window("tanden steken duidelijk af, en het rode kwijl druipt langzaam uit zijn bek.\n");
 		print_to_main_window("Hij kijkt je dreigend aan met zijn bloeddoorlopen ogen, en uit zijn keel\n");
 		print_to_main_window("klinkt een diep gegrom.\n\n");
 
-		progdata.animates[AnimateID::hellhound].status++;
+		core.animates[AnimateID::hellhound].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("De hellehond zet zich af tegen de grond, en hij spring boven op je lijf. Zijn\n");
 		print_to_main_window("nagels boren zich in je vlees, en op een gegeven moment bijt hij je hard in je\n");
 		print_to_main_window("schouder. Je botten kraken en een scheut van pijn trekt door je zenuwen. De\n");
 		print_to_main_window("hond laat je los, en hij kijkt je grommend aan.\n\n");
 
-		progdata.status.lifepoints--; //  Wond
-		progdata.animates[hellhound].status++;
+		core.status.life_points--; //  Wond
+		core.animates[AnimateID::hellhound].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("De honger van de hellehond is nog niet gestild. Een diep gegrom komt uit zijn\n");
 		print_to_main_window("keel, en hij staat klaar om opnieuw aan te vallen.\n\n");
 
-		progdata.animates[hellhound].status = get_random_number(2) + 1;
+		core.animates[AnimateID::hellhound].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 
-	case 3:
-
+	case AnimateStatus::status_3:
 		print_to_main_window("Door de wonden aangericht met je zwaard sterft de hevig bloedende hellehond. Je\n");
 		print_to_main_window("deelt nog een slag uit, en een stuk vlees van de hond laat los.\n\n");
 
-		progdata.items[hound_meat].room = progdata.status.curroom;
-		progdata.animates[hellhound].status++;
+		core.items[ItemID::hound_meat].room = core.status.current_room;
+		core.animates[AnimateID::hellhound].status++;
 
 		break;
 
-	case 4:
-
+	case AnimateStatus::status_4:
 		print_to_main_window("De dode hellehond ligt in een bad van dampend bloed.\n\n");
 		break;
 	}
 }
 
-void progress_red_troll_status(Progdata &progdata)
+void progress_red_troll_status(CoreData& core)
 {
-	switch (progdata.animates[red_troll].status)
+	switch (core.animates[AnimateID::red_troll].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
     	write_to_main_window(L"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geërgerd.\n\n");
 
-		progdata.animates[red_troll].status++;
+		core.animates[AnimateID::red_troll].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("Nu is de trol pas echt goed wakker. Hij pakt zijn zweep en komt dreigend op je\n");
 		print_to_main_window("af.\n\n");
 
-		progdata.animates[red_troll].status++;
+		core.animates[AnimateID::red_troll].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("De trol deelt je een harde klap uit met z'n zweep. Je voelt de brandende pijn\n");
 		print_to_main_window("tot je botten doordringen.\n\n");
 
-		progdata.status.lifepoints--; //   Wond
-		progdata.animates[red_troll].status++;
+		core.status.life_points--; //   Wond
+		core.animates[AnimateID::red_troll].status++;
 
 		break;
 
-	case 3:
-
+	case AnimateStatus::status_3:
 		print_to_main_window("Het schuim loopt uit de trol z'n bek. Hij heft opnieuw zijn zweep.\n\n");
 
-		progdata.animates[red_troll].status = get_random_number(2) + 2;
+		core.animates[AnimateID::red_troll].status = get_random_status(AnimateStatus::status_2, AnimateStatus::status_3);
 
 		break;
 
-	case booklet_thrown:
-
+	case AnimateStatus::booklet_thrown:
 		print_to_main_window("Opgewonden grijpt de trol het boekje. Hij bladert het door, en wordt roder en\n");
 		print_to_main_window("roder. Op een gegeven moment klinkt een geborrel op uit het wezen, en met een\n");
 		print_to_main_window("klap springt hij uit elkaar. Van de rotswanden druipen de resten van de trol\n");
 		print_to_main_window("langzaam naar beneden.\n");
 		print_to_main_window("Opeens zie je iets glinsteren.\n\n");
 
-		progdata.items[red_crystal].room = progdata.status.curroom;
-		progdata.animates[red_troll].status++;
+		core.items[ItemID::red_crystal].room = core.status.current_room;
+		core.animates[AnimateID::red_troll].status++;
 
 		break;
 
-	case 5:
-
+	case AnimateStatus::status_5:
 		print_to_main_window("Overal in de grot liggen stukken van de verscheurde trol verspreid. Het slijm\n");
 		print_to_main_window("zuigt aan je schoenen, en een vieze stank dringt in je neus.\n\n");
 
@@ -396,100 +388,92 @@ void progress_red_troll_status(Progdata &progdata)
 	}
 }
 
-void progress_plant_status(Progdata &progdata)
+void progress_plant_status(CoreData& core)
 {
-	switch (progdata.animates[plant].status)
+	switch (core.animates[AnimateID::plant].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("In deze grot leeft een vleesetende plant. Zijn dikke groene stengel loopt uit\n");
 		print_to_main_window("in een afschrikwekkende kop, met afzichtelijke tanden. Hij heeft je gezien en\n");
 		print_to_main_window("beweegt zijn opengesperde bek in je richting. Voordat je een stap hebt kunnen\n");
 		print_to_main_window("zetten zit je verstrengd in het monster, en zet de plant zijn tanden in je\n");
 		print_to_main_window("nek.\n\n");
 
-		progdata.status.lifepoints--; //   Wond
-		progdata.animates[plant].status = get_random_number(2) + 1;
+		core.status.life_points--; //   Wond
+		core.animates[AnimateID::plant].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("De plant likt met zijn kleine schurfterige tongetje je bloed van zijn bek.\n");
 		print_to_main_window("Met zijn groene oogjes kijkt hij je weer aan, en hij maakt aanstalten zijn\n");
 		print_to_main_window("tanden opnieuw in je nek te zetten.\n\n");
 
-		progdata.animates[plant].status++;
+		core.animates[AnimateID::plant].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("Opnieuw omsluit de bek van de plant je hals. Een warme stroom bloed loopt via\n");
 		print_to_main_window("je rug naar beneden, en de pijn is nu ondraaglijk. Na een tijdje laat de plant\n");
 		print_to_main_window("je weer los.\n\n");
 
-		progdata.status.lifepoints--; //   Wond
-		progdata.animates[plant].status = get_random_number(2) + 1;
+		core.status.life_points--; //   Wond
+		core.animates[AnimateID::plant].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 
-	case dead:
-
+	case AnimateStatus::dead:
 		print_to_main_window("De resten van wat eerst een vleesetende plant was liggen nu op de grond van\n");
 		print_to_main_window("de grot. Zijn bek ligt opengesperd, en zijn ogen rollen bijna uit zijn oogkas-\n");
 		print_to_main_window("sen. Uit zijn stengel druipt langzaam het bloed van zijn slachtoffers.\n");
 		print_to_main_window("Op de plek waar vroeger zijn beschimmelde wortels waren zit nu een opening.\n\n");
 
-		progdata.rooms[ROOM_VERWAARLOOSDEGROT].connect[north] = ROOM_SLIJMGROT; //	Maak verbinding met slijmgrot
-		progdata.animates[plant].status++;
+		core.rooms[RoomID::neglected_cave].connections.set(Command::north, RoomID::slime_cave); //	Maak verbinding met slijmgrot
+		core.animates[AnimateID::plant].status++;
 
 		break;
 
-	case 4:
+	case AnimateStatus::status_4:
 		print_to_main_window("De vleesetende plant is niet veel meer dan een berg stinkend tuinafval.\n\n");
 
 		break;
 	}
 }
 
-void progress_gnu_status(Progdata &progdata)
+void progress_gnu_status(CoreData& core)
 {
-	switch (progdata.animates[gnu].status)
+	switch (core.animates[AnimateID::gnu].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er staat hier een grote behaarde gnoe die je met twee geniepige oogjes aan-\n");
 		print_to_main_window("kijkt. Tussen de haren van zijn vacht bevinden zich allerlei kleine kruipende\n");
 		print_to_main_window("beestjes, die je nog nooit eerder gezien hebt. Het beest verspreidt een\n");
 		print_to_main_window("afschuwelijke lucht. Kweilend en zwaar snuivend komt hij langzaam naar je toe.\n\n");
 
-		progdata.animates[gnu].status++;
+		core.animates[AnimateID::gnu].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("De gnoe neemt een sprong, en stoot met zijn grote kop hard in je maag. Je\n");
 		print_to_main_window("hebt het gevoel alsof je longen uit je lijf worden geperst. Versuft sta je\n");
 		print_to_main_window("weer op.\n\n");
 
-		progdata.status.lifepoints--; //   Wond
+		core.status.life_points--; //   Wond
 
 		break;
 
-	case poisonous_meat_fed:
-
+	case AnimateStatus::poisonous_meat_fed:
 		write_to_main_window(L"De gnoe ziet het vlees, snuffelt er aan, en slokt het in één hap naar binnen.\n");
 		print_to_main_window("Je ziet hem langzaam opzwellen en zijn hersens komen door zijn oogkassen naar\n");
 		print_to_main_window("buiten. Hij zakt in elkaar en blijft roerloos liggen.\n\n");
 
-		progdata.animates[gnu].status = dead;
+		core.animates[AnimateID::gnu].status = AnimateStatus::dead;
 
 		break;
 
-	case dead:
-
+	case AnimateStatus::dead:
 		print_to_main_window("Het bultachtige lichaam van de gnoe ligt op de grond en de hersens liggen er\n");
 		print_to_main_window("als een papje naast.\n\n");
 
@@ -497,75 +481,68 @@ void progress_gnu_status(Progdata &progdata)
 	}
 }
 
-void progress_dragon_status(Progdata &progdata)
+void progress_dragon_status(CoreData& core)
 {
-	switch (progdata.animates[dragon].status)
+	switch (core.animates[AnimateID::dragon].status)
 	{
-
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("In deze grot bevindt zich een grote draak. Hij heeft meerdere koppen, die je\n");
 		print_to_main_window("allemaal bespieden met gele oogjes. Zijn hele huid is bedekt met schimmel, en\n");
 		print_to_main_window("uit zijn bekken hangen lange, bruine tongen, waar een bijtend zuur af drup-\n");
 		print_to_main_window("pelt. Opeens komt uit een van de bekken een rommelend geluid. Met moeite\n");
 		print_to_main_window("versta je \"Ben jij een koekie?\".\n\n");
 
-		progdata.animates[dragon].status++;
+		core.animates[AnimateID::dragon].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("De koppen van de draak bewegen nu agressiever heen en weer en beginnen hevig\n");
 		print_to_main_window("te snuiven.\n");
 		print_to_main_window("De lucht uit de drakekoppen ruikt afgrijselijk, en je slaat achterover van\n");
 		print_to_main_window("walging. Een van de bekken spert zich wijd open, en harder dan eerst klinkt\n");
 		print_to_main_window("\"BEN JIJ EEN KOEKIE?!?\".\n\n");
 
-		progdata.animates[dragon].status++;
+		core.animates[AnimateID::dragon].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("De draak heft langzaam een van zijn gore poten op, en geeft opeens een ontzet-\n");
 		print_to_main_window("tende harde klap. Er kraakt iets in je hoofd, en een duizeling maakt zich van\n");
 		print_to_main_window("je meester. Hij maakt aanstalten je nog een klap te verkopen.\n\n");
 
-		progdata.status.lifepoints--; //   Wond
+		core.status.life_points--; //   Wond
 
 		break;
 
-	case cookie_is_thrown:
-
+	case AnimateStatus::cookie_is_thrown:
 		print_to_main_window("De draak grijpt het koekje, en steekt hem gelijk in een van zijn grote bekken.\n");
 		print_to_main_window("Langzaam begint hij te wankelen, en met een doffe dreun klapt hij op de grond.\n");
 		print_to_main_window("Uit de bek waar juist het koekje in verdween druipt wat kwijl. De draak\n");
 		print_to_main_window("slaapt.\n\n");
 
-		progdata.animates[dragon].status++;
+		core.animates[AnimateID::dragon].status++;
 
 		break;
 
-	case sleeping_lightly:
-
+	case AnimateStatus::sleeping_lightly:
 		print_to_main_window("De draak slaapt onrustig. Soms beweegt een van zijn koppen iets, en uit zijn\n");
 		print_to_main_window("lijf klinkt een diep gegrom.\n\n");
 
 		break;
 
-	case nightcap_on_head:
-
+	case AnimateStatus::nightcap_on_head:
 		print_to_main_window("Voorzichtig zet je de draak de slaapmuts op. De vrolijke kleuren van de muts\n");
 		print_to_main_window("steken af tegen de beschimmelde huid, en de muts zakt iets scheef. Op een ge-\n");
 		print_to_main_window("geven moment valt er iets, en het klettert tegen de harde rotsvloer.\n\n");
 
-		progdata.items[gas_capsule].room = progdata.status.curroom;
-		progdata.animates[dragon].status++;
+		core.items[ItemID::gas_capsule].room = core.status.current_room;
+		core.animates[AnimateID::dragon].status++;
 
 		break;
 
-	case 6:
+	case AnimateStatus::status_6:
 
 		print_to_main_window("De draak slaapt rustig.\n\n");
 
@@ -573,29 +550,27 @@ void progress_dragon_status(Progdata &progdata)
 	}
 }
 
-void progress_swelling_status(Progdata &progdata)
+void progress_swelling_status(CoreData& core)
 {
-	switch (progdata.animates[swelling].status)
+	switch (core.animates[AnimateID::swelling].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er staat hier een wezen dat nog het meest lijkt op een gezwel. Het kijkt je\n");
 		print_to_main_window("aan met 2 gluiperige ogen, op zijn huid zitten schurftvlekken, en op zijn\n");
 		print_to_main_window("mondhoeken groeien algen. Met zijn lange, glibberige tentakels houdt het zich\n");
 		print_to_main_window("vast aan alle wanden van de grot en verspert zo je weg.\n\n");
 
-		progdata.animates[swelling].status++;
+		core.animates[AnimateID::swelling].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("Het gezwel zit nog steeds aan de grotwanden vastgezogen, en het trilt licht.\n\n");
 
 		break;
 
-	case swelling_gassed:
-		if (progdata.items[gasmask].room == item_owned)
+	case AnimateStatus::swelling_gassed:
+		if (core.items[ItemID::gasmask].room == RoomID::owned)
 		// gasmasker op
 		{
 			print_to_main_window("Als je op de hendel drukt, zie je een bruingrijs gas uit het patroon spuiten.\n");
@@ -612,16 +587,15 @@ void progress_swelling_status(Progdata &progdata)
 			print_to_main_window("om je tegen het gas te beschermen, en je valt flauw. Na een tijdje kom je weer\n");
 			print_to_main_window("bij.\n\n");
 
-			progdata.status.lifepoints -= 4; //    Grote wond
+			core.status.life_points -= 4; //    Grote wond
 		}
 
-		progdata.rooms[ROOM_VLEERMUISGROT].connect[north] = ROOM_VERDOEMENISGROT;
-		progdata.animates[swelling].status = dead;
+		core.rooms[RoomID::bat_cave].connections.set(Command::north, RoomID::damnation_cave);
+		core.animates[AnimateID::swelling].status = AnimateStatus::dead;
 
 		break;
 
-	case dead:
-
+	case AnimateStatus::dead:
 		print_to_main_window("Op het gescheurde lichaam van het gezwel zitten allemaal schimmels. Uit zijn\n");
 		print_to_main_window("maag kruipen pissebedden en oorkruipers. Er verspreidt zich een sterke rot-\n");
 		print_to_main_window("lucht, en er ontstaat langzaam een klein slijmplasje.\n\n");
@@ -630,151 +604,127 @@ void progress_swelling_status(Progdata &progdata)
 	}
 }
 
-void progress_door_status(Progdata &progdata)
+void progress_door_status(CoreData& core)
 {
-	switch (progdata.animates[door].status)
+	switch (core.animates[AnimateID::door].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("In het noorden zit een grote, vastgeroeste deur. Hij is met blote handen niet\n");
 		print_to_main_window("meer open te krijgen.\n\n");
 
 		break;
 
-	case door_open:
-
+	case AnimateStatus::door_open:
 		write_to_main_window(L"Je zet één eind van het bot onder de deur, en op het andere begin je te duwen.\n");
 		print_to_main_window("Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een\n");
 		print_to_main_window("kier. Je geeft nog een duw, en langzaam draait de deur open.\n\n");
 
-		progdata.rooms[ROOM_LEGEGROT45].connect[north] = ROOM_VUILNISGROT;
-		progdata.animates[door].status++;
+		core.rooms[RoomID::empty_cave45].connections.set(Command::north, RoomID::garbage_cave);
+		core.animates[AnimateID::door].status++;
 
 		break;
 
-	case 2:
+	case AnimateStatus::status_2:
 		print_to_main_window("De deur is nu open, en geeft toegang tot een grot.\n\n");
 
 		break;
 	}
 }
 
-void progress_voices_status(Progdata &progdata)
+void progress_voices_status(CoreData& core)
 {
-	switch (progdata.animates[voices].status)
+	switch (core.animates[AnimateID::voices].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Uit het niets hoor je opeens een paar stemmen. Met moeite kun je ze verstaan:\n");
 		print_to_main_window("\"Wat schreeuwt is in z'n hart nog een kind\".\n");
 		print_to_main_window("Dan is het weer stil.\n\n");
 
-		progdata.animates[voices].status++;
+		core.animates[AnimateID::voices].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("Vanuit de verte hoor je zachte, lachende stemmetjes.\n\n");
 
 		break;
 	}
 }
 
-void progress_barbecue_status(Progdata &progdata)
+void progress_barbecue_status(CoreData& core)
 {
-	switch (progdata.animates[barbecue].status)
+	switch (core.animates[AnimateID::barbecue].status)
 	{
-	case initial_burn:
-
+	case AnimateStatus::initial_burn:
 		print_to_main_window("Op deze open plek staat een barbecue gezellig te branden.\n\n");
 
 		break;
 
-	case hashis_on_fire:
-
+	case AnimateStatus::hashis_on_fire:
 		print_to_main_window("Als je de hasj op de barbecue gooit verschiet de vlam van kleur. Verder gebeurt\n");
 		print_to_main_window("er niets.\n\n");
 
-		progdata.animates[barbecue].status = ingredients_burning;
+		core.animates[AnimateID::barbecue].status = AnimateStatus::ingredient_burning;
 
 		break;
 
-	case meat_on_fire:
-
+	case AnimateStatus::meat_on_fire:
 		print_to_main_window("Als je het vlees op de barbecue gooit verschiet de vlam van kleur. Verder\n");
 		print_to_main_window("gebeurt er niets.\n\n");
 
-		progdata.animates[barbecue].status = ingredients_burning;
+		core.animates[AnimateID::barbecue].status = AnimateStatus::ingredient_burning;
 
 		break;
 
-	case ingredients_burning:
-
+	case AnimateStatus::ingredient_burning:
 		print_to_main_window("De barbecue brandt nog steeds, alleen iets onrustiger dan eerst.\n\n");
 
 		break;
 
-	case cookie_is_baking:
-
+	case AnimateStatus::cookie_is_baking:
 		write_to_main_window(L"Een grote rookontwikkeling treedt op wanneer het tweede ingrediënt in de\n");
 		print_to_main_window("barbecue belandt.\n");
 		write_to_main_window(L"Knetterend smelten de 2 ingrediënten om tot een koekje.\n\n");
 
-		progdata.items[cookie].room = progdata.status.curroom;
-		progdata.animates[barbecue].status = initial_burn;
+		core.items[ItemID::cookie].room = core.status.current_room;
+		core.animates[AnimateID::barbecue].status = AnimateStatus::initial_burn;
 
 		break;
 	}
 }
 
-void progress_tree_status(Progdata &progdata)
+void progress_tree_status(CoreData& core)
 {
-	static const wchar_t *smeulendbos = L"Om je heen zie je de smeulende resten van wat eens bos was.";
-
-	int i, j;
-
-	switch (progdata.animates[tree].status)
+	switch (core.animates[AnimateID::tree].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("In een kleine open plek staat een grote, kurkdroge, dode boom. Op de stam zit\n");
 		print_to_main_window("een bordje met daarop de tekst \"Roken en open vuur verboden\".\n\n");
 
 		break;
 
-	case tree_on_fire:
-
+	case AnimateStatus::tree_on_fire:
 		print_to_main_window("Uit de pijp van de vlammenwerper spuit een enorme vlam. De boom begint langzaam\n");
 		print_to_main_window("te branden, en weldra staat hij in lichterlaaie. De vlammen slaan om zich heen,\n");
 		print_to_main_window("en het hele bos begint mee te branden. Je bent omringd door een enorme vuurzee,\n");
 		print_to_main_window("en de hitte is enorm.\n\n");
 
-		if (progdata.items[thermal_suit].room != item_owned)
+		if (core.items[ItemID::thermal_suit].room != RoomID::owned)
 		{
 			print_to_main_window("Je hebt niets om je te beschermen tegen de hitte, en je loopt flinke brandwon-\n");
 			print_to_main_window("den op.\n\n");
 
-			progdata.status.lifepoints -= 4; //   Levenswond
+			core.status.life_points -= 4; //   Levenswond
 		}
 
-		for (i = 0; i < 20; i += 5)
-			for (j = 0; j < 2; j++)
-				if (i + j != 6)
-					progdata.rooms[i + j].descript = smeulendbos;
-
-		progdata.rooms[ROOM_BOS2].descript = smeulendbos;
-		progdata.rooms[ROOM_BOS4].descript = smeulendbos;
-		progdata.rooms[ROOM_BOS7].descript = smeulendbos;
-
-		progdata.items[green_crystal].room = ROOM_BOS4;
-		progdata.animates[green_crystal].status = 1;
-		progdata.animates[tree].status++;
+		core.status.has_tree_burned = true;
+		core.items[ItemID::green_crystal].room = RoomID::forest4;
+		core.animates[AnimateID::green_crystal].status = AnimateStatus::visible;
+		core.animates[AnimateID::tree].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("Uit de grond steken nog een paar wortels, en er naast ligt een verkoold stuk\n");
 		print_to_main_window("bord met daarop \"R   n e  op n v u  ver  d n\".\n\n");
 
@@ -782,100 +732,89 @@ void progress_tree_status(Progdata &progdata)
 	}
 }
 
-void progress_green_crystal_status(Progdata &progdata)
+void progress_green_crystal_status(CoreData& core)
 {
-	switch (progdata.animates[green_crystal].status)
+	switch (core.animates[AnimateID::green_crystal].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		write_to_main_window(L"Je struikelt over iets. Door de begroeïing zie je niet wat het is.\n\n");
 
 		break;
 	}
 }
 
-void progress_computer_status(Progdata &progdata)
+void progress_computer_status(CoreData& core)
 {
-	switch (progdata.animates[computer].status)
+	switch (core.animates[AnimateID::computer].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er staat een computer van het merk Beull die bestaat bestaat uit een kast met\n");
 		print_to_main_window("een 3.5-inch drive en een monitor. Op de monitor staat: \"Datadisk invoeren\n");
 		print_to_main_window("a.u.b.\".\n\n");
 
-		progdata.animates[computer].status++;
+		core.animates[AnimateID::computer].status++;
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("De computer wacht nog steeds.\n\n");
 
 		break;
 
-	case computer_is_reading:
-
+	case AnimateStatus::computer_is_reading:
 		print_to_main_window("De drive begint te lezen en na korte tijd verschijnt er informatie op het\n");
 		print_to_main_window("scherm. Er staat: \"In het onderste grottenstelsel moet men een letter-\n");
 		print_to_main_window("route volgen die resulteert in de naam van het te vinden voorwerp.\".\n");
 		print_to_main_window("Na even wordt het scherm zwart.\n\n");
 
-		progdata.animates[computer].status++;
+		core.animates[AnimateID::computer].status++;
 
 		break;
 
-	case 3:
-
+	case AnimateStatus::status_3:
 		print_to_main_window("Er valt niets te zien op de monitor en de computer is stil.\n\n");
 
 		break;
 	}
 }
 
-void progress_dragon_head_status(Progdata &progdata)
+void progress_dragon_head_status(CoreData& core)
 {
-	switch (progdata.animates[dragon_head].status)
+	switch (core.animates[AnimateID::dragon_head].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er zit in het noorden een zware, dichte deur met daarnaast een drakekop met een\n");
 		print_to_main_window("geopende muil. Op de deur zit een zwaar slot.\n\n");
 
 		break;
 
-	case 1:
-
+	case AnimateStatus::status_1:
 		print_to_main_window("Je stopt het kristal in de muil van de drakekop, die daarop dicht- en weer\n");
 		print_to_main_window("opengaat. Het kristal is nu verdwenen, en de ogen van de kop beginnen licht te\n");
 		print_to_main_window("gloeien.\n\n");
 
-		progdata.animates[dragon_head].status++;
+		core.animates[AnimateID::dragon_head].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("De ogen van de draak blijven licht gloeien.\n\n");
 
 		break;
 
-	case 3:
-
+	case AnimateStatus::status_3:
 		print_to_main_window("Je stopt nog een kristal in de muil. Weer sluit en opent deze, en weer is het\n");
 		print_to_main_window("kristal verdwenen. Het schijnsel uit de ogen wordt nu sterker.\n\n");
 
-		progdata.animates[dragon_head].status++;
+		core.animates[AnimateID::dragon_head].status++;
 		break;
 
-	case 4:
-
+	case AnimateStatus::status_4:
 		print_to_main_window("De ogen van de draak blijven gloeien.\n\n");
 
 		break;
 
-	case 5:
-
+	case AnimateStatus::status_5:
 		print_to_main_window("Je legt het laatste kristal in de kop. De muil sluit zich weer, en nu blijft\n");
 		print_to_main_window("hij dicht. De ogen beginnen nu steeds feller te gloeien. Op een gegeven moment\n");
 		print_to_main_window("concentreert de gloed zich tot een erg felle lichtstraal, die langs je schiet\n");
@@ -883,26 +822,24 @@ void progress_dragon_head_status(Progdata &progdata)
 		print_to_main_window("licht met akelige precisie op het zware slot dat door de enorme hitte verdampt.\n");
 		print_to_main_window("Daarna zwaait de deur langzaam met veel gepiep open.\n\n");
 
-		progdata.rooms[ROOM_KLEINEGROT].connect[north] = ROOM_HOOFDGROT;
-		progdata.animates[dragon_head].status++;
+		core.rooms[RoomID::small_cave].connections.set(Command::north, RoomID::main_cave);
+		core.animates[AnimateID::dragon_head].status++;
 
 		break;
 
-	case 6:
-
+	case AnimateStatus::status_6:
 		print_to_main_window("De zware deur is nu open en geeft toegang tot een ruimte.\n\n");
 
 		break;
 	}
 }
 
-bool progress_lava_status(Progdata &progdata)
+bool progress_lava_status(CoreData& core)
 {
-	switch (progdata.animates[lava].status)
+	switch (core.animates[AnimateID::lava].status)
 	{
-	case 0:
-
-		if (progdata.items[thermal_suit].room == item_owned)
+	case AnimateStatus::initial:
+		if (core.items[ItemID::thermal_suit].room == RoomID::owned)
 		{
 			print_to_main_window("Voor je zie je een krater waarin lava opborrelt. Van het lava komt een dikke\n");
 			print_to_main_window("damp, en een rode gloed verlicht de omtrek. De hitte is enorm, maar het hitte-\n");
@@ -913,16 +850,15 @@ bool progress_lava_status(Progdata &progdata)
 			print_to_main_window("Voor je zie je een krater waarin lava opborrelt. De hitte is zo intens, dat je\n");
 			print_to_main_window("een aantal brandwonden oploopt en naar achteren wordt geblazen.\n\n");
 
-			progdata.status.curroom = ROOM_OLIEGROT; //   Grot terug
-			progdata.status.lifepoints -= 4; //   Levenswond
+			core.status.current_room = RoomID::oil_cave; //   Grot terug
+			core.status.life_points -= 4; //   Levenswond
 
 			return false;
 		}
 
 		return true;
 
-	case bomb_dropped:
-
+	case AnimateStatus::bomb_dropped:
 		print_to_main_window("Je gooit de positronenbom met een pisboogje in de lava. Met luid gesis zakt\n");
 		print_to_main_window("de bom langzaam weg naar beneden. De lava begint op een gegeven moment vreemd\n");
 		print_to_main_window("te borrelen en verschiet ineens van rood naar groen. Dan zie je een oogver-\n");
@@ -938,27 +874,24 @@ bool progress_lava_status(Progdata &progdata)
 	return true;
 }
 
-void progress_hatch_status(Progdata &progdata)
+void progress_hatch_status(CoreData& core)
 {
-	switch (progdata.animates[hatch].status)
+	switch (core.animates[AnimateID::hatch].status)
 	{
-	case 0:
-
+	case AnimateStatus::initial:
 		print_to_main_window("Er zit een dicht, houten luik in het plafond. Je kunt er niet bij.\n\n");
 
 		break;
 
-	case hatch_opening:
-
+	case AnimateStatus::hatch_opening:
 		print_to_main_window("Het luik in het plafond gaat open en er dwarrelt een vel papier naar beneden.\n\n");
 
-		progdata.items[hatch].room = ROOM_RGROT;
-		progdata.animates[hatch].status++;
+		core.items[ItemID::paper].room = RoomID::r_cave;
+		core.animates[AnimateID::hatch].status++;
 
 		break;
 
-	case 2:
-
+	case AnimateStatus::status_2:
 		print_to_main_window("Het luik aan het plafond hangt nu open. Er zit een leeg gat.\n\n");
 
 		break;
