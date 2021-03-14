@@ -65,4 +65,7 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="R136.rc" />
+  </ItemGroup>
 </Project>
