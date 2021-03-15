@@ -1,3 +1,9 @@
+#pragma once
+
+#if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
+#error (PD)Curses must be built with wide-character support
+#endif
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -7,10 +13,6 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
-
-#if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
-	#error (PD)Curses must be built with wide-character support
-#endif
 
 // Figure out which (n)curses header to include
 #ifdef HAVE_NCURSES_NCURSES_H
@@ -22,6 +24,11 @@
 #else
 	#include <curses.h>
 #endif
+
+extern const char* saved_status_path;
+extern WINDOW* banner_window;
+extern WINDOW* main_window;
+extern WINDOW* input_window;
 
 enum class RoomID : char {
 	forest0 = 0,
@@ -250,7 +257,8 @@ constexpr char max_owned_items = 10;
 	Structures
 */
 
-class RoomConnections {
+class RoomConnections 
+{
 	std::map<Command, RoomID> connections;
 	bool is_direction_command(Command command) const;
 
@@ -397,13 +405,8 @@ struct ParseData
 	bool parse_error;
 };
 
-/*
-	Functions
-*/
 int get_random_number(int max);
-AnimateStatus get_random_status(int lowest, int highest);
 AnimateStatus get_random_status(AnimateStatus lowest, AnimateStatus highest);
-
 void setup_windows();
 int print_to_main_window(const char* fmt, ...);
 void initialize_console();
@@ -434,18 +437,13 @@ AnimateStatus next_status(AnimateStatus status);
 AnimateStatus operator++(AnimateStatus& status, int);
 AnimateStatus& operator++(AnimateStatus& status);
 
-extern const char* saved_status_path;
-extern WINDOW* banner_window;
-extern WINDOW* main_window;
-extern WINDOW* input_window;
-
-template <typename E>
+template <class E>
 constexpr auto to_value(E e) noexcept
 {
 	return static_cast<std::underlying_type_t<E>>(e);
 }
 
-template<typename L>
+template<class L>
 constexpr L combines_with(L value) { return -(value + 2); }
 
 constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }

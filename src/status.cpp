@@ -1,5 +1,4 @@
-﻿#include "r136.h"
-#include "status.h"
+﻿#include "status.h"
 
 void show_room_status(CoreData& core)
 {

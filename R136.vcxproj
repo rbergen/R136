@@ -173,7 +173,6 @@
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\status.cpp" />
     <ClCompile Include="src\act.cpp" />
-    <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

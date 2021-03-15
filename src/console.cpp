@@ -1,11 +1,9 @@
-/***************************************************************************
- * Includes necessary for functions to work
- ***************************************************************************/
 #include "console.h"
 
-/***************************************************************************
- * #defines of constants used by the functions
- ***************************************************************************/
+WINDOW* banner_window = NULL;
+WINDOW* main_window = NULL;
+WINDOW* input_window = NULL;
+WINDOW* full_screen = NULL;
 
 enum class Key : char {
 	kEscape = -2,
@@ -16,91 +14,53 @@ enum class Key : char {
 	kShiftTab = 4
 };
 
-/* Value that determines the settings for Insert for all functions.
-	== 0: Insert off at start, use block cursor to indicate Insert on.
-	== 1: Insert on at start, use block cursor to indicate Insert on.
-	== 2: Insert off at start, use block cursor to indicate Insert off.
-	== 3: Insert on at start, use block cursor to indicate Insert off. */
-constexpr int insert_flag = 3;
-
-class ColorSet 
-{
-	static std::map<Color, ColorSet*> color_sets;
-
-	Color color;
-	short foreground, background;
-	chtype style, value;
-	bool is_initialized;
-
-public:
-	ColorSet(Color c, short fg, short bg) : ColorSet(c, fg, bg, 0) {}
-
-	ColorSet(Color c, short fg, short bg, chtype s) :
-		color(c),
-		foreground(fg),
-		background(bg),
-		style(s),
-		value(),
-		is_initialized(false)
-	{}
-
-	void initialize() 
-	{
-		auto color_value = to_value(color);
-		init_pair(color_value, foreground, background);
-		value = COLOR_PAIR(color_value) | style;
-
-		is_initialized = true;
-	}
-
-	chtype get_attrs()
-	{
-		if (!is_initialized)
-			initialize();
-
-		return value;
-	}
-
-	static void add(Color c, short fg, short bg, chtype s)
-	{
-		add(ColorSet(c, fg, bg, s));
-	}
-
-	static void add(Color c, short fg, short bg)
-	{
-		add(ColorSet(c, fg, bg));
-	}
-
-	static void add(ColorSet set) 
-	{
-		auto element = color_sets.find(set.color);
-		if (element == color_sets.end())
-			color_sets.insert(std::make_pair(set.color, &set));
-		else
-			element->second = &set;
-	}
-
-	static chtype get_attrs(Color color) 
-	{
-		auto element = color_sets.find(color);
-		if (element == color_sets.end())
-			throw std::out_of_range("color");
-
-		return element->second->get_attrs();
-	}
-};
-
 std::map<Color, ColorSet*> ColorSet::color_sets;
 
-WINDOW* banner_window = NULL;
-WINDOW* main_window = NULL;
-WINDOW* input_window = NULL;
-WINDOW* full_screen = NULL;
+void ColorSet::initialize()
+{
+	auto color_value = to_value(color);
+	init_pair(color_value, foreground, background);
+	value = COLOR_PAIR(color_value) | style;
 
+	is_initialized = true;
+}
 
- /***************************************************************************
-  * Definitions of the functions
-  ***************************************************************************/
+chtype ColorSet::get_attrs()
+{
+	if (!is_initialized)
+		initialize();
+
+	return value;
+}
+
+void ColorSet::add(Color c, short fg, short bg, chtype s)
+{
+	add(ColorSet(c, fg, bg, s));
+}
+
+void ColorSet::add(Color c, short fg, short bg)
+{
+	add(ColorSet(c, fg, bg));
+}
+
+void ColorSet::add(ColorSet set)
+{
+	auto element = color_sets.find(set.color);
+	if (element == color_sets.end())
+		color_sets.insert(std::make_pair(set.color, &set));
+	else
+		element->second = &set;
+}
+
+chtype ColorSet::get_attrs(Color color)
+{
+	auto element = color_sets.find(color);
+	if (element == color_sets.end())
+		throw std::out_of_range("color");
+
+	return element->second->get_attrs();
+}
+
 
 void setup_windows()
 {
