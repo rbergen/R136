@@ -124,7 +124,8 @@ enum class Color : short
 	inverse,
 	inverse_red,
 	normal,
-	COUNT
+	COUNT,
+	undefined = -1
 };
 
 enum class Cursor : char
@@ -268,6 +269,7 @@ public:
 	bool is_open(Command direction) const;
 	bool set(Command direction, RoomID room);
 	bool erase(Command direction);
+	void clear();
 	std::map<Command, RoomID>::iterator begin();
 	std::map<Command, RoomID>::iterator end();
 };
@@ -356,6 +358,7 @@ class EntityMap
 public:
 	void add_or_set(TKey key, TValue& value);
 	bool contains(TKey key);
+	void clear();
 	TValue& operator[](TKey key);
 	typename std::map<TKey, TValue*>::iterator begin();
 	typename std::map<TKey, TValue*>::iterator end();
@@ -382,9 +385,9 @@ class Inventory : public BoundedCollection<ItemID>
 {
 public:
 	Inventory(int capacity);
-	bool add(Item item);
+	bool add(Item& item);
 	bool add(ItemID item);
-	bool remove(Item item);
+	bool remove(Item& item);
 };
 
 struct CoreData
@@ -405,29 +408,124 @@ struct ParseData
 	bool parse_error;
 };
 
+class Window
+{
+	friend class Console;
+
+	int scanf(int check_input, int length, const char* allowed_characters, const char* format_string, ...);
+
+protected:
+	WINDOW* wnd;
+	Color standard_color;
+	bool notify_console_of_resize;
+
+	Window(WINDOW* wnd);
+
+	Window(WINDOW* wnd, bool enable_keypad);
+
+	Window(WINDOW* wnd, Color standard_color);
+
+	Window(WINDOW* wnd, bool enable_keypad, Color standard_color);
+
+	~Window();
+
+	void resize(int height, int width);
+
+	void move(int y, int x, int height, int width);
+
+	void set_color(Color color);
+
+	void unset_color(Color color);
+
+	void get_position(int& y, int& x);
+
+	int get_x();
+
+	int get_y();
+
+	void set_position(int y, int x);
+
+	void clear_line();
+
+	void set_scrollable(bool enable);
+
+	void get_size(int& y, int& x);
+
+	int get_string_input(const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals);
+
+public:
+	void clear();
+
+	void clear(Color color);
+
+	void refresh();
+
+	void print_centered(const char* str);
+
+	int print(const char* format, ...);
+
+	void print(char c);
+
+	int write(const wchar_t* text);
+
+	void write_block(int y, int x, Color color, const wchar_t** block, int rowcount);
+
+	void write_block(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx);
+
+	void write(int y, int x, Color color, const wchar_t* text);
+
+	void wait_for_key();
+
+	int get_char_input(const char* allowed);
+};
+
+class InputWindow : protected Window
+{
+	friend class Console;
+
+	InputWindow(WINDOW* wnd);
+
+public:
+	void get_string_input(char* input, int max_length);
+
+	void print_error(const char* format, ...);
+};
+
+class Console
+{
+	Window* fullscreen_window;
+	Window* main_window;
+	Window* banner_window;
+	InputWindow* input_window;
+
+	~Console();
+
+	Window& banner();
+
+	void setup_windows();
+
+public:
+	Window& fullscreen();
+
+	Window& main();
+
+	InputWindow& input();
+
+	void process_resize();
+
+	void initialize();
+
+	void release();
+};
+
+extern Console console;
+
 int get_random_number(int max);
 AnimateStatus get_random_status(AnimateStatus lowest, AnimateStatus highest);
-void setup_windows();
-int print_to_main_window(const char* fmt, ...);
-void initialize_console();
-void release_console();
-void print_fullscreen_block(int y, int x, Color colors, const wchar_t** block, int rowcount);
-void print_fullscreen_block_section(int y, int x, Color colors, const wchar_t** block, int uppery, int leftx, int lowery, int rightx);
-void print_fullscreen(int y, int x, Color colors, const wchar_t* text);
-void clear_fullscreen(Color colors);
-void get_fullscreen_size(int& y, int& x);
-void update_fullscreen();
-void clear_window();
-void wait_for_key();
-int write_to_main_window(const wchar_t* text);
-void write_centered(WINDOW* win, const char* str);
-void get_command_string(char* input, int maxlength);
-void print_command_string(const char* fmt, ...);
-int advanced_getchar(const char* allowed);
 void run_intro();
 bool save_status(CoreData& core);
 bool load_status(CoreData& core);
-bool initialize(CoreData& core);
+void initialize(CoreData& core);
 bool perform_command(CoreData& core);
 void force_exit(void);
 void show_room_status(CoreData& core);
@@ -536,7 +634,7 @@ TValue& EntityMap<TKey, TValue>::operator[](TKey key)
 	if (element == map.end())
 		throw std::out_of_range("key");
 
-	return *element->second;
+	return *(element->second);
 }
 
 template<class TKey, class TValue>
@@ -549,4 +647,10 @@ template<class TKey, class TValue>
 typename std::map<TKey, TValue*>::iterator EntityMap<TKey, TValue>::end()
 {
 	return map.end();
+}
+
+template<class TKey, class TValue>
+void EntityMap<TKey, TValue>::clear() 
+{
+	map.clear();
 }

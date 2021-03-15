@@ -44,7 +44,7 @@ bool perform_command(CoreData& core)
 		} 
 		while (parse_data.parse_error);
 
-		write_centered(main_window, "---***---");
+		print_centered(main_window, "---***---");
 		print_to_main_window("\n\n");
 
 		auto& gnu = core.animates[AnimateID::gnu];
@@ -277,7 +277,7 @@ void use(CoreData& core, ItemID item_id)
 	default:
 		auto target_animate = item.usable_on;
 
-		if (target_animate != AnimateID::undefined
+		if (target_animate == AnimateID::undefined
 			 || animates[target_animate].room != current_room)
 		{
 			print_to_main_window("Dat heeft geen zin.\n\n");
@@ -376,7 +376,7 @@ void use(CoreData& core, ItemID item_id)
 	}
 }
 
-void use_item_to_status(CoreData& core, Item item, AnimateID animate, AnimateStatus status)
+void use_item_to_status(CoreData& core, Item& item, AnimateID animate, AnimateStatus status)
 {
 	core.inventory.remove(item);
 	core.animates[animate].status = status;

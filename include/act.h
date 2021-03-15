@@ -19,7 +19,7 @@ bool perform_command(CoreData& core);
 
 void use(CoreData& core, ItemID item_id);
 
-void use_item_to_status(CoreData& core, Item item, AnimateID animate, AnimateStatus status);
+void use_item_to_status(CoreData& core, Item& item, AnimateID animate, AnimateStatus status);
 
 void combine(CoreData& core, ItemID item1, ItemID item2);
 

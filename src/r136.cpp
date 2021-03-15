@@ -31,6 +31,12 @@ bool RoomConnections::erase(Command direction)
 	return connections.erase(direction) != 0;
 }
 
+void RoomConnections::clear()
+{
+	connections.clear();
+}
+
+
 std::map<Command, RoomID>::iterator RoomConnections::begin()
 {
 	return connections.begin();
@@ -71,7 +77,7 @@ bool Inventory::add(ItemID item)
 	return BoundedCollection<ItemID>::add(item);
 }
 
-bool Inventory::add(Item item)
+bool Inventory::add(Item& item)
 {
 	if (!BoundedCollection<ItemID>::add(item.id))
 		return false;
@@ -80,7 +86,7 @@ bool Inventory::add(Item item)
 	return true;
 }
 
-bool Inventory::remove(Item item)
+bool Inventory::remove(Item& item)
 {
 	if (!BoundedCollection<ItemID>::remove(item.id))
 		return false;

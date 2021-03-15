@@ -5,8 +5,9 @@ void show_room_status(CoreData& core)
 	static const wchar_t* youre_at_format = L"Je bevindt je %ls.\n";
 	static const wchar_t* smoldering_forest_description = L"Om je heen zie je de smeulende resten van wat eens bos was.";
 
-	auto current_room = core.status.current_room;
-	const wchar_t* current_room_name = core.rooms[current_room].name;
+	auto current_room_id = core.status.current_room;
+	auto& current_room = core.rooms[current_room_id];
+	const wchar_t* current_room_name = current_room.name;
 
 	size_t youre_at_buffer_length = wcslen(youre_at_format) + wcslen(current_room_name);
 	wchar_t* youre_at_buffer = new wchar_t[youre_at_buffer_length];
@@ -16,16 +17,16 @@ void show_room_status(CoreData& core)
 
 	delete[] youre_at_buffer;
 
-	if (current_room != RoomID::radioactive_cave && current_room != RoomID::fluorescent_cave
-		&& to_value(current_room) >= 20 && !core.status.is_lamp_on)
+	if (current_room_id != RoomID::radioactive_cave && current_room_id != RoomID::fluorescent_cave
+		&& to_value(current_room_id) >= 20 && !core.status.is_lamp_on)
 	{
 		print_to_main_window("Het is stekedonker en je ziet geen hand voor ogen.\n");
 	}
 	else
 	{
-		const wchar_t* description = core.status.has_tree_burned && core.rooms[current_room].is_forest 
+		const wchar_t* description = core.status.has_tree_burned && current_room.is_forest 
 			? smoldering_forest_description
-			: core.rooms[current_room].description;
+			: current_room.description;
 
 		if (description)
 			write_to_main_window(description);
@@ -34,11 +35,11 @@ void show_room_status(CoreData& core)
 		show_items(core);
 	}
 
-	show_open_directions(core.rooms[current_room].connections);
+	show_open_directions(current_room.connections);
 	print_to_main_window("\n");
 }
 
-void show_open_directions(RoomConnections connections)
+void show_open_directions(RoomConnections& connections)
 {
 	size_t count = connections.count();
 

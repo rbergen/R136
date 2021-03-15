@@ -41,39 +41,39 @@ void show_splashscreen(void)
 	clear_window();
 
 	wattron(main_window, A_BOLD);
-	write_centered(main_window, "*** R136 ***");
+	print_centered(main_window, "*** R136 ***");
 	
 	waddstr(main_window, "\n\n");
 	
 	wattron(main_window, A_UNDERLINE);
-	write_centered(main_window, "Ontwerp"); waddch(main_window, '\n');
+	print_centered(main_window, "Ontwerp"); waddch(main_window, '\n');
 	wattroff(main_window, A_BOLD | A_UNDERLINE);
 	
-	write_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
-	write_centered(main_window, "Rutger van Bergen");
+	print_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
+	print_centered(main_window, "Rutger van Bergen");
 	
 	waddstr(main_window, "\n\n");
 	
 	wattron(main_window, A_BOLD | A_UNDERLINE);
-	write_centered(main_window, "Code"); waddch(main_window, '\n');
+	print_centered(main_window, "Code"); waddch(main_window, '\n');
 	wattroff(main_window, A_BOLD | A_UNDERLINE);
 	
-	write_centered(main_window, "Rutger van Bergen");
+	print_centered(main_window, "Rutger van Bergen");
 	
 	waddstr(main_window, "\n\n");
 	
 	wattron(main_window, A_BOLD | A_UNDERLINE);
-	write_centered(main_window, "Testen"); waddch(main_window, '\n');
+	print_centered(main_window, "Testen"); waddch(main_window, '\n');
 	wattroff(main_window, A_BOLD | A_UNDERLINE);
 	
-	write_centered(main_window, "Machiel Keizer"); waddch(main_window, '\n');
-	write_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
-	write_centered(main_window, "Rutger van Bergen");
+	print_centered(main_window, "Machiel Keizer"); waddch(main_window, '\n');
+	print_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
+	print_centered(main_window, "Rutger van Bergen");
 	
 	waddstr(main_window, "\n\n");
 	
 	wattron(main_window, A_BOLD);
-	write_centered(main_window, "Versie 3.2, (C) 1998, 2021 R.I.P.");
+	print_centered(main_window, "Versie 3.2, (C) 1998, 2021 R.I.P.");
 	wattroff(main_window, A_BOLD);
 	
 	waddstr(main_window, "\n\n");

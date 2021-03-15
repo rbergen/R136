@@ -1,9 +1,7 @@
 #include "console.h"
 
-WINDOW* banner_window = NULL;
-WINDOW* main_window = NULL;
-WINDOW* input_window = NULL;
-WINDOW* full_screen = NULL;
+ColorMap color_map;
+Console console;
 
 enum class Key : char {
 	kEscape = -2,
@@ -14,7 +12,16 @@ enum class Key : char {
 	kShiftTab = 4
 };
 
-std::map<Color, ColorSet*> ColorSet::color_sets;
+inline ColorSet::ColorSet(Color color, short foreground, short background) : ColorSet(color, foreground, background, 0) {}
+
+inline ColorSet::ColorSet(Color color, short foreground, short background, chtype style) :
+	color(color),
+	foreground(foreground),
+	background(background),
+	style(style),
+	value(),
+	is_initialized(false)
+{}
 
 void ColorSet::initialize()
 {
@@ -25,7 +32,12 @@ void ColorSet::initialize()
 	is_initialized = true;
 }
 
-chtype ColorSet::get_attrs()
+inline Color ColorSet::get_color()
+{
+	return color;
+}
+
+inline chtype ColorSet::get_attrs()
 {
 	if (!is_initialized)
 		initialize();
@@ -33,26 +45,35 @@ chtype ColorSet::get_attrs()
 	return value;
 }
 
-void ColorSet::add(Color c, short fg, short bg, chtype s)
+ColorMap::~ColorMap()
 {
-	add(ColorSet(c, fg, bg, s));
+	for (auto element = color_sets.begin(); element != color_sets.end(); element++) 
+	{
+		delete element->second;
+		color_sets.erase(element);
+	}
 }
 
-void ColorSet::add(Color c, short fg, short bg)
+inline void ColorMap::add(Color color, short foreground, short background, chtype style)
 {
-	add(ColorSet(c, fg, bg));
+	add(new ColorSet(color, foreground, background, style));
 }
 
-void ColorSet::add(ColorSet set)
+inline void ColorMap::add(Color color, short foreground, short background)
 {
-	auto element = color_sets.find(set.color);
+	add(new ColorSet(color, foreground, background));
+}
+
+void ColorMap::add(ColorSet* set)
+{
+	auto element = color_sets.find(set->get_color());
 	if (element == color_sets.end())
-		color_sets.insert(std::make_pair(set.color, &set));
+		color_sets.insert(std::make_pair(set->get_color(), set));
 	else
-		element->second = &set;
+		element->second = set;
 }
 
-chtype ColorSet::get_attrs(Color color)
+inline chtype ColorMap::get_attrs(Color color)
 {
 	auto element = color_sets.find(color);
 	if (element == color_sets.end())
@@ -61,324 +82,151 @@ chtype ColorSet::get_attrs(Color color)
 	return element->second->get_attrs();
 }
 
-
-void setup_windows()
-{
-	int height, width;
-
-	getmaxyx(stdscr, height, width);
-
-	if (banner_window)
-	{
-		wresize(banner_window, 2, width);
-		touchwin(banner_window);
-	}
-	else
-		banner_window = subwin(stdscr, 2, width, 0, 0);
-
-	if (main_window)
-	{
-		wresize(main_window, height - 3, width);
-		touchwin(main_window);
-	}
-	else 
-	{
-		main_window = subwin(stdscr, height - 3, width, 2, 0);
-		keypad(main_window, TRUE);
-		touchwin(main_window);
-	}
-
-	if (input_window)
-	{
-		wresize(input_window, 1, width);
-		mvwin(input_window, height - 1, 0);
-		touchwin(input_window);
-	}
-	else 
-	{
-		input_window = subwin(stdscr, 1, width, height - 1, 0);
-		keypad(input_window, true);
-	}
-
-	wattron(banner_window, ColorSet::get_attrs(Color::banner));
-	wmove(banner_window, 0, 0);
-	write_centered(banner_window, "Missiecode: R136");
-
-	scrollok(main_window, true);
-
-	wrefresh(banner_window);
-	wrefresh(main_window);
-	wrefresh(input_window);
-}
-
-int print_to_main_window(const char* format, ...)
-{
-	va_list args;
-	int return_value;
-
-	va_start(args, format);
-	return_value = vw_printw(main_window, format, args);
-	va_end(args);
-
-	return return_value;
-}
-
-int write_to_main_window(const wchar_t* text)
-{
-	return waddwstr(main_window, text);
-}
-
-void initialize_colors()
+void ColorMap::initialize()
 {
 	start_color();
 
-	ColorSet::add(Color::bold, COLOR_WHITE, COLOR_BLACK, A_BOLD);
-	ColorSet::add(Color::banner, COLOR_RED, COLOR_BLACK, A_UNDERLINE);
-	ColorSet::add(Color::error, COLOR_RED, COLOR_BLACK, A_BOLD);
-	ColorSet::add(Color::inverse, COLOR_BLACK, COLOR_WHITE);
-	ColorSet::add(Color::inverse_red, COLOR_RED, COLOR_WHITE, A_BOLD);
-	ColorSet::add(Color::normal, COLOR_WHITE, COLOR_BLACK);
+	add(Color::bold, COLOR_WHITE, COLOR_BLACK, A_BOLD);
+	add(Color::banner, COLOR_RED, COLOR_BLACK, A_UNDERLINE);
+	add(Color::error, COLOR_RED, COLOR_BLACK, A_BOLD);
+	add(Color::inverse, COLOR_BLACK, COLOR_WHITE);
+	add(Color::inverse_red, COLOR_RED, COLOR_WHITE, A_BOLD);
+	add(Color::normal, COLOR_WHITE, COLOR_BLACK);
 }
 
-void initialize_console()
+inline int Window::scanf(int check_input, int length, const char* allowed_characters, const char* format_string, ...)
 {
-	setlocale(LC_ALL, "");
-
-	initscr();
-	noecho();
-	keypad(stdscr, true);
-
-	full_screen = stdscr;
-	
-	initialize_colors();
-}
-
-void release_console()
-{
-	if (input_window)
-		delwin(input_window);
-
-	if (main_window)
-		delwin(main_window);
-
-	if (banner_window)
-		delwin(banner_window);
-
-	endwin();
-}
-
-void print_fullscreen_block(int y, int x, Color colors, const wchar_t** block, int rowcount) 
-{
-	wattron(full_screen, ColorSet::get_attrs(colors));
-	
-	for (int i  = 0; i < rowcount; i++)
-		mvwaddwstr(full_screen, y + i, x, block[i]);
-
-	wattroff(full_screen, ColorSet::get_attrs(colors));
-}
-
-void print_fullscreen_block_section(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
-{
-	wattron(full_screen, ColorSet::get_attrs(color));
-
-	for (int i = topy; i <= bottomy; i++)
-		mvwaddnwstr(full_screen, y + i - topy, x,& block[i][leftx], rightx - leftx + 1);
-
-	wattroff(full_screen, ColorSet::get_attrs(color));
-}
-
-
-void print_fullscreen(int y, int x, Color color, const wchar_t* text) 
-{
-	wattron(full_screen, ColorSet::get_attrs(color));
-	mvwaddwstr(full_screen, y, x, text);
-	wattroff(full_screen, ColorSet::get_attrs(color));
-}
-
-void clear_fullscreen(Color colors) 
-{
-	wbkgd(full_screen, ColorSet::get_attrs(colors));
-	werase(full_screen);
-}
-
-void update_fullscreen()
-{
-	wrefresh(full_screen);
-}
-
-void clear_window()
-{
-	werase(main_window);
-}
-
-void get_fullscreen_size(int& y, int& x)
-{
-	getmaxyx(full_screen, y, x);
-}
-
-void wait_for_key_core(WINDOW* window, bool do_setup) 
-{
-	int y, x;
-
-	wrefresh(window);
-
-	while (true)
-	{
-		getyx(window, y, x);
-	
-		if (mvwgetch(window, y, x) == KEY_RESIZE)
-		{
-			resize_term(0, 0);
-
-			if (do_setup)
-				setup_windows();
-		}
-		else
-			break;
-	}
-}
-
-void wait_for_fullscreen_key()
-{
-	wait_for_key_core(full_screen, false);
-}
-
-void wait_for_key()
-{
-	wait_for_key_core(main_window, true);
-}
-
-void write_centered(WINDOW* win, const char* str)
-{
-	int winwidth = getmaxx(win);
-	int strlength = (int)strlen(str);
-
-	clear_line(win);
-
-	int x = (winwidth - strlength) / 2;
-	mvwaddstr(win, getcury(win), x < 0 ? 0 : x, str);
-}
-
-void get_command_string(char* input, int max_length) 
-{
-	memset(input, ' ', max_length);
-	input[max_length] = 0;
-
-	wrefresh(main_window);
-
-	wmove(input_window, 0, 0);
-	clear_line(input_window);
-
-	wattron(input_window, ColorSet::get_attrs(Color::bold));
-	waddstr(input_window, "> ");
-
-	get_string_input(input_window, " abcdefghijklmnopqrstuvwxyz", input, 0, getcurx(input_window), -1, 0, 0);
-
-	clear_line(input_window);
-	wmove(input_window, 0, 0);
-
-	wattroff(input_window, ColorSet::get_attrs(Color::bold));
-}
-
-void print_command_string(const char* format, ...)
-{
-	wmove(input_window, 0, 0);
-	clear_line(input_window);
-
-	va_list args;
-
-	wattron(input_window, ColorSet::get_attrs(Color::error));
-
-	va_start(args, format);
-	vw_printw(input_window, format, args);
-	va_end(args);
-
-	wattroff(input_window, ColorSet::get_attrs(Color::error));
-
-	wrefresh(input_window);
-	wgetch(input_window);
-}
-
-int advanced_getchar(const char* allowed)
-{  
-	char input = 0;
-	int y = getcury(main_window);
-	int x = getcurx(main_window);
-
-	wattron(main_window, ColorSet::get_attrs(Color::bold));
-
-	do
-	{  
-		wmove(main_window, y, x);
-
-		if (advanced_scanf(main_window, 0, 1, allowed, "%c",& input) == to_value(Key::kEscape))
-			input = to_value(Key::kEscape);
-	}
-	while (input == ' ');
-
-	wattroff(main_window, ColorSet::get_attrs(Color::bold));
-
-	return input;
-}
-
-int advanced_scanf(WINDOW* win, int check_input, int length, const char* allowed_characters, const char* format_string, ...)
-{  
 	va_list argp;
 	char* input_string;
 	int result = 0;
 
-	input_string =  new char[length + 1];
+	input_string = new char[length + 1];
 
 	if (!input_string)
 		return to_value(Key::kEscape);
 
+	input_string[length] = 0;
 	do
-	{  
+	{
 		memset(input_string, ' ', length);
-		if (!((result = get_string_input(win, allowed_characters, input_string, getcury(win), getcurx(win), 0, 1, 0)) == to_value(Key::kEscape)))
-		{  
+		if (!((result = get_string_input(allowed_characters, input_string, get_y(), get_x(), 0, 1, 0)) == to_value(Key::kEscape)))
+		{
 			va_start(argp, format_string);
 			result = vsscanf(input_string, format_string, argp);
 			va_end(argp);
 		}
-	}
-	while (check_input && (result == EOF || !result));
+	} while (check_input && (result == EOF || !result));
 
 	delete[] input_string;
 
 	return result;
 }
 
-void clear_line(WINDOW* win) 
+inline Window::Window(WINDOW* wnd) : Window(wnd, false, Color::undefined) {}
+
+inline Window::Window(WINDOW* wnd, bool enable_keypad) : Window(wnd, enable_keypad, Color::undefined) {}
+
+inline Window::Window(WINDOW* wnd, Color standard_color) : Window(wnd, false, standard_color) {}
+
+inline Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
+	wnd(wnd),
+	standard_color(standard_color),
+	notify_console_of_resize(true)
 {
-	wmove(win, getcury(win), 0);
-	wclrtoeol(win);
+	keypad(wnd, enable_keypad);
+	touchwin(wnd);
 }
 
-int get_string_input (WINDOW* win, const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
+inline Window::~Window()
+{
+	delwin(wnd);
+}
+
+inline void Window::resize(int height, int width)
+{
+	wresize(wnd, height, width);
+	touchwin(wnd);
+}
+
+inline void Window::move(int y, int x, int height, int width)
+{
+	wresize(wnd, height, width);
+	mvwin(wnd, y, x);
+}
+
+inline void Window::set_color(Color color)
+{
+	if (color != Color::undefined)
+		wattron(wnd, color_map.get_attrs(color));
+}
+
+inline void Window::unset_color(Color color)
+{
+	if (color != Color::undefined)
+		wattroff(wnd, color_map.get_attrs(color));
+}
+
+inline void Window::get_position(int& y, int& x)
+{
+	getyx(wnd, y, x);
+}
+
+inline int Window::get_x()
+{
+	return getcurx(wnd);
+}
+
+inline int Window::get_y()
+{
+	return getcury(wnd);
+}
+
+inline void Window::set_position(int y, int x)
+{
+	wmove(wnd, y, x);
+}
+
+inline void Window::clear_line()
+{
+	wmove(wnd, getcury(wnd), 0);
+	wclrtoeol(wnd);
+}
+
+inline void Window::set_scrollable(bool enable)
+{
+	scrollok(wnd, enable);
+}
+
+inline void Window::get_size(int& y, int& x)
+{
+	getmaxyx(wnd, y, x);
+}
+
+inline int Window::get_string_input(const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
 {
 	static bool insert_on = 0;
 	int input_length, input_pos = 0, result = 0, current_x, current_y;
 	int input_char;
 
 	input_length = (int)strlen(input) - 1;
-	current_x = getcurx(win);
-	current_y = getcury(win);
+	get_position(current_y, current_x);
 
 	insert_on = insert_flag & 1;
 
 	do
-	{  
-		wmove(win, input_y, input_x + input_pos);
-		wrefresh(input_window);
+	{
+		set_position(input_y, input_x + input_pos);
+		refresh();
 
-		input_char = wgetch(win);
+		input_char = wgetch(wnd);
 
 		switch (input_char)
 		{
 		case KEY_RESIZE:
 			resize_term(0, 0);
-			setup_windows();
+
+			if (notify_console_of_resize)
+				console.process_resize();
 
 			break;
 
@@ -415,7 +263,7 @@ int get_string_input (WINDOW* win, const char* allowed_characters, char* input, 
 			memmove(input + input_pos, input + input_pos + 1, (size_t)input_length - input_pos);
 
 			input[input_length] = ' ';
-			wdelch(win);
+			wdelch(wnd);
 
 			break;
 
@@ -438,17 +286,19 @@ int get_string_input (WINDOW* win, const char* allowed_characters, char* input, 
 			break;
 
 		case KEY_BACKSPACE: /* Backspace */
-			#ifdef __APPLE__
-			case 127:
-			#else
-			case 8:
-			#endif
+#ifdef __APPLE__
+		case 127:
+#else
+		case 8:
+#endif
 
 			if (input_pos)
-			{  
+			{
 				memmove(input + input_pos - 1, input + input_pos, (size_t)input_length - input_pos + 1);
 				input[input_length] = ' ';
-				mvwdelch(win, input_y, input_x + --input_pos);
+
+				set_position(input_y, input_x + --input_pos);
+				wdelch(wnd);
 			}
 
 			break;
@@ -471,7 +321,8 @@ int get_string_input (WINDOW* win, const char* allowed_characters, char* input, 
 			else
 			{
 				memset(input, ' ', input_length);
-				mvwaddstr(win, input_y, input_x, input);
+				set_position(input_y, input_x);
+				print(input);
 				input_pos = 0;
 			}
 
@@ -484,16 +335,18 @@ int get_string_input (WINDOW* win, const char* allowed_characters, char* input, 
 				input_char = tolower(input_char);
 
 			if (strchr(allowed_characters, input_char))
-			{  
+			{
 				if (insert_on)
-				{  
+				{
 					memmove(input + input_pos + 1, input + input_pos, (size_t)input_length - input_pos);
 
-					mvwdelch(win, input_y, input_x + input_length);
-					mvwinsch(win, input_y, input_x + input_pos, input_char);
+					set_position(input_y, input_x + input_length);
+					wdelch(wnd);
+					set_position(input_y, input_x + input_pos);
+					winsch(wnd, input_char);
 				}
-				else 
-					waddch(win, input_char);
+				else
+					print(input_char);
 
 				input[input_pos] = input_char;
 
@@ -503,14 +356,273 @@ int get_string_input (WINDOW* win, const char* allowed_characters, char* input, 
 
 			break;
 		}
-	}
-	while (!result);
-//	setcursor(CURSOR_NORMAL);
+	} while (!result);
+	//	setcursor(CURSOR_NORMAL);
 
-	if (input_pos == input_length) 
+	if (input_pos == input_length)
 		current_x++;
 
-	wmove(win, current_y, current_x);
+	set_position(current_y, current_x);
 
 	return result;
+}
+
+inline void Window::clear()
+{
+	werase(wnd);
+}
+
+inline void Window::clear(Color color)
+{
+	wbkgd(wnd, color_map.get_attrs(color));
+	werase(wnd);
+}
+
+inline void Window::refresh()
+{
+	wrefresh(wnd);
+}
+
+inline void Window::print_centered(const char* str)
+{
+	set_color(standard_color);
+
+	int winwidth = getmaxx(wnd);
+	int strlength = (int)strlen(str);
+
+	clear_line();
+
+	int x = (winwidth - strlength) / 2;
+	mvwaddstr(wnd, getcury(wnd), x < 0 ? 0 : x, str);
+
+	unset_color(standard_color);
+}
+
+inline int Window::print(const char* format, ...)
+{
+	va_list args;
+	int return_value;
+
+	va_start(args, format);
+	return_value = vw_printw(wnd, format, args);
+	va_end(args);
+
+	return return_value;
+}
+
+inline void Window::print(char c)
+{
+	waddch(wnd, c);
+}
+
+inline int Window::write(const wchar_t* text)
+{
+	return waddwstr(wnd, text);
+}
+
+inline void Window::write_block(int y, int x, Color color, const wchar_t** block, int rowcount)
+{
+	set_color(color);
+
+	for (int i = 0; i < rowcount; i++)
+		mvwaddwstr(wnd, y + i, x, block[i]);
+
+	unset_color(color);
+}
+
+inline void Window::write_block(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
+{
+	set_color(color);
+
+	for (int i = topy; i <= bottomy; i++)
+		mvwaddnwstr(wnd, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
+
+	unset_color(color);
+}
+
+inline void Window::write(int y, int x, Color color, const wchar_t* text)
+{
+	set_color(color);
+
+	set_position(y, x);
+	write(text);
+
+	unset_color(color);
+}
+
+inline void Window::wait_for_key()
+{
+	refresh();
+
+	while (true)
+	{
+		if (wgetch(wnd) == KEY_RESIZE)
+		{
+			resize_term(0, 0);
+
+			if (notify_console_of_resize)
+				console.process_resize();
+		}
+		else
+			break;
+	}
+}
+
+inline int Window::get_char_input(const char* allowed)
+{
+	char input = 0;
+	int y, x;
+
+	get_position(y, x);
+
+	set_color(Color::bold);
+
+	do
+	{
+		set_position(y, x);
+
+		if (scanf(0, 1, allowed, "%c", &input) == to_value(Key::kEscape))
+			input = to_value(Key::kEscape);
+	} 		while (input == ' ');
+
+	unset_color(Color::bold);
+
+	return input;
+}
+
+inline Console::~Console()
+{
+	release();
+}
+
+inline Window& Console::banner()
+{
+	return *banner_window;
+}
+
+inline InputWindow& Console::input()
+{
+	return *input_window;
+}
+
+void Console::setup_windows()
+{
+	int height, width;
+
+	if (!fullscreen_window)
+	{
+		fullscreen_window = new Window(stdscr, true);
+		fullscreen_window->notify_console_of_resize = false;
+	}
+
+	fullscreen_window->get_size(height, width);
+
+	if (banner_window)
+		banner_window->resize(2, width);
+	else
+		banner_window = new Window(subwin(stdscr, 2, width, 0, 0), Color::banner);
+
+	if (main_window)
+		main_window->resize(height - 3, width);
+	else
+		main_window = new Window(subwin(stdscr, height - 3, width, 2, 0), true);
+
+	if (input_window)
+		input_window->move(height - 1, 0, 1, width);
+	else
+		input_window = new InputWindow(subwin(stdscr, 1, width, height - 1, 0));
+
+	banner_window->set_position(0, 0);
+	banner_window->print_centered("Missiecode: R136");
+
+	main_window->set_scrollable(true);
+
+	banner_window->refresh();
+	main_window->refresh();
+	input_window->refresh();
+}
+
+inline Window& Console::fullscreen()
+{
+	return *fullscreen_window;
+}
+
+inline Window& Console::main()
+{
+	return *main_window;
+}
+
+inline void Console::process_resize()
+{
+	setup_windows();
+}
+
+void Console::initialize()
+{
+	setlocale(LC_ALL, "");
+
+	initscr();
+	noecho();
+
+	color_map.initialize();
+
+	setup_windows();
+}
+
+void Console::release()
+{
+	if (input_window)
+		delete input_window;
+
+	if (main_window)
+		delete main_window;
+
+	if (banner_window)
+		delete banner_window;
+
+	endwin();
+}
+
+inline InputWindow::InputWindow(WINDOW* wnd) : Window(wnd, true, Color::bold) {}
+
+void InputWindow::get_string_input(char* input, int max_length)
+{
+	memset(input, ' ', max_length);
+	input[max_length] = 0;
+
+	console.main().refresh();
+
+	set_position(0, 0);
+	clear_line();
+
+	set_color(standard_color);
+	print("> ");
+
+	Window::get_string_input(" abcdefghijklmnopqrstuvwxyz", input, 0, get_x(), -1, 0, 0);
+
+	clear_line();
+	set_position(0, 0);
+
+	unset_color(standard_color);
+}
+
+void InputWindow::print_error(const char* format, ...)
+{
+	set_position(0, 0);
+	clear_line();
+
+	va_list args;
+
+	set_color(Color::error);
+
+	print("< ");
+
+	va_start(args, format);
+	vw_printw(wnd, format, args);
+	va_end(args);
+
+	unset_color(Color::error);
+
+	refresh();
+	wait_for_key();
 }

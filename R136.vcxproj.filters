@@ -17,9 +17,6 @@
     <ClInclude Include="include\r136.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include-external\curses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>

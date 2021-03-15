@@ -94,13 +94,13 @@ bool load_status(CoreData& core)
 
 	if (!(fp = fopen(saved_status_path, "rb")))
 	{
-		write_centered(main_window, "Druk op een toets om te beginnen");
+		print_centered(main_window, "Druk op een toets om te beginnen");
 
 		wait_for_key();
 		return false;
 	}
 
-	write_centered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+	print_centered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
 
 	if (tolower(advanced_getchar("12")) != '2')
 	{

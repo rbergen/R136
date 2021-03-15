@@ -222,8 +222,10 @@ Item items[to_value(ItemID::COUNT)] = { // { name, description, room, useable_on
 };
 
 template <typename TKey, class TValue>
-void fill_map(EntityMap<TKey, TValue> map, TValue values[], int value_count)
+void fill_map(EntityMap<TKey, TValue>& map, TValue values[], int value_count)
 {
+	map.clear();
+
 	bool is_entity = std::is_base_of<Entity<TKey>, TValue>::value;
 
 	for (int i = 0; i < value_count; i++) 
@@ -237,7 +239,7 @@ void fill_map(EntityMap<TKey, TValue> map, TValue values[], int value_count)
 	}
 }
 
-bool initialize(CoreData& core)
+void initialize(CoreData& core)
 {
 	core.paperroute = { RoomID::capital_p_cave, RoomID::a_cave, RoomID::p_cave, RoomID::i_cave, RoomID::e_cave, RoomID::r_cave };
 
@@ -252,11 +254,13 @@ bool initialize(CoreData& core)
 
 	srand((int)time(NULL));
 
-	return set_room_connections(rooms);
+	set_room_connections(rooms);
 
 	fill_map(core.animates, animates, to_value(AnimateID::COUNT));
 	fill_map(core.items, items, to_value(ItemID::COUNT));
 	fill_map(core.rooms, rooms, to_value(RoomID::COUNT));
+
+	return;
 }
 
 bool set_room_connections(Room* rooms)
@@ -265,6 +269,7 @@ bool set_room_connections(Room* rooms)
 	for (int i = 0; i < to_value(RoomID::COUNT); i++)
 	{
 		Room& room = rooms[i];
+		room.connections.clear();
 		room.connections.set(Command::east, static_cast<RoomID>(i + 1));
 		room.connections.set(Command::west, static_cast<RoomID>(i - 1));
 		room.connections.set(Command::north, static_cast<RoomID>(i - 5));
