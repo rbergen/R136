@@ -47,6 +47,9 @@ bool perform_command(CoreData& core)
 		write_centered(main_window, "---***---");
 		print_to_main_window("\n\n");
 
+		auto& gnu = core.animates[AnimateID::gnu];
+		auto& status = core.status;
+
 		switch(parse_data.command)
 		{
 		case Command::east:
@@ -55,7 +58,6 @@ bool perform_command(CoreData& core)
 		case Command::south:
 		case Command::up:
 		case Command::down:
-			auto& status = core.status;
 
 			if (!core.rooms[status.current_room].connections.is_open(parse_data.command)) 
 			{
@@ -63,7 +65,6 @@ bool perform_command(CoreData& core)
 				break;
 			}
 
-			auto& gnu = core.animates[AnimateID::gnu];
 			if (gnu.room == status.current_room && gnu.status != AnimateStatus::dead)
 			{
 				switch (get_random_number(5))
@@ -120,18 +121,22 @@ bool perform_command(CoreData& core)
 		case Command::inspect:
 			inspect(core, parse_data.item1);
 			break;
+
 		case Command::wait:
 			wait();
 			break;
+
 		case Command::finish:
 			print_to_main_window("Weet je zeker dat je de aarde laat vergaan? ");
 			if (tolower(advanced_getchar("jJnN")) == 'j')
 				return false;
 			print_to_main_window("\nMooi zo!\n");
 			break;
+
 		case Command::status:
 			show_status(core);
 			break;
+
 		case Command::help:
 			show_help();
 			break;
@@ -146,6 +151,7 @@ bool perform_command(CoreData& core)
 
 void use(CoreData& core, ItemID item_id)
 {
+	auto& animates = core.animates;
 	auto& status = core.status;
 	auto current_room = status.current_room;
 	auto& item = core.items[item_id];
@@ -153,8 +159,7 @@ void use(CoreData& core, ItemID item_id)
 	switch (item.id)
 	{
 	case ItemID::sword:
-
-		auto& animates = core.animates;
+	{
 		AnimateID monsterID;
 
 		if (animates[AnimateID::hellhound].room == current_room && animates[AnimateID::hellhound].strikes_left)
@@ -207,7 +212,7 @@ void use(CoreData& core, ItemID item_id)
 
 		wait_for_key();
 		break;
-
+	}
 	case ItemID::flashlight:
 
 		if (status.is_lamp_on)
@@ -270,7 +275,6 @@ void use(CoreData& core, ItemID item_id)
 		break;
 
 	default:
-		auto& animates = core.animates;
 		auto target_animate = item.usable_on;
 
 		if (target_animate != AnimateID::undefined
@@ -751,7 +755,7 @@ ItemID find_laying_item(CoreData& core, const char* item_name)
 	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
 	for (auto& element : core.items) 
 	{
-		auto& item = element.second;
+		auto& item = *element.second;
 		if (item.room != core.status.current_room || !strstr(item.name, item_name))
 			continue;
 

@@ -156,12 +156,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include-external\curses.h" />
+    <ClInclude Include="include\act.h" />
+    <ClInclude Include="include\console.h" />
+    <ClInclude Include="include\init.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\r136.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="src\act.h" />
-    <ClInclude Include="src\console.h" />
-    <ClInclude Include="src\init.h" />
+    <ClInclude Include="include\status.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -169,6 +169,7 @@
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\loadsave.cpp" />
+    <ClCompile Include="src\r136.cpp" />
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\status.cpp" />
     <ClCompile Include="src\act.cpp" />
@@ -176,9 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="R136.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

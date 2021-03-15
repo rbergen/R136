@@ -1,4 +1,5 @@
 ﻿#include "r136.h"
+#include "status.h"
 
 void show_room_status(CoreData& core)
 {
@@ -14,7 +15,7 @@ void show_room_status(CoreData& core)
 	
 	write_to_main_window(youre_at_buffer);
 
-	delete youre_at_buffer;
+	delete[] youre_at_buffer;
 
 	if (current_room != RoomID::radioactive_cave && current_room != RoomID::fluorescent_cave
 		&& to_value(current_room) >= 20 && !core.status.is_lamp_on)
@@ -90,10 +91,10 @@ void show_open_directions(RoomConnections connections)
 void show_items(CoreData& core)
 {
 	int count = 0;
-	auto item_count = to_value(ItemID::COUNT);
+	constexpr auto item_count = to_value(ItemID::COUNT);
 
 	for (auto& element : core.items) 
-		if (element.second.room == core.status.current_room)
+		if (element.second->room == core.status.current_room)
 			count++;
 
 	if (!count)
@@ -103,7 +104,7 @@ void show_items(CoreData& core)
 
 	for (auto& element : core.items) 
 	{
-		auto& item = element.second;
+		auto& item = *element.second;
 
 		if (item.room != core.status.current_room)
 			continue;
@@ -136,7 +137,7 @@ bool progress_animate_status(CoreData& core)
 
 	for (auto& element : core.animates)
 	{
-		if (element.second.room == core.status.current_room)
+		if (element.second->room == core.status.current_room)
 		{
 			present_animate = element.first;
 			break;

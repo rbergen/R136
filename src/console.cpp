@@ -2,8 +2,6 @@
  * Includes necessary for functions to work
  ***************************************************************************/
 #include "console.h"
-#include <locale.h>
-#include <map>
 
 /***************************************************************************
  * #defines of constants used by the functions
@@ -27,7 +25,7 @@ constexpr int insert_flag = 3;
 
 class ColorSet 
 {
-	static std::map<Color, ColorSet> color_sets;
+	static std::map<Color, ColorSet*> color_sets;
 
 	Color color;
 	short foreground, background;
@@ -42,6 +40,7 @@ public:
 		foreground(fg),
 		background(bg),
 		style(s),
+		value(),
 		is_initialized(false)
 	{}
 
@@ -74,14 +73,24 @@ public:
 
 	static void add(ColorSet set) 
 	{
-		color_sets[set.color] = set;
+		auto element = color_sets.find(set.color);
+		if (element == color_sets.end())
+			color_sets.insert(std::make_pair(set.color, &set));
+		else
+			element->second = &set;
 	}
 
 	static chtype get_attrs(Color color) 
 	{
-		return color_sets[color].get_attrs();
+		auto element = color_sets.find(color);
+		if (element == color_sets.end())
+			throw std::out_of_range("color");
+
+		return element->second->get_attrs();
 	}
 };
+
+std::map<Color, ColorSet*> ColorSet::color_sets;
 
 WINDOW* banner_window = NULL;
 WINDOW* main_window = NULL;
@@ -282,7 +291,7 @@ void wait_for_key()
 void write_centered(WINDOW* win, const char* str)
 {
 	int winwidth = getmaxx(win);
-	int strlength = strlen(str);
+	int strlength = (int)strlen(str);
 
 	clear_line(win);
 

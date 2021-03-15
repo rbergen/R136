@@ -1,5 +1,4 @@
-﻿#include "r136.h"
-#include "include\main.h"
+﻿#include "main.h"
 
 int main()
 {

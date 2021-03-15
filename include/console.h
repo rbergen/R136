@@ -1,5 +1,8 @@
 #pragma once
 #include "r136.h"
+#include <locale.h>
+#include <map>
+#include <stdexcept>
 
 void clear_line(WINDOW* win);
 int get_string_input(WINDOW* win, const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals);

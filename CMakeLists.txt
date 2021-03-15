@@ -35,6 +35,7 @@ add_executable(
     src/status.cpp 
     src/act.cpp
     src/utilities.cpp
+    src/r136.cpp
 )
 
 target_compile_features(${PROJECT_NAME}

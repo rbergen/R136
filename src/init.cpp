@@ -1,6 +1,4 @@
-﻿#include "r136.h"
-#include <time.h>
-#include "init.h"
+﻿#include "init.h"
 
 Room rooms[to_value(RoomID::COUNT)] = { // { name, description, is_forest }
 	{ L"in het bos",					L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden.", true },
@@ -224,7 +222,7 @@ Item items[to_value(ItemID::COUNT)] = { // { name, description, room, useable_on
 };
 
 template <typename TKey, class TValue>
-void fill_map(std::map<TKey, TValue> map, TValue values[], int value_count)
+void fill_map(EntityMap<TKey, TValue> map, TValue values[], int value_count)
 {
 	bool is_entity = std::is_base_of<Entity<TKey>, TValue>::value;
 
@@ -233,13 +231,10 @@ void fill_map(std::map<TKey, TValue> map, TValue values[], int value_count)
 		TKey id = static_cast<TKey>(i);
 
 		if (is_entity) 
-		{
-			((TEntity<TKey>)values[i]).id = id;
-		}
+			((Entity<TKey>*)&values[i])->id = id;
 
-		map.emplace( = values[i];
+		map.add_or_set(id, values[i]);
 	}
-
 }
 
 bool initialize(CoreData& core)

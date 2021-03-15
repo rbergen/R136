@@ -20,19 +20,19 @@
     <ClInclude Include="include-external\curses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\act.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\console.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\init.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\act.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\init.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -64,11 +64,11 @@
     <ClCompile Include="src\utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\r136.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="R136.rc" />
   </ItemGroup>
 </Project>

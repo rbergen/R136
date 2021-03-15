@@ -1,7 +1,3 @@
-#ifndef R136_INCLUDE
-
-#define R136_INCLUDE
-
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -10,7 +6,7 @@
 #include <type_traits>
 #include <map>
 #include <vector>
-
+#include <stdexcept>
 
 #if !defined(CURSES_WIDE) && !defined(PDC_WIDE)
 	#error (PD)Curses must be built with wide-character support
@@ -26,137 +22,6 @@
 #else
 	#include <curses.h>
 #endif
-
-// This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021, on one approach to idle-wait for a number of milliseconds
-#ifdef _WIN32
-#include <windows.h>
-void sleep_ms(int n) 
-{
-	Sleep(n);
-}
-#else
-#include <unistd.h>
-#include <map>
-void sleep_ms(int n)
-{
-	usleep(n * 1000,);
-}
-
-#endif
-
-template <typename E>
-constexpr auto to_value(E e) noexcept
-{
-	return static_cast<std::underlying_type_t<E>>(e);
-}
-
-/*
-	Defines
-*/
-enum class Color : short 
-{
-	bold,
-	banner,
-	error,
-	inverse,
-	inverse_red,
-	normal,
-	COUNT
-};
-
-enum class Cursor : char
-{
-	normal,
-	block
-};
-
-constexpr int undefined	= -1;
-
-enum class Command : char
-{
-	east = 0,
-	west,
-	north,
-	south,
-	up,
-	down,
-	use,
-	combine,
-	pickup,
-	lay_down,
-	inspect,
-	wait,
-	finish,
-	status,
-	help,
-	COUNT,
-	undefined = -1
-};
-
-enum class AnimateID : char
-{
-	hellhound = 0,
-	red_troll,
-	plant,
-	gnu,
-	dragon,
-	swelling,
-	door,
-	voices,
-	barbecue,
-	tree,
-	green_crystal,
-	computer,
-	dragon_head,
-	lava,
-	vacuum,
-	hatch,
-	north_swamp,
-	middle_swamp,
-	south_swamp,
-	mist,
-	teleporter,
-	COUNT,
-	undefined = -1
-};
-
-enum class ItemID : char
-{
-	hound_meat,
-	thermal_suit,
-	green_crystal,
-	sword,
-	bone,
-	diskette,
-	hashis,
-	red_crystal,
-	nightcap,
-	bomb,
-	flashlight,
-	bandage,
-	flamethrower,
-	cookbook,
-	tnt,
-	gas_capsule,
-	poisined_meat,
-	ignition,
-	batteries,
-	gasmask,
-	paper,
-	booklet,
-	blue_crystal,
-	cookie,
-	gas_grenade,
-	COUNT,
-	undefined = -1,
-	ambiguous = -2
-};
-
-template<typename L>
-constexpr L combines_with(L value) { return -(value + 2); }
-
-constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }
-constexpr ItemID combines_with(AnimateID animate) { return static_cast<ItemID>(combines_with(to_value(animate))); }
 
 enum class RoomID : char {
 	forest0 = 0,
@@ -244,11 +109,105 @@ enum class RoomID : char {
 	owned = -2
 };
 
-constexpr char max_life_points = 20;
-constexpr char max_lamp_points = 60;
-constexpr char max_owned_items = 10;
+enum class Color : short
+{
+	bold,
+	banner,
+	error,
+	inverse,
+	inverse_red,
+	normal,
+	COUNT
+};
 
-enum class AnimateStatus : char {
+enum class Cursor : char
+{
+	normal,
+	block
+};
+
+enum class Command : char
+{
+	east = 0,
+	west,
+	north,
+	south,
+	up,
+	down,
+	use,
+	combine,
+	pickup,
+	lay_down,
+	inspect,
+	wait,
+	finish,
+	status,
+	help,
+	COUNT,
+	undefined = -1
+};
+
+enum class AnimateID : char
+{
+	hellhound = 0,
+	red_troll,
+	plant,
+	gnu,
+	dragon,
+	swelling,
+	door,
+	voices,
+	barbecue,
+	tree,
+	green_crystal,
+	computer,
+	dragon_head,
+	lava,
+	vacuum,
+	hatch,
+	north_swamp,
+	middle_swamp,
+	south_swamp,
+	mist,
+	teleporter,
+	COUNT,
+	undefined = -1
+};
+
+enum class ItemID : char
+{
+	hound_meat,
+	thermal_suit,
+	green_crystal,
+	sword,
+	bone,
+	diskette,
+	hashis,
+	red_crystal,
+	nightcap,
+	bomb,
+	flashlight,
+	bandage,
+	flamethrower,
+	cookbook,
+	tnt,
+	gas_capsule,
+	poisined_meat,
+	ignition,
+	batteries,
+	gasmask,
+	paper,
+	booklet,
+	blue_crystal,
+	cookie,
+	gas_grenade,
+	COUNT,
+	undefined = -1,
+	ambiguous = -2
+};
+
+enum class AnimateStatus : char
+{
 	initial = 0,
 	initial_burn = 0,
 
@@ -282,15 +241,10 @@ enum class AnimateStatus : char {
 	status_6 = 6
 };
 
-AnimateStatus next_status(AnimateStatus status) 
-{
-	return static_cast<AnimateStatus>(to_value(status) + 1);
-}
-
-AnimateStatus operator++(AnimateStatus& status)
-{
-	return next_status(status);
-}
+constexpr int undefined = -1;
+constexpr char max_life_points = 20;
+constexpr char max_lamp_points = 60;
+constexpr char max_owned_items = 10;
 
 /*
 	Structures
@@ -310,7 +264,7 @@ public:
 	std::map<Command, RoomID>::iterator end();
 };
 
-template<typename Tid>
+template<class Tid>
 struct Entity
 {
 	Tid id;
@@ -395,9 +349,11 @@ public:
 	void add_or_set(TKey key, TValue& value);
 	bool contains(TKey key);
 	TValue& operator[](TKey key);
+	typename std::map<TKey, TValue*>::iterator begin();
+	typename std::map<TKey, TValue*>::iterator end();
 };
 
-template<typename TEntity>
+template<class TEntity>
 class BoundedCollection
 {
 	std::vector<TEntity> items;
@@ -419,14 +375,15 @@ class Inventory : public BoundedCollection<ItemID>
 public:
 	Inventory(int capacity);
 	bool add(Item item);
+	bool add(ItemID item);
 	bool remove(Item item);
 };
 
 struct CoreData
 {
-	std::map<RoomID, Room> rooms;
-	std::map<AnimateID, Animate> animates;
-	std::map<ItemID, Item> items;
+	EntityMap<RoomID, Room> rooms;
+	EntityMap<AnimateID, Animate> animates;
+	EntityMap<ItemID, Item> items;
 	Inventory inventory = Inventory(max_owned_items);
 	std::vector<RoomID> paperroute;
 	Status status;
@@ -440,11 +397,9 @@ struct ParseData
 	bool parse_error;
 };
 
-
 /*
 	Functions
 */
-
 int get_random_number(int max);
 AnimateStatus get_random_status(int lowest, int highest);
 AnimateStatus get_random_status(AnimateStatus lowest, AnimateStatus highest);
@@ -466,25 +421,134 @@ void write_centered(WINDOW* win, const char* str);
 void get_command_string(char* input, int maxlength);
 void print_command_string(const char* fmt, ...);
 int advanced_getchar(const char* allowed);
-
 void run_intro();
-
-void save_status(CoreData& core);
+bool save_status(CoreData& core);
 bool load_status(CoreData& core);
-
 bool initialize(CoreData& core);
-
 bool perform_command(CoreData& core);
-
 void force_exit(void);
-
 void show_room_status(CoreData& core);
 bool progress_animate_status(CoreData& core);
+void sleep_ms(int n);
+AnimateStatus next_status(AnimateStatus status);
+AnimateStatus operator++(AnimateStatus& status, int);
+AnimateStatus& operator++(AnimateStatus& status);
 
 extern const char* saved_status_path;
 extern WINDOW* banner_window;
 extern WINDOW* main_window;
 extern WINDOW* input_window;
 
-#endif // !R136_INCLUDE
+template <typename E>
+constexpr auto to_value(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
 
+template<typename L>
+constexpr L combines_with(L value) { return -(value + 2); }
+
+constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }
+constexpr ItemID combines_with(AnimateID animate) { return static_cast<ItemID>(combines_with(to_value(animate))); }
+
+template<class TEntity >
+BoundedCollection<TEntity>::BoundedCollection(int capacity) :
+	max_item_count(capacity)
+{}
+
+template<class TEntity>
+bool BoundedCollection<TEntity>::is_full() const
+{
+	return items.size() >= max_item_count;
+}
+
+template<class TEntity>
+bool BoundedCollection<TEntity>::contains(TEntity item) const
+{
+	for (auto& element : items)
+		if (element == item)
+			return true;
+
+	return false;
+}
+
+template<class TEntity>
+bool BoundedCollection<TEntity>::add(TEntity item)
+{
+	if (is_full())
+		return false;
+
+	items.push_back(item);
+	return true;
+}
+
+template<class TEntity>
+bool BoundedCollection<TEntity>::remove(TEntity item)
+{
+	for (auto element = items.begin(); element != items.end(); ++element)
+	{
+		if (*element == item)
+		{
+			items.erase(element);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+template<class TEntity>
+size_t BoundedCollection<TEntity>::count() const
+{
+	return items.size();
+}
+
+template<class TEntity>
+typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::begin()
+{
+	return items.begin();
+}
+
+template<class TEntity>
+typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::end()
+{
+	return items.end();
+}
+
+template<class TKey, class TValue>
+void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue& value)
+{
+	auto element = map.find(key);
+	if (element == map.end())
+		map.insert(std::make_pair(key, &value));
+	else
+		element->second = &value;
+}
+
+template<class TKey, class TValue>
+bool EntityMap<TKey, TValue>::contains(TKey key)
+{
+	return map.find(key) != map.end();
+}
+
+template<class TKey, class TValue>
+TValue& EntityMap<TKey, TValue>::operator[](TKey key)
+{
+	auto element = map.find(key);
+	if (element == map.end())
+		throw std::out_of_range("key");
+
+	return *element->second;
+}
+
+template<class TKey, class TValue>
+typename std::map<TKey, TValue*>::iterator EntityMap<TKey, TValue>::begin()
+{
+	return map.begin();
+}
+
+template<class TKey, class TValue>
+typename std::map<TKey, TValue*>::iterator EntityMap<TKey, TValue>::end()
+{
+	return map.end();
+}

@@ -91,7 +91,6 @@ bool HandleFailedRead(CoreData& core, FILE* fp)
 bool load_status(CoreData& core)
 {
 	FILE* fp;
-	int i;
 
 	if (!(fp = fopen(saved_status_path, "rb")))
 	{
@@ -121,7 +120,7 @@ bool load_status(CoreData& core)
 		if (fp != 0 && fread(&room_id, sizeof(RoomID), 1, fp) < 1)
 			return HandleFailedRead(core, fp);
 
-		ore.items[static_cast<ItemID>(i)].room = room_id;
+		core.items[static_cast<ItemID>(i)].room = room_id;
 	}
 
 	for (int i = 0; i < to_value(RoomID::COUNT); i++)
