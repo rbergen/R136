@@ -25,7 +25,7 @@ BoundedCollection<TEntity>::BoundedCollection(int capacity) :
 template<class TEntity>
 bool BoundedCollection<TEntity>::is_full() const
 {
-	return items.size() >= max_item_count;
+	return items.size() >= (unsigned)max_item_count;
 }
 
 template<class TEntity>

@@ -231,7 +231,7 @@ void fill_map(EntityMap<TKey, TValue>& map, std::vector<TValue*> values)
 
 	map.clear();
 
-	for (int i = 0; i < values.size(); i++)
+	for (size_t i = 0; i < values.size(); i++)
 	{
 		values[i]->id = static_cast<TKey>(i);
 		map.add_or_set(values[i]);
@@ -264,7 +264,7 @@ void initialize(CoreData& core)
 bool set_room_connections(std::vector<Room*> rooms)
 {
 	// Interconnect rooms with neighbours
-	for (int i = 0; i < rooms.size(); i++)
+	for (size_t i = 0; i < rooms.size(); i++)
 	{
 		Room& room = *rooms[i];
 		room.connections.clear();
