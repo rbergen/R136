@@ -4,11 +4,9 @@ int main()
 {
 	CoreData core;
 
-	initialize_console();
+	console.initialize();
 
 	run_intro();
-
-	setup_windows();
 
 	initialize(core);
 
@@ -27,117 +25,112 @@ int main()
 
 	save_status(core);
 
-	wait_for_key();
+	console.main().wait_for_key();
+	console.main().clear();
 
-	clear_window();
-
-	release_console();
+	console.release();
 
 	return 0;
 }
 
 void show_splashscreen(void)
 {
-	clear_window();
+	console.main().clear();
 
-	wattron(main_window, A_BOLD);
-	print_centered(main_window, "*** R136 ***");
+	console.main().set_attribute(A_BOLD);
+	console.main().print_centered("*** R136 ***");
+	console.main().print("\n\n");
 	
-	waddstr(main_window, "\n\n");
+	console.main().set_attribute(A_UNDERLINE);
+	console.main().print_centered("Ontwerp\n"); 
+	console.main().unset_attribute(A_BOLD | A_UNDERLINE);
 	
-	wattron(main_window, A_UNDERLINE);
-	print_centered(main_window, "Ontwerp"); waddch(main_window, '\n');
-	wattroff(main_window, A_BOLD | A_UNDERLINE);
+	console.main().print_centered("Peter Wouda\n"); 
+	console.main().print_centered("Rutger van Bergen");
+	console.main().print("\n\n");
 	
-	print_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
-	print_centered(main_window, "Rutger van Bergen");
+	console.main().set_attribute(A_BOLD | A_UNDERLINE);
+	console.main().print_centered("Code\n"); 
+	console.main().unset_attribute(A_BOLD | A_UNDERLINE);
 	
-	waddstr(main_window, "\n\n");
+	console.main().print_centered("Rutger van Bergen");
+	console.main().print("\n\n");
 	
-	wattron(main_window, A_BOLD | A_UNDERLINE);
-	print_centered(main_window, "Code"); waddch(main_window, '\n');
-	wattroff(main_window, A_BOLD | A_UNDERLINE);
+	console.main().set_attribute(A_BOLD | A_UNDERLINE);
+	console.main().print_centered("Testen\n"); 
+	console.main().unset_attribute(A_BOLD | A_UNDERLINE);
 	
-	print_centered(main_window, "Rutger van Bergen");
+	console.main().print_centered("Machiel Keizer\n"); 
+	console.main().print_centered("Peter Wouda\n"); 
+	console.main().print_centered("Rutger van Bergen\n");
+	console.main().print("\n\n");
 	
-	waddstr(main_window, "\n\n");
-	
-	wattron(main_window, A_BOLD | A_UNDERLINE);
-	print_centered(main_window, "Testen"); waddch(main_window, '\n');
-	wattroff(main_window, A_BOLD | A_UNDERLINE);
-	
-	print_centered(main_window, "Machiel Keizer"); waddch(main_window, '\n');
-	print_centered(main_window, "Peter Wouda"); waddch(main_window, '\n');
-	print_centered(main_window, "Rutger van Bergen");
-	
-	waddstr(main_window, "\n\n");
-	
-	wattron(main_window, A_BOLD);
-	print_centered(main_window, "Versie 3.2, (C) 1998, 2021 R.I.P.");
-	wattroff(main_window, A_BOLD);
-	
-	waddstr(main_window, "\n\n");
+	console.main().set_attribute(A_BOLD);
+	console.main().print_centered("Versie 3.2, (C) 1998, 2021 R.I.P.");
+	console.main().unset_attribute(A_BOLD);
+	console.main().print("\n\n");
 }
 
 void show_start_message(void)
 {
-	clear_window();
+	console.main().clear();
 	
-	write_to_main_window(L"Terwijl je op het punt staat je avontuur te beginnen, denk je nog even na\n");
-	write_to_main_window(L"over waarom je hier, in deze verlaten, neertroostige omgeving staat.\n\n");
-	write_to_main_window(L"Het verhaal begint op het moment dat je met drie andere wetenschappers een\n");
-	write_to_main_window(L"project begon over straling. In een vergevorderd stadium van het onderzoek\n");
-	write_to_main_window(L"werd er een fout gemaakt. In plaats van de gebruikelijke stoffen werden er\n");
-	write_to_main_window(L"andere, agressievere in de kernsplitser gebracht.\n");
-	write_to_main_window(L"Het resultaat was even interessant als bedreigend: er ontstond een nieuwe\n");
-	write_to_main_window(L"straling, de positronenstraling. Deze straling heft elektronen op waardoor\n");
-	write_to_main_window(L"stoffen compleet in het niets verdwijnen. Een bepaald gedeelte van de reactor\n");
-	write_to_main_window(L"loste dan ook op in de lucht, en net op tijd kon een wereldramp voorkomen\n");
-	write_to_main_window(L"worden door het heldhaftig optreden van één van je collega's.\n");
-	write_to_main_window(L"De betreffende wetenschapper werd even blootgesteld aan de straling, en na\n");
-	write_to_main_window(L"het gebeuren zonderde hij zich af.\n\n");
-	write_to_main_window(L"Geschrokken door wat er gebeurde werd er besloten alles geheim te houden en\n");
-	write_to_main_window(L"het project te stoppen.\n");
-	write_to_main_window(L"De wetenschapper die aan de straling was blootgesteld hield zich niet aan de\n");
-	write_to_main_window(L"afspraak en stal wat van de agressieve stof. Hij bouwde een bom, de posi-\n");
-	write_to_main_window(L"tronenbom genaamd.\n");
+	console.main().write(L"Terwijl je op het punt staat je avontuur te beginnen, denk je nog even na\n");
+	console.main().write(L"over waarom je hier, in deze verlaten, neertroostige omgeving staat.\n\n");
+	console.main().write(L"Het verhaal begint op het moment dat je met drie andere wetenschappers een\n");
+	console.main().write(L"project begon over straling. In een vergevorderd stadium van het onderzoek\n");
+	console.main().write(L"werd er een fout gemaakt. In plaats van de gebruikelijke stoffen werden er\n");
+	console.main().write(L"andere, agressievere in de kernsplitser gebracht.\n");
+	console.main().write(L"Het resultaat was even interessant als bedreigend: er ontstond een nieuwe\n");
+	console.main().write(L"straling, de positronenstraling. Deze straling heft elektronen op waardoor\n");
+	console.main().write(L"stoffen compleet in het niets verdwijnen. Een bepaald gedeelte van de reactor\n");
+	console.main().write(L"loste dan ook op in de lucht, en net op tijd kon een wereldramp voorkomen\n");
+	console.main().write(L"worden door het heldhaftig optreden van één van je collega's.\n");
+	console.main().write(L"De betreffende wetenschapper werd even blootgesteld aan de straling, en na\n");
+	console.main().write(L"het gebeuren zonderde hij zich af.\n\n");
+	console.main().write(L"Geschrokken door wat er gebeurde werd er besloten alles geheim te houden en\n");
+	console.main().write(L"het project te stoppen.\n");
+	console.main().write(L"De wetenschapper die aan de straling was blootgesteld hield zich niet aan de\n");
+	console.main().write(L"afspraak en stal wat van de agressieve stof. Hij bouwde een bom, de posi-\n");
+	console.main().write(L"tronenbom genaamd.\n");
 	
-	wait_for_key();
-	clear_window();
+	console.main().wait_for_key();
+	console.main().clear();
 	
-	write_to_main_window(L"Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de\n");
-	write_to_main_window(L"wereld daarvoor laten boeten. Daarom verborg hij de bom, met een tijdmecha-\n");
-	write_to_main_window(L"nisme op een plaats die niemand zou durven betreden; de vallei der verderf.\n\n");
-	write_to_main_window(L"Eén van de wetenschappers rook onraad en wilde de zaak gaan onderzoeken.\n");
-	write_to_main_window(L"Drie dagen later werd hij met een vleesmes in zijn rug op de stoep van zijn\n");
-	write_to_main_window(L"huis gevonden.\n");
-	write_to_main_window(L"Toen zijn huis werd doorzocht stootte men op twee dingen: de plaats waar de\n");
-	write_to_main_window(L"bom lag en licht radioactieve voetstappen.\n");
-	write_to_main_window(L"Jij en je collega begrepen wat er aan de hand was, en jullie besloten dat er\n");
-	write_to_main_window(L"moest worden ingegrepen. Aangezien je niet echt een held bent, werd er beslo-\n");
-	write_to_main_window(L"ten dat de andere wetenschapper op pad zou gaan. Jij zou achterblijven om\n");
-	write_to_main_window(L"zijn reis te coördineren via een geheime radiofrequentie.\n");
-	write_to_main_window(L"Je hebt nooit meer iets van hem gehoord.\n\n");
-	write_to_main_window(L"Nu ben jij aan de beurt.\n\n");
-	write_to_main_window(L"Je staat op de trap die naar de vallei leidt. Rechts van je staat een ver-\n");
-	write_to_main_window(L"weerd bordje: \"Betreden op eigen risico\". Je kijkt nog één keer achterom,\n");
-	write_to_main_window(L"en met trillende benen loop je naar beneden...\n");
+	console.main().write(L"Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de\n");
+	console.main().write(L"wereld daarvoor laten boeten. Daarom verborg hij de bom, met een tijdmecha-\n");
+	console.main().write(L"nisme op een plaats die niemand zou durven betreden; de vallei der verderf.\n\n");
+	console.main().write(L"Eén van de wetenschappers rook onraad en wilde de zaak gaan onderzoeken.\n");
+	console.main().write(L"Drie dagen later werd hij met een vleesmes in zijn rug op de stoep van zijn\n");
+	console.main().write(L"huis gevonden.\n");
+	console.main().write(L"Toen zijn huis werd doorzocht stootte men op twee dingen: de plaats waar de\n");
+	console.main().write(L"bom lag en licht radioactieve voetstappen.\n");
+	console.main().write(L"Jij en je collega begrepen wat er aan de hand was, en jullie besloten dat er\n");
+	console.main().write(L"moest worden ingegrepen. Aangezien je niet echt een held bent, werd er beslo-\n");
+	console.main().write(L"ten dat de andere wetenschapper op pad zou gaan. Jij zou achterblijven om\n");
+	console.main().write(L"zijn reis te coördineren via een geheime radiofrequentie.\n");
+	console.main().write(L"Je hebt nooit meer iets van hem gehoord.\n\n");
+	console.main().write(L"Nu ben jij aan de beurt.\n\n");
+	console.main().write(L"Je staat op de trap die naar de vallei leidt. Rechts van je staat een ver-\n");
+	console.main().write(L"weerd bordje: \"Betreden op eigen risico\". Je kijkt nog één keer achterom,\n");
+	console.main().write(L"en met trillende benen loop je naar beneden...\n");
 	
-	wait_for_key();
-	clear_window();
+	console.main().wait_for_key();
+	console.main().clear();
+
 	
-	write_to_main_window(L"Type h voor help.\n\n");
+	console.main().write(L"Type h voor help.\n\n");
 }
 
 void force_exit(void)
 {
-	wait_for_key();
+	console.main().wait_for_key();
 
 	remove(saved_status_path);
 
-	clear_window();
+	console.main().clear();
 
-	release_console();
+	console.release();
 
 	exit(0);
 }

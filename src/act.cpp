@@ -1,10 +1,16 @@
 #include "act.h"
 
-const char* dontOwnItemFormatString = "< je hebt geen \"%s\"";
+const char* dontOwnItemFormatString = "je hebt geen \"%s\"";
 
 const char* commands[to_value(Command::COUNT)] = 
 	{"oost", "west", "noord", "zuid", "klim", "daal", "gebruik", "combineer", "pak", "leg", "bekijk", "afwachten", 
 	"einde", "status", "help"};
+
+InputWindow& input_window()
+{
+	static InputWindow* window = &console.input();
+	return *window;
+}
 
 bool perform_command(CoreData& core)
 {
@@ -12,10 +18,10 @@ bool perform_command(CoreData& core)
 
 	if (core.status.life_points <= 0)
 	{
-		print_to_main_window("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
-		print_to_main_window("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
-		print_to_main_window("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
-		print_to_main_window("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.\n\n");
+		console.main().print("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
+		console.main().print("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
+		console.main().print("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
+		console.main().print("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.\n\n");
 		force_exit();
 	}
 
@@ -24,10 +30,10 @@ bool perform_command(CoreData& core)
 		switch(--core.status.lamp_points)
 		{
 		case 10:
-			print_to_main_window("De zaklamp gaat zwakker branden.\n\n");
+			console.main().print("De zaklamp gaat zwakker branden.\n\n");
 			break;
 		case 0:
-			print_to_main_window("De batterijen van de zaklamp zijn uitgeput. Langzaam dooft hij.\n\n");
+			console.main().print("De batterijen van de zaklamp zijn uitgeput. Langzaam dooft hij.\n\n");
 			core.status.is_lamp_on = false;
 			break;
 		}
@@ -39,13 +45,13 @@ bool perform_command(CoreData& core)
 
 		do 
 		{
-			get_command_string(input_string, 64);
+			console.input().get_string_input(input_string, 64);
 			parse_input(core, input_string, parse_data);
 		} 
 		while (parse_data.parse_error);
 
-		print_centered(main_window, "---***---");
-		print_to_main_window("\n\n");
+		console.main().print_centered("---***---");
+		console.main().print("\n\n");
 
 		auto& gnu = core.animates[AnimateID::gnu];
 		auto& status = core.status;
@@ -61,7 +67,7 @@ bool perform_command(CoreData& core)
 
 			if (!core.rooms[status.current_room].connections.is_open(parse_data.command)) 
 			{
-				print_to_main_window("Daar kun je niet heen.\n");
+				console.main().print("Daar kun je niet heen.\n");
 				break;
 			}
 
@@ -127,10 +133,10 @@ bool perform_command(CoreData& core)
 			break;
 
 		case Command::finish:
-			print_to_main_window("Weet je zeker dat je de aarde laat vergaan? ");
-			if (tolower(advanced_getchar("jJnN")) == 'j')
+			console.main().print("Weet je zeker dat je de aarde laat vergaan? ");
+			if (tolower(console.main().get_char_input("jJnN")) == 'j')
 				return false;
-			print_to_main_window("\nMooi zo!\n");
+			console.main().print("\nMooi zo!\n");
 			break;
 
 		case Command::status:
@@ -142,7 +148,7 @@ bool perform_command(CoreData& core)
 			break;
 		}
 
-		print_to_main_window("\n");
+		console.main().print("\n");
 	}
 	while (parse_data.command == Command::status || parse_data.command == Command::help || parse_data.command == Command::finish);
 
@@ -168,7 +174,7 @@ void use(CoreData& core, ItemID item_id)
 			monsterID = AnimateID::plant;
 		else
 		{
-			print_to_main_window("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n\n");
 			return;
 		}
 
@@ -176,33 +182,33 @@ void use(CoreData& core, ItemID item_id)
 
 		while (true)
 		{
-			print_to_main_window("Je haalt uit met je zwaard");
+			console.main().print("Je haalt uit met je zwaard");
 
 			if (get_random_number(100) > 70)
-				print_to_main_window(", maar het monster ontwijkt.\n");
+				console.main().print(", maar het monster ontwijkt.\n");
 			else
 			{
-				print_to_main_window(" en je raakt het monster hard.\n");
+				console.main().print(" en je raakt het monster hard.\n");
 				monster.strikes_left--;
 			}
 
 			if (monster.strikes_left == 1)
-				print_to_main_window("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
+				console.main().print("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
 
 			if (!monster.strikes_left || get_random_number(100) > 30)
 				break;
 
-			print_to_main_window("\nJe kunt nog een slag uitdelen. Wil je dat? ");
+			console.main().print("\nJe kunt nog een slag uitdelen. Wil je dat? ");
 
-			if (tolower(advanced_getchar("jJnN")) != 'j')
+			if (tolower(console.main().get_char_input("jJnN")) != 'j')
 			{
-				print_to_main_window("\n");
+				console.main().print("\n");
 				break;
 			}
 
-			print_to_main_window("\n");
+			console.main().print("\n");
 		}
-		print_to_main_window("\n");
+		console.main().print("\n");
 
 		if (!monster.strikes_left)
 		{
@@ -210,7 +216,7 @@ void use(CoreData& core, ItemID item_id)
 			progress_animate_status(core);
 		}
 
-		wait_for_key();
+		console.main().wait_for_key();
 		break;
 	}
 	case ItemID::flashlight:
@@ -218,17 +224,17 @@ void use(CoreData& core, ItemID item_id)
 		if (status.is_lamp_on)
 		{
 			status.is_lamp_on = !status.is_lamp_on;
-			print_to_main_window("Je zet de zaklamp uit.%s", is_room_lit(status) ? "\n" : " Je ziet niets meer.\n");
+			console.main().print("Je zet de zaklamp uit.%s", is_room_lit(status) ? "\n" : " Je ziet niets meer.\n");
 			break;
 		}
 
 		if (status.lamp_points)
 		{
 			status.is_lamp_on = !status.is_lamp_on;
-			print_to_main_window("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
+			console.main().print("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
 		}
 		else
-			print_to_main_window("Zonder nieuwe batterijen doet'ie het niet...\n");
+			console.main().print("Zonder nieuwe batterijen doet'ie het niet...\n");
 
 		break;
 
@@ -236,11 +242,11 @@ void use(CoreData& core, ItemID item_id)
 
 		if (status.life_points == max_life_points)
 		{
-			print_to_main_window("Je bent nog helemaal heel!\n");
+			console.main().print("Je bent nog helemaal heel!\n");
 			break;
 		}
 
-		print_to_main_window("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even\n"
+		console.main().print("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even\n"
 				 "op je lippen van de pijn als het verband je nog bloedende wonden raakt.\n\n"
 				 "Je bent weer zo goed als nieuw.\n");
 
@@ -248,29 +254,29 @@ void use(CoreData& core, ItemID item_id)
 		
 		core.inventory.remove(item);
 
-		wait_for_key();
+		console.main().wait_for_key();
 		break;
 
 	case ItemID::tnt:
 
-		print_to_main_window("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\n"
+		console.main().print("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\n"
 				 "gaat met een harde knal. Je wordt even verblind door de flits van de ontplof-\n"
 				 "fing. Door de klap val je even flauw.\n");
 
 		status.life_points--;
 
-		wait_for_key();
+		console.main().wait_for_key();
 		break;
 
 	case ItemID::thermal_suit:
 
-		print_to_main_window("Je hebt het pak al aan.\n");
+		console.main().print("Je hebt het pak al aan.\n");
 
 		break;
 
 	case ItemID::gasmask:
 
-		print_to_main_window("Je hebt het gasmasker al op.\n");
+		console.main().print("Je hebt het gasmasker al op.\n");
 
 		break;
 
@@ -280,7 +286,7 @@ void use(CoreData& core, ItemID item_id)
 		if (target_animate == AnimateID::undefined
 			 || animates[target_animate].room != current_room)
 		{
-			print_to_main_window("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n\n");
 			break;
 		}
 
@@ -330,7 +336,7 @@ void use(CoreData& core, ItemID item_id)
 
 			if (animates[AnimateID::dragon].status != AnimateStatus::sleeping_lightly)
 			{
-				print_to_main_window("Dat heeft geen zin.\n\n");
+				console.main().print("Dat heeft geen zin.\n\n");
 				return;
 			}
 
@@ -371,7 +377,7 @@ void use(CoreData& core, ItemID item_id)
 
 		progress_animate_status(core);
 
-		wait_for_key();
+		console.main().wait_for_key();;
 		break;
 	}
 }
@@ -387,7 +393,7 @@ void combine(CoreData& core, ItemID item1, ItemID item2)
 
 	if (combines_with(core.items[item1].usable_on) != item2)
 	{
-		print_to_main_window("Dat levert niets bruikbaars op.\n");
+		console.main().print("Dat levert niets bruikbaars op.\n");
 		return;
 	}
 
@@ -396,7 +402,7 @@ void combine(CoreData& core, ItemID item1, ItemID item2)
 	case ItemID::flashlight:
 	case ItemID::batteries:
 
-		print_to_main_window("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen\n"
+		console.main().print("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen\n"
 				 "vallen. Daarna steek je de \"trommelbatterijen\" erin en schroeft de lamp weer\n"
 				 "dicht. Nadat je een paar keer op de zaklantaarn hebt geslagen zie je dat hij\n"
 				 "het doet.\n");
@@ -409,7 +415,7 @@ void combine(CoreData& core, ItemID item1, ItemID item2)
 	case ItemID::gas_capsule:
 	case ItemID::ignition:
 
-		print_to_main_window("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\n"
+		console.main().print("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\n"
 				 "resultaat een werkende mosterdgasgranaat.\n");
 
 		core.inventory.remove(core.items[ItemID::gas_capsule]);
@@ -425,7 +431,7 @@ void lay_down(CoreData& core, ItemID item_id)
 	
 	if (item_id == ItemID::flashlight)
 	{
-		print_to_main_window("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt\n"
+		console.main().print("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt\n"
 				 "missen.\n");
 
 		return;
@@ -433,14 +439,14 @@ void lay_down(CoreData& core, ItemID item_id)
 
 	if (item_id == ItemID::batteries)
 	{
-		print_to_main_window("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt\n"
+		console.main().print("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt\n"
 				 "missen.\n");
 
 		return;
 	}
 
 	auto& item = core.items[item_id];
-	print_to_main_window("Je legt %s neer.\n", item.name);
+	console.main().print("Je legt %s neer.\n", item.name);
 
 
 	core.inventory.remove(item);
@@ -453,11 +459,11 @@ void pickup(CoreData& core, ItemID item_id)
 
 	if (core.inventory.is_full())
 	{
-		print_to_main_window("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", item.name);
+		console.main().print("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", item.name);
 		return;
 	}
 
-	print_to_main_window("Je pakt %s op en steekt deze in een van je zakken.\n", item.name);
+	console.main().print("Je pakt %s op en steekt deze in een van je zakken.\n", item.name);
 
 	core.inventory.add(item);
 }
@@ -466,12 +472,12 @@ void inspect(CoreData& core, ItemID item_id)
 {
 	if (!is_room_lit(core.status))
 	{
-		print_to_main_window("Het is veel te donker om wat dan ook te bekijken.\n");
+		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
 		return;
 	}
 
-	write_to_main_window(core.items[item_id].description);
-	print_to_main_window("\n");
+	console.main().write(core.items[item_id].description);
+	console.main().print("\n");
 }
 
 void wait(void)
@@ -479,23 +485,23 @@ void wait(void)
 	switch(get_random_number(5))
 	{
 	case 0:
-		print_to_main_window("Je pulkt wat in je neus.\n");
+		console.main().print("Je pulkt wat in je neus.\n");
 		break;
 
 	case 1:
-		print_to_main_window("Je krabt wat achter je oren.\n");
+		console.main().print("Je krabt wat achter je oren.\n");
 		break;
 
 	case 2:
-		print_to_main_window("Je gaapt even uitgebreid.\n");
+		console.main().print("Je gaapt even uitgebreid.\n");
 		break;
 
 	case 3:
-		print_to_main_window("Je trekt je broek even op.\n");
+		console.main().print("Je trekt je broek even op.\n");
 		break;
 
 	case 4:
-		print_to_main_window("Je pulkt wat smeer uit je oren.\n");
+		console.main().print("Je pulkt wat smeer uit je oren.\n");
 		break;
 	}
 }
@@ -504,44 +510,44 @@ void show_status(CoreData& core)
 {
 	auto& status = core.status;
 
-	print_to_main_window("--- STATUSRAPPORT ---\n\n");
-	print_to_main_window("Je hebt nog %d levenspunten.\n", status.life_points);
+	console.main().print("--- STATUSRAPPORT ---\n\n");
+	console.main().print("Je hebt nog %d levenspunten.\n", status.life_points);
 
 	auto& inventory = core.inventory;
 	if (inventory.contains(ItemID::flashlight))
-		print_to_main_window("Je zaklamp staat %s.\n", status.is_lamp_on ? "aan" : "uit");
+		console.main().print("Je zaklamp staat %s.\n", status.is_lamp_on ? "aan" : "uit");
 
 	if (inventory.count() == 0)
 	{
-		print_to_main_window("Je draagt niets.\n");
+		console.main().print("Je draagt niets.\n");
 		return;
 	}
 
-	print_to_main_window("Je hebt in je bezit:\n");
+	console.main().print("Je hebt in je bezit:\n");
 
 	for (auto& item : core.inventory)
-		print_to_main_window("    %s\n", core.items[item].name);
+		console.main().print("    %s\n", core.items[item].name);
 }
 
 void show_help(void)
 {
-	print_to_main_window("--- HELP ---\n\n");
-	print_to_main_window("Commando's:\n");
-	print_to_main_window("   oost\n");
-	print_to_main_window("   west\n");
-	print_to_main_window("   noord\n");
-	print_to_main_window("   zuid\n");
-	print_to_main_window("   klim\n");
-	print_to_main_window("   daal\n");
-	print_to_main_window("   gebruik <voorwerp>\n");
-	print_to_main_window("   combineer <voorwerp> en/met <voorwerp>\n");
-	print_to_main_window("   pak <voorwerp>\n");
-	print_to_main_window("   leg <voorwerp>\n");
-	print_to_main_window("   bekijk <voorwerp>\n");
-	print_to_main_window("   afwachten\n");
-	print_to_main_window("   einde\n");
-	print_to_main_window("   status\n");
-	print_to_main_window("   help\n");
+	console.main().print("--- HELP ---\n\n");
+	console.main().print("Commando's:\n");
+	console.main().print("   oost\n");
+	console.main().print("   west\n");
+	console.main().print("   noord\n");
+	console.main().print("   zuid\n");
+	console.main().print("   klim\n");
+	console.main().print("   daal\n");
+	console.main().print("   gebruik <voorwerp>\n");
+	console.main().print("   combineer <voorwerp> en/met <voorwerp>\n");
+	console.main().print("   pak <voorwerp>\n");
+	console.main().print("   leg <voorwerp>\n");
+	console.main().print("   bekijk <voorwerp>\n");
+	console.main().print("   afwachten\n");
+	console.main().print("   einde\n");
+	console.main().print("   status\n");
+	console.main().print("   help\n");
 }
 
 void parse_input(CoreData& core, char* inpstr, ParseData& parse_data)
@@ -571,9 +577,9 @@ void parse_input(CoreData& core, char* inpstr, ParseData& parse_data)
 		parse_data.parse_error = true;
 
 		if (eoword == curp)
-			print_command_string("< geen commando gegeven");
+			console.input().print_error("geen commando gegeven");
 		else
-			print_command_string("< ongeldig commando gegeven");
+			console.input().print_error("ongeldig commando gegeven");
 
 		return;
 	}
@@ -592,7 +598,7 @@ void parse_input(CoreData& core, char* inpstr, ParseData& parse_data)
 	{
 	case Command::undefined:
 
-		print_command_string("< ongeldig commando gegeven");
+		console.input().print_error("ongeldig commando gegeven");
 		parse_data.parse_error = true;
 		return;
 
@@ -612,7 +618,7 @@ void parse_input(CoreData& core, char* inpstr, ParseData& parse_data)
 
 		if (*eoword != ' ')
 		{
-			print_command_string("< syntax: pak <voorwerp>");
+			console.input().print_error("syntax: pak <voorwerp>");
 			parse_data.parse_error = true;
 
 			return;
@@ -632,7 +638,7 @@ void parse_combine_parameters(CoreData& core, ParseData& parse_data, const char*
 
 	if (*currentMatch != ' ' || (!strstr(currentMatch + 1, " en ") && !strstr(currentMatch + 1, " met ")))
 	{
-		print_command_string("< syntax: combineer <voorwerp> en/met <voorwerp>");
+		console.input().print_error("syntax: combineer <voorwerp> en/met <voorwerp>");
 		parse_data.parse_error = true;
 
 		return;
@@ -675,7 +681,7 @@ void parse_combine_parameters(CoreData& core, ParseData& parse_data, const char*
 	
 	if (parse_data.item1 == parse_data.item2)
 	{
-		print_command_string("< je kunt een voorwerp niet met zichzelf combineren");
+		console.input().print_error("je kunt een voorwerp niet met zichzelf combineren");
 		parse_data.parse_error = true;
 	}
 }
@@ -684,7 +690,7 @@ bool parse_owned_item_command_param(CoreData& core, ParseData& parse_data, const
 {
 	if (*parseString != ' ')
 	{
-		print_command_string("< syntax: %s <voorwerp>", command);
+		console.input().print_error("syntax: %s <voorwerp>", command);
 		parse_data.parse_error = true;
 
 		return false;
@@ -701,14 +707,14 @@ bool check_found_item(ParseData& parse_data, ItemID item, const char* itemname, 
 	{
 	case ItemID::undefined:
 
-		print_command_string(undefinedItemFormatString, itemname);
+		console.input().print_error(undefinedItemFormatString, itemname);
 		parse_data.parse_error = true;
 
 		return false;
 
 	case ItemID::ambiguous:
 
-		print_command_string("< de afkorting \"%s\" is dubbelzinnig", itemname);
+		console.input().print_error("de afkorting \"%s\" is dubbelzinnig", itemname);
 		parse_data.parse_error = true;
 
 		return false;

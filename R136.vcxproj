@@ -151,9 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\act.h" />
+    <ClInclude Include="include\console_inlines.h" />
     <ClInclude Include="include\console.h" />
     <ClInclude Include="include\init.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\r136_inlines.h" />
+    <ClInclude Include="include\r136_templates.h" />
     <ClInclude Include="include\r136.h" />
     <ClInclude Include="include\status.h" />
   </ItemGroup>

@@ -21,30 +21,24 @@ class ColorSet
 
 public:
 	ColorSet(Color color, short foreground, short background);
-
 	ColorSet(Color color, short foreground, short background, chtype style);
-
 	void initialize();
-
 	Color get_color();
-
 	chtype get_attrs();
 };
 
 class ColorMap
 {
-	~ColorMap();
-
 	std::map<Color, ColorSet*> color_sets;
-
 	void add(Color color, short foreground, short background, chtype style);
-
 	void add(Color color, short foreground, short background);
-
 	void add(ColorSet* set);
 
 public:
-	chtype get_attrs(Color color);
+	~ColorMap();
 
+	chtype get_attrs(Color color);
 	void initialize();
 };
+
+extern ColorMap color_map;

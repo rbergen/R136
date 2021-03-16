@@ -4,7 +4,7 @@ const char* saved_status_path = "r136data.rip";
 
 bool HandleFailedWrite(FILE* fp)
 {
-	print_to_main_window("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
+	console.main().print("Fout bij wegschrijven status.\n\nStatus niet opgeslagen!\n");
 
 	fclose(fp);
 	remove(saved_status_path);
@@ -16,22 +16,22 @@ bool save_status(CoreData& core)
 {
 	FILE* fp;
 
-	print_to_main_window("\n\nWil je je huidige status opslaan? ");
+	console.main().print("\n\nWil je je huidige status opslaan? ");
 
-	if (tolower(advanced_getchar("jJnN")) != 'j')
+	if (tolower(console.main().get_char_input("jJnN")) != 'j')
 	{
-		print_to_main_window("\n");
+		console.main().print("\n");
 
 		return true;
 	}
 
 	while (!(fp = fopen(saved_status_path, "wb")))
 	{
-		print_to_main_window("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+		console.main().print("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 
-		if (tolower(advanced_getchar("jJnN")) != 'j')
+		if (tolower(console.main().get_char_input("jJnN")) != 'j')
 		{
-			print_to_main_window("\n\nStatus niet opgeslagen!\n");
+			console.main().print("\n\nStatus niet opgeslagen!\n");
 
 			remove(saved_status_path);
 
@@ -39,7 +39,7 @@ bool save_status(CoreData& core)
 		}
 	}
 
-	print_to_main_window("\n");
+	console.main().print("\n");
 
 	for (int i = 0; i < to_value(ItemID::COUNT); i++)
 		if (fp != 0 && fwrite(&core.items[static_cast<ItemID>(i)].room, sizeof(RoomID), 1, fp) < 1)
@@ -76,12 +76,12 @@ bool save_status(CoreData& core)
 
 bool HandleFailedRead(CoreData& core, FILE* fp)
 {
-	print_to_main_window("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
+	console.main().print("Fout bij lezen status.\n\nJe start een nieuw spel.\n\n");
 
 	fclose(fp);
 	remove(saved_status_path);
 
-	wait_for_key();
+	console.main().wait_for_key();
 
 	initialize(core);
 
@@ -94,15 +94,15 @@ bool load_status(CoreData& core)
 
 	if (!(fp = fopen(saved_status_path, "rb")))
 	{
-		print_centered(main_window, "Druk op een toets om te beginnen");
+		console.main().print_centered("Druk op een toets om te beginnen");
 
-		wait_for_key();
+		console.main().wait_for_key();
 		return false;
 	}
 
-	print_centered(main_window, "Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+	console.main().print_centered("Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
 
-	if (tolower(advanced_getchar("12")) != '2')
+	if (tolower(console.main().get_char_input("12")) != '2')
 	{
 		if (fp != 0) 
 			fclose(fp);
@@ -112,7 +112,7 @@ bool load_status(CoreData& core)
 		return false;
 	}
 
-	print_to_main_window("\n");
+	console.main().print("\n");
 
 	RoomID room_id = RoomID();
 	for (int i = 0; i < to_value(ItemID::COUNT); i++) 
@@ -157,7 +157,7 @@ bool load_status(CoreData& core)
 	if (fp != 0 && fread(&core.status, sizeof(Status), 1, fp) < 1)
 		return HandleFailedRead(core, fp);
 
-	print_to_main_window("\n");
+	console.main().print("\n");
 	
 	if (fp != 0)
 		fclose(fp);

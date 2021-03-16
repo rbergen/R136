@@ -250,8 +250,6 @@ void initialize(CoreData& core)
 	core.status.lamp_points = max_lamp_points;
 	core.status.has_tree_burned = false;
 
-	clear_window();
-
 	srand((int)time(NULL));
 
 	set_room_connections(rooms);
