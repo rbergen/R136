@@ -39,3 +39,9 @@ bool RoomConnections::set(Command direction, RoomID room)
 	return true;
 }
 
+void Animate::load(Animate& animate)
+{
+	room = animate.room;
+	strikes_left = animate.strikes_left;
+	status = animate.status;
+}

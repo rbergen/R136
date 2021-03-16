@@ -1,0 +1,23 @@
+target_sources(
+	${PROJECT_NAME} 
+	PRIVATE 
+	barbecue.cpp
+  computer.cpp 
+  door.cpp 
+  dragon.cpp 
+  dragonhead.cpp 
+  gnu.cpp
+  greencrystal.cpp 
+  hatch.cpp
+  hellhound.cpp
+  lava.cpp
+  mist.cpp
+  plant.cpp
+  redtroll.cpp
+  swamp.cpp
+  swelling.cpp
+  teleporter.cpp
+  tree.cpp
+  vacuum.cpp
+  voices.cpp
+)

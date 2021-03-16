@@ -93,6 +93,8 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PDC_WIDE;PDC_WIDE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ShowIncludes>
+      </ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,6 +110,8 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PDC_WIDE;PDC_WIDE;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ShowIncludes>
+      </ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +127,8 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PDC_WIDE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ShowIncludes>
+      </ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +144,8 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PDC_WIDE;PDC_WIDE;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ShowIncludes>
+      </ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,17 +159,41 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\act.h" />
-    <ClInclude Include="include\console_inlines.h" />
+    <ClInclude Include="include\animates.h" />
     <ClInclude Include="include\console.h" />
+    <ClInclude Include="include\constants\r136.h" />
     <ClInclude Include="include\init.h" />
+    <ClInclude Include="include\inlines\console.h" />
+    <ClInclude Include="include\inlines\r136.h" />
     <ClInclude Include="include\main.h" />
-    <ClInclude Include="include\r136_inlines.h" />
-    <ClInclude Include="include\r136_templates.h" />
     <ClInclude Include="include\r136.h" />
     <ClInclude Include="include\status.h" />
+    <ClInclude Include="include\templates\r136.h" />
+    <ClInclude Include="include\types\animates.h" />
+    <ClInclude Include="include\types\console.h" />
+    <ClInclude Include="include\types\r136.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\animates\barbecue.cpp" />
+    <ClCompile Include="src\animates\computer.cpp" />
+    <ClCompile Include="src\animates\door.cpp" />
+    <ClCompile Include="src\animates\dragon.cpp" />
+    <ClCompile Include="src\animates\dragonhead.cpp" />
+    <ClCompile Include="src\animates\gnu.cpp" />
+    <ClCompile Include="src\animates\greencrystal.cpp" />
+    <ClCompile Include="src\animates\hatch.cpp" />
+    <ClCompile Include="src\animates\hellhound.cpp" />
+    <ClCompile Include="src\animates\lava.cpp" />
+    <ClCompile Include="src\animates\mist.cpp" />
+    <ClCompile Include="src\animates\plant.cpp" />
+    <ClCompile Include="src\animates\redtroll.cpp" />
+    <ClCompile Include="src\animates\swamp.cpp" />
+    <ClCompile Include="src\animates\swelling.cpp" />
+    <ClCompile Include="src\animates\teleporter.cpp" />
+    <ClCompile Include="src\animates\tree.cpp" />
+    <ClCompile Include="src\animates\vacuum.cpp" />
+    <ClCompile Include="src\animates\voices.cpp" />
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
@@ -173,6 +205,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+    <Text Include="src\animates\CMakeLists.txt" />
+    <Text Include="src\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

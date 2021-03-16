@@ -1,9 +1,6 @@
 #pragma once
 
-#include "r136.h"
-#include <locale.h>
-#include <map>
-#include <stdexcept>
+#include "types/console.h"
 
 /* Value that determines the settings for Insert for all functions.
 	== 0: Insert off at start, use block cursor to indicate Insert on.
@@ -12,33 +9,4 @@
 	== 3: Insert on at start, use block cursor to indicate Insert off. */
 constexpr int insert_flag = 3;
 
-class ColorSet
-{
-	Color color;
-	short foreground, background;
-	chtype style, value;
-	bool is_initialized;
-
-public:
-	ColorSet(Color color, short foreground, short background);
-	ColorSet(Color color, short foreground, short background, chtype style);
-	void initialize();
-	Color get_color();
-	chtype get_attrs();
-};
-
-class ColorMap
-{
-	std::map<Color, ColorSet*> color_sets;
-	void add(Color color, short foreground, short background, chtype style);
-	void add(Color color, short foreground, short background);
-	void add(ColorSet* set);
-
-public:
-	~ColorMap();
-
-	chtype get_attrs(Color color);
-	void initialize();
-};
-
-extern ColorMap color_map;
+#include "inlines/console.h"

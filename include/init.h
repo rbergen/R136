@@ -1,5 +1,5 @@
 #pragma once
-#include "r136.h"
-#include <time.h>
 
-bool set_room_connections(Room* rooms);
+#include "types/r136.h"
+
+bool set_room_connections(std::vector<Room*> rooms);

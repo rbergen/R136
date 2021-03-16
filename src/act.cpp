@@ -1,3 +1,4 @@
+#include "r136.h"
 #include "act.h"
 
 const char* dontOwnItemFormatString = "je hebt geen \"%s\"";
@@ -216,7 +217,7 @@ void use(CoreData& core, ItemID item_id)
 			progress_animate_status(core);
 		}
 
-		console.main().wait_for_key();
+		console.main().wait_for_key(true);
 		break;
 	}
 	case ItemID::flashlight:
@@ -254,7 +255,7 @@ void use(CoreData& core, ItemID item_id)
 		
 		core.inventory.remove(item);
 
-		console.main().wait_for_key();
+		console.main().wait_for_key(true);
 		break;
 
 	case ItemID::tnt:
@@ -265,7 +266,7 @@ void use(CoreData& core, ItemID item_id)
 
 		status.life_points--;
 
-		console.main().wait_for_key();
+		console.main().wait_for_key(true);
 		break;
 
 	case ItemID::thermal_suit:
@@ -377,7 +378,7 @@ void use(CoreData& core, ItemID item_id)
 
 		progress_animate_status(core);
 
-		console.main().wait_for_key();;
+		console.main().wait_for_key(true);
 		break;
 	}
 }

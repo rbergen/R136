@@ -1,5 +1,6 @@
 #pragma once
-#include "r136.h"
+
+#include "types/r136.h"
 
 bool parse_owned_item_command_param(CoreData& core, ParseData& parse_data, const char* command, const char* parseString);
 

@@ -1,6 +1,12 @@
 #pragma once
 
-#include "r136.h"
+#include "types/r136.h"
+#include "constants/r136.h"
+#include <thread>
+
+inline CoreData::CoreData() :
+	inventory(Inventory(max_owned_items))
+{}
 
 inline size_t RoomConnections::count() const
 {
@@ -75,19 +81,7 @@ inline AnimateStatus& operator++(AnimateStatus& status)
 	return status;
 }
 
-// This following section is a little bit of nastiness due to major OS platforms not agreeing in 2021, on one approach to idle-wait for a number of milliseconds
-#ifdef _WIN32
-#include <windows.h>
 inline void sleep_ms(int n)
 {
-	Sleep(n);
+	std::this_thread::sleep_for(std::chrono::milliseconds(n));
 }
-#else
-#include <unistd.h>
-#include <map>
-inline void sleep_ms(int n)
-{
-	usleep(n * 1000, );
-}
-
-#endif

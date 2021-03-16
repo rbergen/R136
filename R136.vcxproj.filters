@@ -9,6 +9,21 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\constants">
+      <UniqueIdentifier>{c0c25b83-c418-4800-9c3f-8fc598bfc613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\inlines">
+      <UniqueIdentifier>{938ca956-6e8f-4773-bcfd-1c623cb6082e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\templates">
+      <UniqueIdentifier>{498add8c-3d74-4b5d-a76c-0b1a2094f12e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{c9255c7f-d094-4ae4-a6bc-5601fb7ca450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\animates">
+      <UniqueIdentifier>{1398b943-616f-4edd-bba1-d46dee4d875f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -32,13 +47,28 @@
     <ClInclude Include="include\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\r136_templates.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\constants\r136.h">
+      <Filter>Header Files\constants</Filter>
     </ClInclude>
-    <ClInclude Include="include\r136_inlines.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\inlines\console.h">
+      <Filter>Header Files\inlines</Filter>
     </ClInclude>
-    <ClInclude Include="include\console_inlines.h">
+    <ClInclude Include="include\inlines\r136.h">
+      <Filter>Header Files\inlines</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\console.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\r136.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templates\r136.h">
+      <Filter>Header Files\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\animates.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\animates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -70,8 +100,71 @@
     <ClCompile Include="src\r136.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\animates\barbecue.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\computer.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\door.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\dragon.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\dragonhead.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\gnu.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\greencrystal.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\hatch.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\hellhound.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\lava.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\mist.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\plant.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\redtroll.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\swamp.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\swelling.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\teleporter.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\tree.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\vacuum.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animates\voices.cpp">
+      <Filter>Source Files\animates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+    <Text Include="src\CMakeLists.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="src\animates\CMakeLists.txt">
+      <Filter>Source Files\animates</Filter>
+    </Text>
   </ItemGroup>
 </Project>

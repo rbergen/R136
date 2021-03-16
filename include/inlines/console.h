@@ -1,6 +1,8 @@
 #pragma once
 
-#include "console.h"
+// inlines/console.h
+
+#include "types/console.h"
 
 inline Window::Window(WINDOW* wnd) : Window(wnd, false, Color::undefined) {}
 
@@ -107,6 +109,10 @@ inline int Window::write(const wchar_t* text)
 inline InputWindow::InputWindow(WINDOW* wnd) : Window(wnd, true, Color::bold) {}
 
 inline Console::Console() :
+	banner_window(nullptr),
+	fullscreen_window(nullptr),
+	input_window(nullptr),
+	main_window(nullptr),
 	is_released(false)
 {}
 
@@ -121,7 +127,7 @@ inline Window& Console::banner()
 	return *banner_window;
 }
 
-void Console::process_resize()
+inline void Console::process_resize()
 {
 	setup_windows();
 }

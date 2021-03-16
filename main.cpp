@@ -1,4 +1,5 @@
-﻿#include "main.h"
+﻿#include "r136.h"
+#include "main.h"
 
 int main()
 {
@@ -25,7 +26,7 @@ int main()
 
 	save_status(core);
 
-	console.main().wait_for_key();
+	console.main().wait_for_key(true);
 	console.main().clear();
 
 	console.release();
@@ -92,9 +93,9 @@ void show_start_message(void)
 	console.main().write(L"het project te stoppen.\n");
 	console.main().write(L"De wetenschapper die aan de straling was blootgesteld hield zich niet aan de\n");
 	console.main().write(L"afspraak en stal wat van de agressieve stof. Hij bouwde een bom, de posi-\n");
-	console.main().write(L"tronenbom genaamd.\n");
+	console.main().write(L"tronenbom genaamd.\n\n");
 	
-	console.main().wait_for_key();
+	console.main().wait_for_key(true);
 	console.main().clear();
 	
 	console.main().write(L"Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de\n");
@@ -113,9 +114,9 @@ void show_start_message(void)
 	console.main().write(L"Nu ben jij aan de beurt.\n\n");
 	console.main().write(L"Je staat op de trap die naar de vallei leidt. Rechts van je staat een ver-\n");
 	console.main().write(L"weerd bordje: \"Betreden op eigen risico\". Je kijkt nog één keer achterom,\n");
-	console.main().write(L"en met trillende benen loop je naar beneden...\n");
+	console.main().write(L"en met trillende benen loop je naar beneden...\n\n");
 	
-	console.main().wait_for_key();
+	console.main().wait_for_key(true);
 	console.main().clear();
 
 	
@@ -124,7 +125,7 @@ void show_start_message(void)
 
 void force_exit(void)
 {
-	console.main().wait_for_key();
+	console.main().wait_for_key(true);
 
 	remove(saved_status_path);
 

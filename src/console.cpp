@@ -1,4 +1,7 @@
+#include "r136.h"
 #include "console.h"
+#include <stdexcept>
+#include <clocale>
 
 ColorMap color_map;
 Console console;
@@ -353,8 +356,15 @@ void Window::write(int y, int x, Color color, const wchar_t* text)
 	unset_color(color);
 }
 
-void Window::wait_for_key()
+void Window::wait_for_key(bool prompt)
 {
+	if (prompt)
+	{
+		set_color(Color::bold);
+		print("[Druk op een toets]");
+		unset_color(Color::bold);
+	}
+
 	refresh();
 
 	while (true)
@@ -368,6 +378,12 @@ void Window::wait_for_key()
 		}
 		else
 			break;
+	}
+
+	if (prompt)
+	{
+		set_position(get_y(), 0);
+		clear_line();
 	}
 }
 
@@ -496,5 +512,7 @@ void Console::release()
 		delwin(banner_window->wnd);
 
 	endwin();
+
+	is_released = true;
 }
 

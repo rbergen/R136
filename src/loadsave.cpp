@@ -138,7 +138,7 @@ bool load_status(CoreData& core)
 		if (fp != 0 && fread(&animate, sizeof(Animate), 1, fp) < 1)
 			return HandleFailedRead(core, fp);
 
-		core.animates[static_cast<AnimateID>(i)] = animate;
+		core.animates[static_cast<AnimateID>(i)].load(animate);
 	}
 
 	size_t inventory_size;
@@ -162,6 +162,8 @@ bool load_status(CoreData& core)
 	if (fp != 0)
 		fclose(fp);
 	
+	console.main().clear();
+
 	return true;
 }
 

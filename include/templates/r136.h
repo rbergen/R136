@@ -1,5 +1,9 @@
 #pragma once
-#include "r136.h"
+
+//templates/r136.h
+
+#include "types/r136.h"
+#include <stdexcept>
 
 template <class E>
 constexpr auto to_value(E e) noexcept
@@ -86,6 +90,17 @@ void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue& value)
 	else
 		element->second = &value;
 }
+
+template<class TKey, class TValue>
+void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue* value)
+{
+	auto element = map.find(key);
+	if (element == map.end())
+		map.insert(std::make_pair(key, value));
+	else
+		element->second = value;
+}
+
 
 template<class TKey, class TValue>
 bool EntityMap<TKey, TValue>::contains(TKey key)
