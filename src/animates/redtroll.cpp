@@ -1,4 +1,4 @@
-#include "r136.h"
+﻿#include "r136.h"
 #include "animates.h"
 
 RedTroll::RedTroll(RoomID room) : Animate(room) {}
@@ -8,7 +8,7 @@ bool RedTroll::progress_status(CoreData& core)
 	switch (core.animates[AnimateID::red_troll].status)
 	{
 	case AnimateStatus::initial:
-		console.main().write(L"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar ge�rgerd.\n\n");
+		console.main().write(L"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geërgerd.\n\n");
 
 		core.animates[AnimateID::red_troll].status++;
 

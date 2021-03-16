@@ -238,11 +238,17 @@ struct Status
 template<class TKey, class TValue>
 class EntityMap
 {
+	static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
+
 	std::map<TKey, TValue*> map;
+	bool delete_values;
 
 public:
-	void add_or_set(TKey key, TValue& value);
-	void add_or_set(TKey key, TValue* value);
+	EntityMap(bool delete_values = false);
+	~EntityMap();
+
+	void add_or_set(TValue& value);
+	void add_or_set(TValue* value);
 	bool contains(TKey key);
 	void clear();
 	TValue& operator[](TKey key);

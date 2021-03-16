@@ -1,5 +1,6 @@
 #include "r136.h"
 #include "act.h"
+#include <cstring>
 
 const char* dontOwnItemFormatString = "je hebt geen \"%s\"";
 

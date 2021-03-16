@@ -225,38 +225,16 @@ std::vector<Item*> items = { // { name, description, room, useable_on }
 };
 
 template <typename TKey, class TValue>
-void fill_map(EntityMap<TKey, TValue>& map, std::vector<TValue> values)
-{
-	map.clear();
-	
-	bool is_entity = std::is_base_of<Entity<TKey>, TValue>::value;
-
-	for (int i = 0; i < values.size(); i++) 
-	{
-		TKey id = static_cast<TKey>(i);
-
-		if (is_entity) 
-			((Entity<TKey>*)&values[i])->id = id;
-
-		map.add_or_set(id, values[i]);
-	}
-}
-
-template <typename TKey, class TValue>
 void fill_map(EntityMap<TKey, TValue>& map, std::vector<TValue*> values)
 {
-	map.clear();
+	static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
 
-	bool is_entity = std::is_base_of<Entity<TKey>, TValue>::value;
+	map.clear();
 
 	for (int i = 0; i < values.size(); i++)
 	{
-		TKey id = static_cast<TKey>(i);
-
-		if (is_entity)
-			((Entity<TKey>*)values[i])->id = id;
-
-		map.add_or_set(id, values[i]);
+		values[i]->id = static_cast<TKey>(i);
+		map.add_or_set(values[i]);
 	}
 }
 

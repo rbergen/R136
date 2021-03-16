@@ -82,8 +82,27 @@ typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::end()
 }
 
 template<class TKey, class TValue>
-void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue& value)
+inline EntityMap<TKey, TValue>::EntityMap(bool delete_values) :
+	delete_values(delete_values)
+{}
+
+template<class TKey, class TValue>
+inline EntityMap<TKey, TValue>::~EntityMap()
 {
+	if (!delete_values)
+		return;
+
+	for (auto element = map.begin(); element != map.end();)
+	{
+		delete element->second;
+		element = map.erase(element);
+	}
+}
+
+template<class TKey, class TValue>
+void EntityMap<TKey, TValue>::add_or_set(TValue& value)
+{
+	auto key = value.id;
 	auto element = map.find(key);
 	if (element == map.end())
 		map.insert(std::make_pair(key, &value));
@@ -92,15 +111,15 @@ void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue& value)
 }
 
 template<class TKey, class TValue>
-void EntityMap<TKey, TValue>::add_or_set(TKey key, TValue* value)
+void EntityMap<TKey, TValue>::add_or_set(TValue* value)
 {
+	auto key = value->id;
 	auto element = map.find(key);
 	if (element == map.end())
 		map.insert(std::make_pair(key, value));
 	else
 		element->second = value;
 }
-
 
 template<class TKey, class TValue>
 bool EntityMap<TKey, TValue>::contains(TKey key)

@@ -4,6 +4,58 @@
 
 #include "types/console.h"
 
+inline ColorSet::ColorSet(Color color, short foreground, short background) : ColorSet(color, foreground, background, 0) {}
+
+inline ColorSet::ColorSet(Color color, short foreground, short background, chtype style) :
+	color(color),
+	foreground(foreground),
+	background(background),
+	style(style),
+	value(),
+	is_initialized(false)
+{}
+
+inline Color ColorSet::get_color()
+{
+	return color;
+}
+
+inline chtype ColorSet::get_attrs()
+{
+	if (!is_initialized)
+		initialize();
+
+	return value;
+}
+
+inline void ColorMap::add(Color color, short foreground, short background, chtype style)
+{
+	add(new ColorSet(color, foreground, background, style));
+}
+
+inline void ColorMap::add(Color color, short foreground, short background)
+{
+	add(new ColorSet(color, foreground, background));
+}
+
+inline void ColorMap::add(ColorSet* set)
+{
+	auto element = color_sets.find(set->get_color());
+	if (element == color_sets.end())
+		color_sets.insert(std::make_pair(set->get_color(), set));
+	else
+		element->second = set;
+}
+
+inline chtype ColorMap::get_attrs(Color color)
+{
+	auto element = color_sets.find(color);
+	if (element == color_sets.end())
+		throw std::out_of_range("color");
+
+	return element->second->get_attrs();
+}
+
 inline Window::Window(WINDOW* wnd) : Window(wnd, false, Color::undefined) {}
 
 inline Window::Window(WINDOW* wnd, bool enable_keypad) : Window(wnd, enable_keypad, Color::undefined) {}

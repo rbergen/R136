@@ -1,4 +1,4 @@
-#include "r136.h"
+ï»¿#include "r136.h"
 #include "animates.h"
 
 Door::Door(RoomID room) : Animate(room) {}
@@ -14,7 +14,7 @@ bool Door::progress_status(CoreData& core)
 		break;
 
 	case AnimateStatus::door_open:
-		console.main().write(L"Je zet één eind van het bot onder de deur, en op het andere begin je te duwen.\n");
+		console.main().write(L"Je zet Ã©Ã©n eind van het bot onder de deur, en op het andere begin je te duwen.\n");
 		console.main().print("Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een\n");
 		console.main().print("kier. Je geeft nog een duw, en langzaam draait de deur open.\n\n");
 

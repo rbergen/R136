@@ -5,7 +5,11 @@
 #include <thread>
 
 inline CoreData::CoreData() :
+	animates(EntityMap<AnimateID, Animate>(true)),
+	items(EntityMap<ItemID, Item>(true)),
+	rooms(EntityMap<RoomID, Room>(true)),
 	inventory(Inventory(max_owned_items))
+
 {}
 
 inline size_t RoomConnections::count() const
