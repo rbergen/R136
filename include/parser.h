@@ -10,11 +10,9 @@ struct ParseData
 
 class Parser {
 	static string dont_own_item_format_string;
-
 	static string commands[];
 
 	ParseData parse_data;
-	bool (*is_room_lit)(Status& status);
 
 	void parse_combine_parameters(CoreData& core, ParseData& parse_data, const string& param_string);
 	bool parse_owned_item_command_param(CoreData& core, ParseData& parse_data, const string& command, const string& parse_string);
@@ -23,7 +21,7 @@ class Parser {
 	ItemID find_laying_item(CoreData& core, string& item_name);
 
 public:
-	Parser(bool (*is_room_lit)(Status& status));
+	Parser();
 
 	ParseData& parse_input(CoreData& core, string& input_string);
 };

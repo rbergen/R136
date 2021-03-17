@@ -27,7 +27,7 @@ bool Gnu::progress_status(CoreData& core)
 		break;
 
 	case AnimateStatus::poisonous_meat_fed:
-		console.main().write(L"De gnoe ziet het vlees, snuffelt er aan, en slokt het in één hap naar binnen.\n");
+		console.main().print(L"De gnoe ziet het vlees, snuffelt er aan, en slokt het in één hap naar binnen.\n");
 		console.main().print("Je ziet hem langzaam opzwellen en zijn hersens komen door zijn oogkassen naar\n");
 		console.main().print("buiten. Hij zakt in elkaar en blijft roerloos liggen.\n\n");
 

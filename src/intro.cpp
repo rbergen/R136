@@ -113,7 +113,7 @@ void lower_spider(int spider_x)
 	{
 		for (int spider_switch = 0; spider_switch < 2; spider_switch++)
 		{
-			console.fullscreen().write_block(0, spider_x, Color::inverse, spider[spider_switch], drop_index - 1, 0, spider_bottom_y, spider_right_x);
+			console.fullscreen().print(0, spider_x, Color::inverse, spider[spider_switch], drop_index - 1, 0, spider_bottom_y, spider_right_x);
 			console.fullscreen().refresh();
 
 			sleep_ms(50);
@@ -123,11 +123,11 @@ void lower_spider(int spider_x)
 	// Lower it to its final place, leaving a silk thread
 	for (int drop_index = 0; drop_index < spider_drop_height; drop_index++)
 	{
-		console.fullscreen().write(drop_index, spider_x, Color::inverse, line_section);
+		console.fullscreen().print(drop_index, spider_x, Color::inverse, line_section);
 
 		for (int spider_switch = 0; spider_switch < 2; spider_switch++)
 		{
-			console.fullscreen().write_block(drop_index + 1, spider_x, Color::inverse, spider[spider_switch], block_row_count);
+			console.fullscreen().print(drop_index + 1, spider_x, Color::inverse, spider[spider_switch], block_row_count);
 
 			console.fullscreen().refresh();
 			sleep_ms(50);
@@ -143,8 +143,8 @@ void swoop_in_letters(int screen_right_x, int screen_middle_x, int left_letter_f
 	// Introduce letters from either side of the screen
 	for (int flow_index = 0; flow_index < letter_width; flow_index++)
 	{
-		console.fullscreen().write_block(2, 0, Color::inverse, letters[letter_r], 0, letter_right_x - flow_index, letter_bottom_y, letter_right_x);
-		console.fullscreen().write_block(2, screen_right_x - flow_index, Color::inverse, letters[letter_p], 0, 0, letter_bottom_y, flow_index);
+		console.fullscreen().print(2, 0, Color::inverse, letters[letter_r], 0, letter_right_x - flow_index, letter_bottom_y, letter_right_x);
+		console.fullscreen().print(2, screen_right_x - flow_index, Color::inverse, letters[letter_p], 0, 0, letter_bottom_y, flow_index);
 
 		console.fullscreen().refresh();
 	}
@@ -156,11 +156,11 @@ void swoop_in_letters(int screen_right_x, int screen_middle_x, int left_letter_f
 	// Bring the letters to the center
 	for (flow_index = 0; flow_index < left_letter_final_x; flow_index++)
 	{
-		console.fullscreen().write_block(2, flow_index, Color::inverse, vertical_space, block_row_count);
-		console.fullscreen().write_block(2, flow_index + 1, Color::inverse, letters[letter_r], block_row_count);
+		console.fullscreen().print(2, flow_index, Color::inverse, vertical_space, block_row_count);
+		console.fullscreen().print(2, flow_index + 1, Color::inverse, letters[letter_r], block_row_count);
 
-		console.fullscreen().write_block(2, right_letter_first_x - flow_index, Color::inverse, letters[letter_p], block_row_count);
-		console.fullscreen().write_block(2, screen_right_x - flow_index, Color::inverse, vertical_space, block_row_count);
+		console.fullscreen().print(2, right_letter_first_x - flow_index, Color::inverse, letters[letter_p], block_row_count);
+		console.fullscreen().print(2, screen_right_x - flow_index, Color::inverse, vertical_space, block_row_count);
 
 		console.fullscreen().refresh();
 	}
@@ -168,15 +168,15 @@ void swoop_in_letters(int screen_right_x, int screen_middle_x, int left_letter_f
 	// If the silk thread is just left of center due to screen width, bump the P one more place to the left
 	if ((screen_right_x % 2) == 0)
 	{
-		console.fullscreen().write_block(2, right_letter_first_x - flow_index, Color::inverse, letters[letter_p], block_row_count);
-		console.fullscreen().write_block(2, screen_right_x - flow_index, Color::inverse, vertical_space, block_row_count);
+		console.fullscreen().print(2, right_letter_first_x - flow_index, Color::inverse, letters[letter_p], block_row_count);
+		console.fullscreen().print(2, screen_right_x - flow_index, Color::inverse, vertical_space, block_row_count);
 
 		console.fullscreen().refresh();
 	}
 
 	// Cut the silk thread to create the letter I
-	console.fullscreen().write(1, screen_middle_x, Color::inverse, L"▀");
-	console.fullscreen().write(1 + block_row_count, screen_middle_x, Color::inverse, L"▄");
+	console.fullscreen().print(1, screen_middle_x, Color::inverse, L"▀");
+	console.fullscreen().print(1 + block_row_count, screen_middle_x, Color::inverse, L"▄");
 
 	console.fullscreen().refresh();
 }
@@ -188,33 +188,33 @@ void swoop_in_digits(int screen_bottom_y, int screen_right_x, int screen_middle_
 		letters_top_y = 2;
 
 	// clear everything except for the R
-	console.fullscreen().write(0, screen_middle_x, Color::inverse, L" ");
-	console.fullscreen().write(1, screen_middle_x, Color::inverse, L" ");
+	console.fullscreen().print(0, screen_middle_x, Color::inverse, L" ");
+	console.fullscreen().print(1, screen_middle_x, Color::inverse, L" ");
 	for (int i = 2; i < 2 + block_row_count; i++)
 	{
-		console.fullscreen().write(i, screen_middle_x, Color::inverse, clear_right_letter_spaces);
+		console.fullscreen().print(i, screen_middle_x, Color::inverse, clear_right_letter_spaces);
 	}
 
 	for (int i = 2 + block_row_count; i < spider_drop_height; i++)
 	{
-		console.fullscreen().write(i, screen_middle_x, Color::inverse, L" ");
+		console.fullscreen().print(i, screen_middle_x, Color::inverse, L" ");
 	}
 
 	for (int i = spider_drop_height; i < spider_drop_height + block_row_count; i++)
 	{
-		console.fullscreen().write(i, spider_x, Color::inverse, clear_spider_spaces);
+		console.fullscreen().print(i, spider_x, Color::inverse, clear_spider_spaces);
 	}
 
 	// Lower the R to the vertical middle of the screen
 	for (int i = 2; i < letters_top_y; i++)
 	{
-		console.fullscreen().write_block(i, left_letter_final_x, Color::inverse, letters[letter_r_low], block_row_count);
+		console.fullscreen().print(i, left_letter_final_x, Color::inverse, letters[letter_r_low], block_row_count);
 
 		console.fullscreen().refresh();
 		sleep_ms(5);
 
-		console.fullscreen().write(i, left_letter_final_x, Color::inverse, clear_left_letter_spaces);
-		console.fullscreen().write_block(i + 1, left_letter_final_x, Color::inverse, letters[letter_r], block_row_count);
+		console.fullscreen().print(i, left_letter_final_x, Color::inverse, clear_left_letter_spaces);
+		console.fullscreen().print(i + 1, left_letter_final_x, Color::inverse, letters[letter_r], block_row_count);
 
 		console.fullscreen().refresh();
 		sleep_ms(5);
@@ -226,7 +226,7 @@ void swoop_in_digits(int screen_bottom_y, int screen_right_x, int screen_middle_
 	// Introduce the digits from the right-hand side of the screen
 	for (int flow_index = 0; flow_index < digits_width; flow_index++)
 	{
-		console.fullscreen().write_block(letters_top_y, screen_right_x - flow_index, Color::inverse_red, digits, 0, 0, digits_bottom_y, flow_index);
+		console.fullscreen().print(letters_top_y, screen_right_x - flow_index, Color::inverse_red, digits, 0, 0, digits_bottom_y, flow_index);
 
 		console.fullscreen().refresh();
 	}
@@ -234,8 +234,8 @@ void swoop_in_digits(int screen_bottom_y, int screen_right_x, int screen_middle_
 	// Bring the digits to the center
 	for (int flow_index = screen_right_x - digits_width; flow_index >= digits_final_x; flow_index--)
 	{
-		console.fullscreen().write_block(letters_top_y, flow_index, Color::inverse_red, digits, block_row_count);
-		console.fullscreen().write_block(letters_top_y, flow_index + digits_width, Color::inverse_red, vertical_space, block_row_count);
+		console.fullscreen().print(letters_top_y, flow_index, Color::inverse_red, digits, block_row_count);
+		console.fullscreen().print(letters_top_y, flow_index + digits_width, Color::inverse_red, vertical_space, block_row_count);
 
 		console.fullscreen().refresh();
 	}

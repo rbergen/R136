@@ -9,6 +9,15 @@
 using std::string;
 using std::wstring;
 
+enum class RoomType : char
+{
+	forest,
+	cave,
+	outdoor,
+	indoor,
+	undefined
+};
+
 enum class RoomID : char
 {
 	forest0 = 0, forest1, forest2, north_swamp, forest4,
@@ -190,13 +199,36 @@ struct Room : Entity<RoomID>
 {
 	const wstring name;
 	const wstring description;
-	bool is_forest;
+	RoomType type;
 	RoomConnections connections;
 
-	Room(const wstring name, const wstring description, bool is_forest) : name(name), description(description), is_forest(is_forest) {}
-	Room(const wstring name, const wstring description) : Room(name, description, false) {}
-	Room(const wstring name, bool is_forest) : Room(name, L"", is_forest) {}
-	Room(const wstring name) : Room(name, L"" , false) {}
+protected:
+	Room(const wstring name, const wstring description, RoomType type) : name(name), description(description), type(type) {}
+	Room(const wstring name, RoomType type) : name(name), description(L""), type(type) {}
+};
+
+struct Forest : public Room
+{
+	Forest(const wstring name, const wstring description) : Room(name, description, RoomType::forest) {}
+	Forest(const wstring name) : Room(name, RoomType::forest) {}
+};
+
+struct Outdoor : public Room
+{
+	Outdoor(const wstring name, const wstring description) : Room(name, description, RoomType::outdoor) {}
+	Outdoor(const wstring name) : Room(name, RoomType::outdoor) {}
+};
+
+struct Indoor : public Room
+{
+	Indoor(const wstring name, const wstring description) : Room(name, description, RoomType::indoor) {}
+	Indoor(const wstring name) : Room(name, RoomType::indoor) {}
+};
+
+struct Cave : public Room
+{
+	Cave(const wstring name, const wstring description) : Room(name, description, RoomType::cave) {}
+	Cave(const wstring name) : Room(name, RoomType::cave) {}
 };
 
 struct CoreData;

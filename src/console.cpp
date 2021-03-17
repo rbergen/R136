@@ -47,7 +47,7 @@ void ColorMap::initialize()
 	add(Color::normal, COLOR_WHITE, COLOR_BLACK);
 }
 
-int Window::scanf(int check_input, int length, const string& allowed_characters, const string format_string, ...)
+int Window::scanf(int check_input, int length, const string& allowed_characters, const char* format_string, ...)
 {
 	va_list argp;
 	int result = 0;
@@ -60,7 +60,7 @@ int Window::scanf(int check_input, int length, const string& allowed_characters,
 		if (!((result = get_string_input(allowed_characters, input_string, get_y(), get_x(), 0, 1, 0)) == to_value(Key::kEscape)))
 		{
 			va_start(argp, format_string);
-			result = vsscanf(input_string.c_str(), format_string.c_str(), argp);
+			result = vsscanf(input_string.c_str(), format_string, argp);
 			va_end(argp);
 		}
 	} 
@@ -261,38 +261,38 @@ void Window::print_centered(const string& str)
 }
 
 
-void Window::write_block(int y, int x, Color color, const wstring* block, int rowcount)
+void Window::print(int y, int x, Color color, const wstring* block, int rowcount)
 {
 	set_color(color);
 
 	for (int i = 0; i < rowcount; i++)
 	{
 		set_position(y + i, x);
-		write(block[i]);
+		print(block[i]);
 	}
 
 	unset_color(color);
 }
 
-void Window::write_block(int y, int x, Color color, const wstring* block, int top_y, int left_x, int bottom_y, int right_x)
+void Window::print(int y, int x, Color color, const wstring* block, int top_y, int left_x, int bottom_y, int right_x)
 {
 	set_color(color);
 
 	for (int i = top_y; i <= bottom_y; i++)
 	{
 		set_position(y + i - top_y, x);
-		write(block[i].substr(left_x, (size_t)right_x - left_x + 1));
+		print(block[i].substr(left_x, (size_t)right_x - left_x + 1));
 	}
 
 	unset_color(color);
 }
 
-void Window::write(int y, int x, Color color, const wstring& text)
+void Window::print(int y, int x, Color color, const wstring& text)
 {
 	set_color(color);
 
 	set_position(y, x);
-	write(text);
+	print(text);
 
 	unset_color(color);
 }
@@ -368,23 +368,6 @@ void InputWindow::get_string_input(string& input)
 	set_position(0, 0);
 
 	unset_color(standard_color);
-}
-
-void InputWindow::print_error(const string& format, const string& value)
-{
-	set_position(0, 0);
-	clear_line();
-
-	set_color(Color::error);
-
-	print("< ");
-
-	print(string(format).replace("{0}", value));
-
-	unset_color(Color::error);
-
-	refresh();
-	wait_for_key();
 }
 
 void Console::setup_windows()

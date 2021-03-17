@@ -1,7 +1,6 @@
 #include "r136.h"
 #include "act.h"
 #include "parser.h"
-#include <cstring>
 
 InputWindow& input_window()
 {
@@ -11,7 +10,7 @@ InputWindow& input_window()
 
 bool perform_command(CoreData& core)
 {
-	static Parser parser{ is_room_lit };
+	static Parser parser{};
 
 	if (core.status.life_points <= 0)
 	{
@@ -40,10 +39,11 @@ bool perform_command(CoreData& core)
 	
 	do
 	{
-		string input_string = string(65, ' ');
+		string input_string;
 
 		do 
 		{
+			input_string = string(65, ' ');
 			console.input().get_string_input(input_string);
 			parse_data = parser.parse_input(core, input_string);
 		} 
@@ -173,7 +173,7 @@ void use(CoreData& core, ItemID item_id)
 			monsterID = AnimateID::plant;
 		else
 		{
-			console.main().print("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n");
 			return;
 		}
 
@@ -223,7 +223,7 @@ void use(CoreData& core, ItemID item_id)
 		if (status.is_lamp_on)
 		{
 			status.is_lamp_on = !status.is_lamp_on;
-			console.main().print("Je zet de zaklamp uit.%s", is_room_lit(status) ? "\n" : " Je ziet niets meer.\n");
+			console.main().print("Je zet de zaklamp uit.{0}", is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
 			break;
 		}
 
@@ -285,7 +285,7 @@ void use(CoreData& core, ItemID item_id)
 		if (target_animate == AnimateID::undefined
 			 || animates[target_animate].room != current_room)
 		{
-			console.main().print("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n");
 			break;
 		}
 
@@ -335,7 +335,7 @@ void use(CoreData& core, ItemID item_id)
 
 			if (animates[AnimateID::dragon].status != AnimateStatus::sleeping_lightly)
 			{
-				console.main().print("Dat heeft geen zin.\n\n");
+				console.main().print("Dat heeft geen zin.\n");
 				return;
 			}
 
@@ -445,7 +445,7 @@ void lay_down(CoreData& core, ItemID item_id)
 	}
 
 	auto& item = core.items[item_id];
-	console.main().print("Je legt %s neer.\n", item.name);
+	console.main().print("Je legt {0} neer.\n", item.name);
 
 
 	core.inventory.remove(item);
@@ -458,24 +458,24 @@ void pickup(CoreData& core, ItemID item_id)
 
 	if (core.inventory.is_full())
 	{
-		console.main().print("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", item.name.c_str());
+		console.main().print("Je zakken zitten tjokvol, en je krijgt {0} er niet in.\n", item.name);
 		return;
 	}
 
-	console.main().print("Je pakt %s op en steekt deze in een van je zakken.\n", item.name.c_str());
+	console.main().print("Je pakt {0} op en steekt deze in een van je zakken.\n", item.name);
 
 	core.inventory.add(item);
 }
 
 void inspect(CoreData& core, ItemID item_id)
 {
-	if (!is_room_lit(core.status))
+	if (!is_room_lit(core))
 	{
 		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
 		return;
 	}
 
-	console.main().write(core.items[item_id].description);
+	console.main().print(core.items[item_id].description);
 	console.main().print("\n");
 }
 
@@ -510,11 +510,11 @@ void show_status(CoreData& core)
 	auto& status = core.status;
 
 	console.main().print("--- STATUSRAPPORT ---\n\n");
-	console.main().print("Je hebt nog %d levenspunten.\n", status.life_points);
+	console.main().print("Je hebt nog {0} levenspunten.\n", std::to_string(status.life_points));
 
 	auto& inventory = core.inventory;
 	if (inventory.contains(ItemID::flashlight))
-		console.main().print("Je zaklamp staat %s.\n", status.is_lamp_on ? "aan" : "uit");
+		console.main().print("Je zaklamp staat {0}.\n", status.is_lamp_on ? "aan" : "uit");
 
 	if (inventory.count() == 0)
 	{
@@ -525,7 +525,7 @@ void show_status(CoreData& core)
 	console.main().print("Je hebt in je bezit:\n");
 
 	for (auto& item : core.inventory)
-		console.main().print("    %s\n", core.items[item].name);
+		console.main().print("    {0}\n", core.items[item].name);
 }
 
 void show_help(void)
@@ -547,12 +547,6 @@ void show_help(void)
 	console.main().print("   einde\n");
 	console.main().print("   status\n");
 	console.main().print("   help\n");
-}
-
-bool is_room_lit(Status& status)
-{
-	return status.current_room == RoomID::radioactive_cave || status.current_room == RoomID::fluorescent_cave
-		|| to_value(status.current_room) < to_value(RoomID::slime_cave) || status.is_lamp_on;
 }
 
 

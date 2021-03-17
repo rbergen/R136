@@ -8,7 +8,7 @@ bool GreenCrystal::progress_status(CoreData& core)
 	switch (core.animates[AnimateID::green_crystal].status)
 	{
 	case AnimateStatus::initial:
-		console.main().write(L"Je struikelt over iets. Door de begroeïing zie je niet wat het is.\n\n");
+		console.main().print(L"Je struikelt over iets. Door de begroeïing zie je niet wat het is.\n\n");
 
 		break;
 	}

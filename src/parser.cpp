@@ -44,7 +44,7 @@ bool Parser::parse_owned_item_command_param(CoreData& core, ParseData& parse_dat
 {
 	if (parse_string.size() == 0)
 	{
-		console.input().print_error("syntax: %s <voorwerp>", command.c_str());
+		console.input().print_error("syntax: {0} <voorwerp>", command);
 		parse_data.parse_error = true;
 
 		return false;
@@ -61,14 +61,14 @@ bool Parser::check_found_item(ParseData& parse_data, ItemID item, const string& 
 	{
 	case ItemID::undefined:
 
-		console.input().print_error(undefined_item_format_string, item_name.c_str());
+		console.input().print_error(undefined_item_format_string, item_name);
 		parse_data.parse_error = true;
 
 		return false;
 
 	case ItemID::ambiguous:
 
-		console.input().print_error("de afkorting \"%s\" is dubbelzinnig", item_name.c_str());
+		console.input().print_error("de afkorting \"{0}\" is dubbelzinnig", item_name);
 		parse_data.parse_error = true;
 
 		return false;
@@ -101,7 +101,7 @@ ItemID Parser::find_owned_item(CoreData& core, const string& item_name)
 
 ItemID Parser::find_laying_item(CoreData& core, string& item_name)
 {
-	if (!is_room_lit(core.status))
+	if (!is_room_lit(core))
 		return ItemID::undefined;
 
 	auto item_id = ItemID::undefined;
@@ -125,9 +125,8 @@ ItemID Parser::find_laying_item(CoreData& core, string& item_name)
 	return item_id;
 }
 
-Parser::Parser(bool (*is_room_lit)(Status& status)) :
-	parse_data(ParseData()),
-	is_room_lit(is_room_lit)
+Parser::Parser() :
+	parse_data(ParseData())
 {}
 
 ParseData& Parser::parse_input(CoreData& core, string& input_string)
@@ -137,15 +136,15 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	parse_data.parse_error = false;
 
 	while (input_string.size() > 0 && input_string[0] == ' ')
-		input_string = input_string.erase(0, 1);
+		input_string.erase(0, 1);
 
 	while (input_string.size() > 0 && input_string[input_string.size() - 1] == ' ')
-		input_string = input_string.erase(input_string.size() - 1);
+		input_string.erase(input_string.size() - 1);
 
 	auto space_position = input_string.find(' ');
 
-	auto &command = space_position == string::npos ? input_string : input_string.substr(0, space_position);
-	input_string = space_position == string::npos ? "" : input_string.substr(space_position + 1);
+	auto &command = (const string&)(space_position == string::npos ? input_string : input_string.substr(0, space_position));
+	input_string = (space_position == string::npos) ? "" : input_string.substr(space_position + 1);
 
 	// 9 is the length of the longest commands
 	if (command.size() == 0 || command.size() > 9)
@@ -192,7 +191,7 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 		}
 
 		parse_data.item1 = find_laying_item(core, input_string);
-		check_found_item(parse_data, parse_data.item1, input_string, "je ziet hier geen \"%s\" die je kunt meenemen");
+		check_found_item(parse_data, parse_data.item1, input_string, "je ziet hier geen \"{0}\" die je kunt meenemen");
 
 		break;
 	}
@@ -200,6 +199,6 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	return parse_data;
 }
 
-string Parser::dont_own_item_format_string = "je hebt geen \"%s\"";
+string Parser::dont_own_item_format_string = "je hebt geen \"{0}\"";
 
 string Parser::commands[] = { "oost", "west", "noord", "zuid", "klim", "daal", "gebruik", "combineer", "pak", "leg", "bekijk", "afwachten", "einde", "status", "help" };

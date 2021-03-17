@@ -2,8 +2,6 @@
 
 #include "types/r136.h"
 
-bool is_room_lit(Status& status);
-
 bool perform_command(CoreData& core);
 
 void use(CoreData& core, ItemID item_id);
