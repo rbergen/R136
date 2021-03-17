@@ -52,8 +52,6 @@ class Window
 {
 	friend class Console;
 
-	int scanf(int check_input, int length, const string& allowed_characters, const char* format, ...);
-
 protected:
 	WINDOW* wnd;
 	Color standard_color;

@@ -14,11 +14,8 @@ RoomID RoomConnections::operator[](Command direction) const
 	if (!is_direction_command(direction))
 		return RoomID::undefined;
 
-	for (auto& element : connections)
-		if (element.first == direction)
-			return element.second;
-
-	return RoomID::undefined;
+	auto existing_target = connections.find(direction);
+	return existing_target == connections.end() ? RoomID::undefined : existing_target->second;
 }
 
 bool RoomConnections::set(Command direction, RoomID room)

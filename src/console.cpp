@@ -47,28 +47,6 @@ void ColorMap::initialize()
 	add(Color::normal, COLOR_WHITE, COLOR_BLACK);
 }
 
-int Window::scanf(int check_input, int length, const string& allowed_characters, const char* format_string, ...)
-{
-	va_list argp;
-	int result = 0;
-
-	string input_string;
-
-	do
-	{
-		input_string.assign(' ', length);
-		if (!((result = get_string_input(allowed_characters, input_string, get_y(), get_x(), 0, 1, 0)) == to_value(Key::kEscape)))
-		{
-			va_start(argp, format_string);
-			result = vsscanf(input_string.c_str(), format_string, argp);
-			va_end(argp);
-		}
-	} 
-	while (check_input && (result == EOF || !result));
-
-	return result;
-}
-
 Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
 	wnd(wnd),
 	standard_color(standard_color),
@@ -114,7 +92,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 			break;
 
 		case KEY_RIGHT: /* Arrow right */
-			if (input_pos < input_length)
+			if (input_pos < input_length - 1)
 				input_pos++;
 
 			break;
@@ -125,7 +103,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 			break;
 
 		case KEY_END: /* End */
-			input_pos = input_length;
+			input_pos = input_length - 1;
 
 			if (input[input_pos] == ' ')
 				while (input_pos && input[(size_t)input_pos - 1] == ' ')
@@ -217,7 +195,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 				input.insert(input_pos, 1, input_char);
 				input.erase(input_length);
 
-				set_position(input_y, input_x + input_length);
+				set_position(input_y, input_x + input_length - 1);
 				wdelch(wnd);
 				set_position(input_y, input_x + input_pos);
 				winsch(wnd, input_char);
@@ -330,24 +308,27 @@ void Window::wait_for_key(bool prompt)
 
 int Window::get_char_input(const string& allowed)
 {
-	char input = 0;
-	int y, x;
+	refresh();
 
+	int y, x;
 	get_position(y, x);
 
 	set_color(Color::bold);
+
+	string input = " ";
 
 	do
 	{
 		set_position(y, x);
 
-		if (scanf(0, 1, allowed, "%c", &input) == to_value(Key::kEscape))
-			input = to_value(Key::kEscape);
-	} 		while (input == ' ');
+		get_string_input(allowed, input, y, x, 0, false, false);
+		
+	} 	
+	while (input[0] == ' ');
 
 	unset_color(Color::bold);
 
-	return input;
+	return input[0];
 }
 
 void InputWindow::get_string_input(string& input)
@@ -362,7 +343,7 @@ void InputWindow::get_string_input(string& input)
 	set_color(standard_color);
 	print("> ");
 
-	Window::get_string_input(" abcdefghijklmnopqrstuvwxyz", input, 0, get_x(), -1, 0, 0);
+	Window::get_string_input(" abcdefghijklmnopqrstuvwxyz", input, 0, get_x(), -1, false, false);
 
 	clear_line();
 	set_position(0, 0);
