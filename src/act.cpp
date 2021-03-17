@@ -1,12 +1,6 @@
 #include "r136.h"
 #include "act.h"
-#include <cstring>
-
-const char* dontOwnItemFormatString = "je hebt geen \"%s\"";
-
-const char* commands[to_value(Command::COUNT)] = 
-	{"oost", "west", "noord", "zuid", "klim", "daal", "gebruik", "combineer", "pak", "leg", "bekijk", "afwachten", 
-	"einde", "status", "help"};
+#include "parser.h"
 
 InputWindow& input_window()
 {
@@ -16,7 +10,7 @@ InputWindow& input_window()
 
 bool perform_command(CoreData& core)
 {
-	ParseData parse_data{};
+	static Parser parser{};
 
 	if (core.status.life_points <= 0)
 	{
@@ -29,7 +23,7 @@ bool perform_command(CoreData& core)
 
 	if (core.status.lamp_points > 0 && core.status.is_lamp_on)
 	{
-		switch(--core.status.lamp_points)
+		switch (--core.status.lamp_points)
 		{
 		case 10:
 			console.main().print("De zaklamp gaat zwakker branden.\n\n");
@@ -41,14 +35,17 @@ bool perform_command(CoreData& core)
 		}
 	}
 
+	ParseData parse_data{};
+	
 	do
 	{
-		char input_string[65];
+		string input_string;
 
 		do 
 		{
-			console.input().get_string_input(input_string, 64);
-			parse_input(core, input_string, parse_data);
+			input_string = string(65, ' ');
+			console.input().get_string_input(input_string);
+			parse_data = parser.parse_input(core, input_string);
 		} 
 		while (parse_data.parse_error);
 
@@ -176,7 +173,7 @@ void use(CoreData& core, ItemID item_id)
 			monsterID = AnimateID::plant;
 		else
 		{
-			console.main().print("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n");
 			return;
 		}
 
@@ -226,7 +223,7 @@ void use(CoreData& core, ItemID item_id)
 		if (status.is_lamp_on)
 		{
 			status.is_lamp_on = !status.is_lamp_on;
-			console.main().print("Je zet de zaklamp uit.%s", is_room_lit(status) ? "\n" : " Je ziet niets meer.\n");
+			console.main().print("Je zet de zaklamp uit.{0}", is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
 			break;
 		}
 
@@ -288,7 +285,7 @@ void use(CoreData& core, ItemID item_id)
 		if (target_animate == AnimateID::undefined
 			 || animates[target_animate].room != current_room)
 		{
-			console.main().print("Dat heeft geen zin.\n\n");
+			console.main().print("Dat heeft geen zin.\n");
 			break;
 		}
 
@@ -338,7 +335,7 @@ void use(CoreData& core, ItemID item_id)
 
 			if (animates[AnimateID::dragon].status != AnimateStatus::sleeping_lightly)
 			{
-				console.main().print("Dat heeft geen zin.\n\n");
+				console.main().print("Dat heeft geen zin.\n");
 				return;
 			}
 
@@ -448,7 +445,7 @@ void lay_down(CoreData& core, ItemID item_id)
 	}
 
 	auto& item = core.items[item_id];
-	console.main().print("Je legt %s neer.\n", item.name);
+	console.main().print("Je legt {0} neer.\n", item.name);
 
 
 	core.inventory.remove(item);
@@ -461,24 +458,24 @@ void pickup(CoreData& core, ItemID item_id)
 
 	if (core.inventory.is_full())
 	{
-		console.main().print("Je zakken zitten tjokvol, en je krijgt %s er niet in.\n", item.name);
+		console.main().print("Je zakken zitten tjokvol, en je krijgt {0} er niet in.\n", item.name);
 		return;
 	}
 
-	console.main().print("Je pakt %s op en steekt deze in een van je zakken.\n", item.name);
+	console.main().print("Je pakt {0} op en steekt deze in een van je zakken.\n", item.name);
 
 	core.inventory.add(item);
 }
 
 void inspect(CoreData& core, ItemID item_id)
 {
-	if (!is_room_lit(core.status))
+	if (!is_room_lit(core))
 	{
 		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
 		return;
 	}
 
-	console.main().write(core.items[item_id].description);
+	console.main().print(core.items[item_id].description);
 	console.main().print("\n");
 }
 
@@ -513,11 +510,11 @@ void show_status(CoreData& core)
 	auto& status = core.status;
 
 	console.main().print("--- STATUSRAPPORT ---\n\n");
-	console.main().print("Je hebt nog %d levenspunten.\n", status.life_points);
+	console.main().print("Je hebt nog {0} levenspunten.\n", std::to_string(status.life_points));
 
 	auto& inventory = core.inventory;
 	if (inventory.contains(ItemID::flashlight))
-		console.main().print("Je zaklamp staat %s.\n", status.is_lamp_on ? "aan" : "uit");
+		console.main().print("Je zaklamp staat {0}.\n", status.is_lamp_on ? "aan" : "uit");
 
 	if (inventory.count() == 0)
 	{
@@ -528,7 +525,7 @@ void show_status(CoreData& core)
 	console.main().print("Je hebt in je bezit:\n");
 
 	for (auto& item : core.inventory)
-		console.main().print("    %s\n", core.items[item].name);
+		console.main().print("    {0}\n", core.items[item].name);
 }
 
 void show_help(void)
@@ -550,233 +547,6 @@ void show_help(void)
 	console.main().print("   einde\n");
 	console.main().print("   status\n");
 	console.main().print("   help\n");
-}
-
-void parse_input(CoreData& core, char* inpstr, ParseData& parse_data)
-{
-	char* eoword;
-	char* curp;
-	char workstr[65];
-	int i;
-
-	parse_data.parse_error = false;
-
-	strncpy(workstr, inpstr, 64);
-	workstr[64] = 0;
-
-	// trim input at both sides
-	for (i = (int)strlen(workstr) - 1; i >= 0 && workstr[i] == ' '; i--);
-	workstr[i + 1] = 0;
-	for (curp = workstr; curp < (workstr + strlen(workstr)) && *curp == ' '; curp++);
-
-	eoword = strchr(curp, ' ');
-	if (eoword == NULL)
-		eoword = curp + strlen(curp);
-
-	// 9 is the length of the longest commands
-	if (eoword == curp || eoword > curp + 9)
-	{
-		parse_data.parse_error = true;
-
-		if (eoword == curp)
-			console.input().print_error("geen commando gegeven");
-		else
-			console.input().print_error("ongeldig commando gegeven");
-
-		return;
-	}
-
-	parse_data.command = Command::undefined;
-
-	for (i = 0; parse_data.command == Command::undefined && i < to_value(Command::COUNT); i++)
-	{
-		// this search assumes that the commands each start with a different letter
-		// it finds the first command that starts with whatever is the command (abbreviation) entered by the user 
-		if (!strncmp(commands[i], curp, int(eoword - curp)))
-			parse_data.command = static_cast<Command>(i);
-	}
-
-	switch (parse_data.command)
-	{
-	case Command::undefined:
-
-		console.input().print_error("ongeldig commando gegeven");
-		parse_data.parse_error = true;
-		return;
-
-	case Command::use:
-	case Command::lay_down:
-	case Command::inspect:
-
-		parse_owned_item_command_param(core, parse_data, commands[to_value(parse_data.command)], eoword);	
-		break;
-
-	case Command::combine:
-
-		parse_combine_parameters(core, parse_data, eoword);
-		break;
-
-	case Command::pickup:
-
-		if (*eoword != ' ')
-		{
-			console.input().print_error("syntax: pak <voorwerp>");
-			parse_data.parse_error = true;
-
-			return;
-		}
-
-		parse_data.item1 = find_laying_item(core, eoword + 1);
-		check_found_item(parse_data, parse_data.item1, eoword + 1, "< je ziet hier geen \"%s\" die je kunt meenemen");
-
-		break;
-	}
-}
-
-void parse_combine_parameters(CoreData& core, ParseData& parse_data, const char* currentMatch)
-{
-	const char* previousMatch;
-	char itemname[25];
-
-	if (*currentMatch != ' ' || (!strstr(currentMatch + 1, " en ") && !strstr(currentMatch + 1, " met ")))
-	{
-		console.input().print_error("syntax: combineer <voorwerp> en/met <voorwerp>");
-		parse_data.parse_error = true;
-
-		return;
-	}
-
-	previousMatch = currentMatch + 1;
-
-	// first item ends with interjection word
-	if (!(currentMatch = strstr(previousMatch, " en ")))
-		currentMatch = strstr(previousMatch, " met ");
-
-	int itemLength = (int)(currentMatch - previousMatch);
-
-	if (itemLength > 24)
-		itemLength = 24;
-
-	strncpy(itemname, previousMatch, itemLength);
-	itemname[itemLength] = 0;
-
-	parse_data.item1 = find_owned_item(core, itemname);
-
-	if (!check_found_item(parse_data, parse_data.item1, itemname, dontOwnItemFormatString))
-		return;
-
-	// second item starts just after interjection word
-	previousMatch = currentMatch + ((strstr(currentMatch, " en ") == currentMatch) ? 4 : 5);
-
-	itemLength = (int)strlen(previousMatch);
-
-	if (itemLength >= 25)
-		itemLength = 24;
-
-	strncpy(itemname, previousMatch, itemLength);
-	itemname[itemLength] = 0;
-
-	parse_data.item2 = find_owned_item(core, itemname);
-
-	if (!check_found_item(parse_data, parse_data.item2, itemname, dontOwnItemFormatString))
-		return;
-	
-	if (parse_data.item1 == parse_data.item2)
-	{
-		console.input().print_error("je kunt een voorwerp niet met zichzelf combineren");
-		parse_data.parse_error = true;
-	}
-}
-
-bool parse_owned_item_command_param(CoreData& core, ParseData& parse_data, const char* command, const char* parseString)
-{
-	if (*parseString != ' ')
-	{
-		console.input().print_error("syntax: %s <voorwerp>", command);
-		parse_data.parse_error = true;
-
-		return false;
-	}
-
-	parse_data.item1 = find_owned_item(core, parseString + 1);
-
-	return check_found_item(parse_data, parse_data.item1, parseString + 1, dontOwnItemFormatString);
-}
-
-bool check_found_item(ParseData& parse_data, ItemID item, const char* itemname, const char* undefinedItemFormatString)
-{
-	switch (item)
-	{
-	case ItemID::undefined:
-
-		console.input().print_error(undefinedItemFormatString, itemname);
-		parse_data.parse_error = true;
-
-		return false;
-
-	case ItemID::ambiguous:
-
-		console.input().print_error("de afkorting \"%s\" is dubbelzinnig", itemname);
-		parse_data.parse_error = true;
-
-		return false;
-	}
-
-	return true;
-}
-
-ItemID find_owned_item(CoreData& core, const char* item_name)
-{
-	ItemID item_id = ItemID::undefined;
-
-	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
-	for (auto& inventory_item : core.inventory)
-	{
-		if (!strstr(core.items[inventory_item].name, item_name))
-			continue;
-
-		if (item_id != ItemID::undefined) 
-		{
-			item_id = ItemID::ambiguous;
-			break;
-		}
-
-		item_id = inventory_item;
-	}
-
-	return item_id;
-}
-
-bool is_room_lit(Status& status) 
-{
-	return status.current_room == RoomID::radioactive_cave || status.current_room == RoomID::fluorescent_cave
-		|| to_value(status.current_room) < to_value(RoomID::slime_cave) || status.is_lamp_on;
-}
-
-ItemID find_laying_item(CoreData& core, const char* item_name)
-{
-	if (!is_room_lit(core.status))
-		return ItemID::undefined;
-
-	auto item_id = ItemID::undefined;
-
-	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
-	for (auto& element : core.items) 
-	{
-		auto& item = *element.second;
-		if (item.room != core.status.current_room || !strstr(item.name, item_name))
-			continue;
-
-		if (item_id != ItemID::undefined) 
-		{
-			item_id = ItemID::ambiguous;
-			break;
-		}
-
-		item_id = element.first;
-	}
-
-	return item_id;
 }
 
 

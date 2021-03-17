@@ -47,34 +47,6 @@ void ColorMap::initialize()
 	add(Color::normal, COLOR_WHITE, COLOR_BLACK);
 }
 
-int Window::scanf(int check_input, int length, const char* allowed_characters, const char* format_string, ...)
-{
-	va_list argp;
-	char* input_string;
-	int result = 0;
-
-	input_string = new char[length + 1];
-
-	if (!input_string)
-		return to_value(Key::kEscape);
-
-	input_string[length] = 0;
-	do
-	{
-		memset(input_string, ' ', length);
-		if (!((result = get_string_input(allowed_characters, input_string, get_y(), get_x(), 0, 1, 0)) == to_value(Key::kEscape)))
-		{
-			va_start(argp, format_string);
-			result = vsscanf(input_string, format_string, argp);
-			va_end(argp);
-		}
-	} while (check_input && (result == EOF || !result));
-
-	delete[] input_string;
-
-	return result;
-}
-
 Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
 	wnd(wnd),
 	standard_color(standard_color),
@@ -84,13 +56,14 @@ Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
 	touchwin(wnd);
 }
 
-int Window::get_string_input(const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
+int Window::get_string_input(const string& allowed_characters, string& input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals)
 {
 	static bool insert_on = 0;
-	int input_length, input_pos = 0, result = 0, current_x, current_y;
+	int input_pos = 0;
+	int result = 0, current_x, current_y;
 	int input_char;
 
-	input_length = (int)strlen(input) - 1;
+	int input_length = (int)input.size();
 	get_position(current_y, current_x);
 
 	insert_on = insert_flag & 1;
@@ -119,7 +92,7 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 			break;
 
 		case KEY_RIGHT: /* Arrow right */
-			if (input_pos < input_length)
+			if (input_pos < input_length - 1)
 				input_pos++;
 
 			break;
@@ -130,10 +103,10 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 			break;
 
 		case KEY_END: /* End */
-			input_pos = input_length;
+			input_pos = input_length - 1;
 
 			if (input[input_pos] == ' ')
-				while (input_pos && input[input_pos - 1] == ' ')
+				while (input_pos && input[(size_t)input_pos - 1] == ' ')
 					input_pos--;
 
 			break;
@@ -143,9 +116,8 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 			break;
 
 		case KEY_DC: /* Delete */
-			memmove(input + input_pos, input + input_pos + 1, (size_t)input_length - input_pos);
-
-			input[input_length] = ' ';
+			input.erase(input_pos, 1);
+			input += ' ';
 			wdelch(wnd);
 
 			break;
@@ -177,8 +149,8 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 			if (!input_pos)
 				break;
 
-			memmove(input + input_pos - 1, input + input_pos, (size_t)input_length - input_pos + 1);
-			input[input_length] = ' ';
+			input.erase((size_t)input_pos - 1, 1);
+			input += ' ';
 
 			set_position(input_y, input_x + --input_pos);
 			wdelch(wnd);
@@ -201,7 +173,7 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 				result = to_value(Key::kEscape);
 			else
 			{
-				memset(input, ' ', input_length);
+				input.assign(' ', input_length);
 				set_position(input_y, input_x);
 				print(input);
 				input_pos = 0;
@@ -215,24 +187,26 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 			else if (force_case < 0)
 				input_char = tolower(input_char);
 
-			if (!strchr(allowed_characters, input_char))
+			if (allowed_characters.find(input_char) == string::npos)
 				break;
 
 			if (insert_on)
 			{
-				memmove(input + input_pos + 1, input + input_pos, (size_t)input_length - input_pos);
+				input.insert(input_pos, 1, input_char);
+				input.erase(input_length);
 
-				set_position(input_y, input_x + input_length);
+				set_position(input_y, input_x + input_length - 1);
 				wdelch(wnd);
 				set_position(input_y, input_x + input_pos);
 				winsch(wnd, input_char);
 			}
-			else
+			else 
+			{
+				input[input_pos] = input_char;
 				print(input_char);
+			}
 
-			input[input_pos] = input_char;
-
-			if (input_pos < input_length)
+			if (input_pos < input_length - 1)
 				input_pos++;
 
 			break;
@@ -240,7 +214,7 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 	} 
 	while (!result);
 
-	if (input_pos == input_length)
+	if (input_pos == input_length - 1)
 		current_x++;
 
 	set_position(current_y, current_x);
@@ -248,59 +222,55 @@ int Window::get_string_input(const char* allowed_characters, char* input, int in
 	return result;
 }
 
-void Window::print_centered(const char* str)
+void Window::print_centered(const string& str)
 {
 	set_color(standard_color);
 
-	int winwidth = getmaxx(wnd);
-	int strlength = (int)strlen(str);
+	int win_width = getmaxx(wnd);
+	int str_length = (int)str.size();
 
 	clear_line();
 
-	int x = (winwidth - strlength) / 2;
-	mvwaddstr(wnd, getcury(wnd), x < 0 ? 0 : x, str);
+	int x = (win_width - str_length) / 2;
+	set_position(get_y(), x < 0 ? 0 : x);
+	print(str);
 
 	unset_color(standard_color);
 }
 
-int Window::print(const char* format, ...)
-{
-	va_list args;
-	int return_value;
 
-	va_start(args, format);
-	return_value = vw_printw(wnd, format, args);
-	va_end(args);
-
-	return return_value;
-}
-
-void Window::write_block(int y, int x, Color color, const wchar_t** block, int rowcount)
+void Window::print(int y, int x, Color color, const wstring* block, int rowcount)
 {
 	set_color(color);
 
 	for (int i = 0; i < rowcount; i++)
-		mvwaddwstr(wnd, y + i, x, block[i]);
+	{
+		set_position(y + i, x);
+		print(block[i]);
+	}
 
 	unset_color(color);
 }
 
-void Window::write_block(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx)
+void Window::print(int y, int x, Color color, const wstring* block, int top_y, int left_x, int bottom_y, int right_x)
 {
 	set_color(color);
 
-	for (int i = topy; i <= bottomy; i++)
-		mvwaddnwstr(wnd, y + i - topy, x, &block[i][leftx], rightx - leftx + 1);
+	for (int i = top_y; i <= bottom_y; i++)
+	{
+		set_position(y + i - top_y, x);
+		print(block[i].substr(left_x, (size_t)right_x - left_x + 1));
+	}
 
 	unset_color(color);
 }
 
-void Window::write(int y, int x, Color color, const wchar_t* text)
+void Window::print(int y, int x, Color color, const wstring& text)
 {
 	set_color(color);
 
 	set_position(y, x);
-	write(text);
+	print(text);
 
 	unset_color(color);
 }
@@ -336,32 +306,34 @@ void Window::wait_for_key(bool prompt)
 	}
 }
 
-int Window::get_char_input(const char* allowed)
+int Window::get_char_input(const string& allowed)
 {
-	char input = 0;
-	int y, x;
+	refresh();
 
+	int y, x;
 	get_position(y, x);
 
 	set_color(Color::bold);
+
+	string input = " ";
 
 	do
 	{
 		set_position(y, x);
 
-		if (scanf(0, 1, allowed, "%c", &input) == to_value(Key::kEscape))
-			input = to_value(Key::kEscape);
-	} 		while (input == ' ');
+		get_string_input(allowed, input, y, x, 0, false, false);
+		
+	} 	
+	while (input[0] == ' ');
 
 	unset_color(Color::bold);
 
-	return input;
+	return input[0];
 }
 
-void InputWindow::get_string_input(char* input, int max_length)
+void InputWindow::get_string_input(string& input)
 {
-	memset(input, ' ', max_length);
-	input[max_length] = 0;
+	int max_length = (int)input.size();
 
 	console.main().refresh();
 
@@ -371,33 +343,12 @@ void InputWindow::get_string_input(char* input, int max_length)
 	set_color(standard_color);
 	print("> ");
 
-	Window::get_string_input(" abcdefghijklmnopqrstuvwxyz", input, 0, get_x(), -1, 0, 0);
+	Window::get_string_input(" abcdefghijklmnopqrstuvwxyz", input, 0, get_x(), -1, false, false);
 
 	clear_line();
 	set_position(0, 0);
 
 	unset_color(standard_color);
-}
-
-void InputWindow::print_error(const char* format, ...)
-{
-	set_position(0, 0);
-	clear_line();
-
-	va_list args;
-
-	set_color(Color::error);
-
-	print("< ");
-
-	va_start(args, format);
-	vw_printw(wnd, format, args);
-	va_end(args);
-
-	unset_color(Color::error);
-
-	refresh();
-	wait_for_key();
 }
 
 void Console::setup_windows()

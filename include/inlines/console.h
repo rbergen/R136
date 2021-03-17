@@ -148,17 +148,53 @@ inline void Window::refresh()
 	wrefresh(wnd);
 }
 
-inline void Window::print(char c)
+inline int Window::print(char c)
 {
-	waddch(wnd, c);
+	return waddch(wnd, c);
 }
 
-inline int Window::write(const wchar_t* text)
+inline int Window::print(const string& text)
 {
-	return waddwstr(wnd, text);
+	return waddstr(wnd, text.c_str());
+}
+
+inline int Window::print(const wstring& text)
+{
+	return waddwstr(wnd, text.c_str());
+}
+
+inline int Window::print(const string& format, const string& value)
+{
+	return print(replace(format, string("{0}"), value));
+}
+
+inline int Window::print(const wstring& format, const wstring& value)
+{
+	return print(replace(format, wstring(L"{0}"), value));
 }
 
 inline InputWindow::InputWindow(WINDOW* wnd) : Window(wnd, true, Color::bold) {}
+
+inline void InputWindow::print_error(const string& format, const string& value)
+{
+	print_error(replace(format, string("{0}"), value));
+}
+
+inline void InputWindow::print_error(const wstring& format, const wstring& value)
+{
+	print_error(replace(format, wstring(L"{0}"), value));
+}
+
+inline void InputWindow::print_error(const string& text)
+{
+	print_error_template(text);
+}
+
+inline void InputWindow::print_error(const wstring& text)
+{
+	print_error_template(text);
+}
+
 
 inline Console::Console() :
 	banner_window(nullptr),

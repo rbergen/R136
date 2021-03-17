@@ -8,7 +8,7 @@ bool RedTroll::progress_status(CoreData& core)
 	switch (core.animates[AnimateID::red_troll].status)
 	{
 	case AnimateStatus::initial:
-		console.main().write(L"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geërgerd.\n\n");
+		console.main().print(L"Je hebt de rust van de rode trol verstoord. Hij kijkt zwaar geërgerd.\n\n");
 
 		core.animates[AnimateID::red_troll].status++;
 

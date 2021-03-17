@@ -4,6 +4,19 @@
 
 #include <vector>
 #include <map>
+#include <string>
+
+using std::string;
+using std::wstring;
+
+enum class RoomType : char
+{
+	forest,
+	cave,
+	outdoor,
+	indoor,
+	undefined
+};
 
 enum class RoomID : char
 {
@@ -184,15 +197,38 @@ struct Entity
 
 struct Room : Entity<RoomID>
 {
-	const wchar_t* name;
-	const wchar_t* description;
-	bool is_forest;
+	const wstring name;
+	const wstring description;
+	RoomType type;
 	RoomConnections connections;
 
-	Room(const wchar_t* name, const wchar_t* description, bool is_forest) : name(name), description(description), is_forest(is_forest) {}
-	Room(const wchar_t* name, const wchar_t* description) : Room(name, description, false) {}
-	Room(const wchar_t* name, bool is_forest) : Room(name, nullptr, is_forest) {}
-	Room(const wchar_t* name) : Room(name, nullptr, false) {}
+protected:
+	Room(const wstring name, const wstring description, RoomType type) : name(name), description(description), type(type) {}
+	Room(const wstring name, RoomType type) : name(name), description(L""), type(type) {}
+};
+
+struct Forest : public Room
+{
+	Forest(const wstring name, const wstring description) : Room(name, description, RoomType::forest) {}
+	Forest(const wstring name) : Room(name, RoomType::forest) {}
+};
+
+struct Outdoor : public Room
+{
+	Outdoor(const wstring name, const wstring description) : Room(name, description, RoomType::outdoor) {}
+	Outdoor(const wstring name) : Room(name, RoomType::outdoor) {}
+};
+
+struct Indoor : public Room
+{
+	Indoor(const wstring name, const wstring description) : Room(name, description, RoomType::indoor) {}
+	Indoor(const wstring name) : Room(name, RoomType::indoor) {}
+};
+
+struct Cave : public Room
+{
+	Cave(const wstring name, const wstring description) : Room(name, description, RoomType::cave) {}
+	Cave(const wstring name) : Room(name, RoomType::cave) {}
 };
 
 struct CoreData;
@@ -213,15 +249,15 @@ struct Animate : Entity<AnimateID>
 
 struct Item : Entity<ItemID>
 {
-	const char* name;
-	const wchar_t* description;
+	const string name;
+	const wstring description;
 	RoomID room;
 	AnimateID usable_on;
 
-	Item(const char* name, const wchar_t* description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
-	Item(const char* name, const wchar_t* description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
-	Item(const char* name, const wchar_t* description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
-	Item(const char* name, const wchar_t* description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+	Item(const string name, const wstring description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
+	Item(const string name, const wstring description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
+	Item(const string name, const wstring description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
+	Item(const string name, const wstring description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
 
 };
 
@@ -292,12 +328,4 @@ struct CoreData
 	Status status{};
 
 	CoreData();
-};
-
-struct ParseData
-{
-	Command command;
-	ItemID item1;
-	ItemID item2;
-	bool parse_error;
 };

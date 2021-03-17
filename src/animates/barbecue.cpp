@@ -34,9 +34,9 @@ bool Barbecue::progress_status(CoreData& core)
 		break;
 
 	case AnimateStatus::cookie_is_baking:
-		console.main().write(L"Een grote rookontwikkeling treedt op wanneer het tweede ingrediënt in de\n");
+		console.main().print(L"Een grote rookontwikkeling treedt op wanneer het tweede ingrediënt in de\n");
 		console.main().print("barbecue belandt.\n");
-		console.main().write(L"Knetterend smelten de 2 ingrediënten om tot een koekje.\n\n");
+		console.main().print(L"Knetterend smelten de 2 ingrediënten om tot een koekje.\n\n");
 
 		core.items[ItemID::cookie].room = core.status.current_room;
 		core.animates[AnimateID::barbecue].status = AnimateStatus::initial_burn;
