@@ -166,8 +166,10 @@
     <ClInclude Include="include\inlines\console.h" />
     <ClInclude Include="include\inlines\r136.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\r136.h" />
     <ClInclude Include="include\status.h" />
+    <ClInclude Include="include\templates\console.h" />
     <ClInclude Include="include\templates\r136.h" />
     <ClInclude Include="include\types\animates.h" />
     <ClInclude Include="include\types\console.h" />
@@ -198,6 +200,7 @@
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\loadsave.cpp" />
+    <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\r136.cpp" />
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\status.cpp" />

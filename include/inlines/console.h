@@ -148,14 +148,19 @@ inline void Window::refresh()
 	wrefresh(wnd);
 }
 
-inline void Window::print(char c)
+inline int Window::print(char c)
 {
-	waddch(wnd, c);
+	return waddch(wnd, c);
 }
 
-inline int Window::write(const wchar_t* text)
+inline int Window::print(const string& text)
 {
-	return waddwstr(wnd, text);
+	return waddstr(wnd, text.c_str());
+}
+
+inline int Window::print(const wstring& text)
+{
+	return waddwstr(wnd, text.c_str());
 }
 
 inline InputWindow::InputWindow(WINDOW* wnd) : Window(wnd, true, Color::bold) {}

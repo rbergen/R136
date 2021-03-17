@@ -2,7 +2,7 @@
 
 constexpr char block_row_count = 8;
 
-const wchar_t* spider[2][block_row_count] = 
+const wstring spider[2][block_row_count] = 
 { 
 	{
 		L"  ▄▄▄        ▄ █ ▄        ▄▄▄  ",
@@ -29,12 +29,12 @@ const wchar_t* spider[2][block_row_count] =
 constexpr char spider_upper = 0;
 constexpr char spider_lower = 1;
 constexpr char spider_drop_height = 13;
-const int spider_width = (int)wcslen(spider[0][0]);
+const int spider_width = (int)spider[0][0].size();
 
-const wchar_t* line_section = L"               █               ";
-const wchar_t* clear_spider_spaces = L"                               ";
+const wstring line_section = L"               █               ";
+const wstring clear_spider_spaces = L"                               ";
 
-const wchar_t* letters[3][block_row_count] = 
+const wstring letters[3][block_row_count] = 
 { 
 	{
 		L"█▀▀▀▀▀▀▀▀▀▀▄",
@@ -68,16 +68,16 @@ const wchar_t* letters[3][block_row_count] =
 	} 
 };
 
-const wchar_t* clear_left_letter_spaces = L"            ";
-const wchar_t* clear_right_letter_spaces = L"                    ";
+const wstring clear_left_letter_spaces = L"            ";
+const wstring clear_right_letter_spaces = L"                    ";
 
 constexpr char letter_r = 0;
 constexpr char letter_p = 1;
 constexpr char letter_r_low = 2;
-const int letter_width = (int)wcslen(letters[0][0]);
+const int letter_width = (int)letters[0][0].size();
 constexpr char letter_space_width = 6;
 
-const wchar_t* vertical_space[block_row_count] =
+const wstring vertical_space[block_row_count] =
 {
 	L" ",
 	L" ",
@@ -89,7 +89,7 @@ const wchar_t* vertical_space[block_row_count] =
 	L" "
 };
 
-const wchar_t* digits[block_row_count] = 
+const wstring digits[block_row_count] = 
 {
 	L"▄█   ▄▀▀▀▀▀▄   ▄▀▀▀▀▀▄",
 	L" █         █   █      ",
@@ -101,7 +101,7 @@ const wchar_t* digits[block_row_count] =
 	L"                      "
 };
 
-const int digits_width = (int)wcslen(digits[0]);
+const int digits_width = (int)digits[0].size();
 
 void lower_spider(int spider_x)
 {

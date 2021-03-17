@@ -4,6 +4,10 @@
 
 #include <vector>
 #include <map>
+#include <string>
+
+using std::string;
+using std::wstring;
 
 enum class RoomID : char
 {
@@ -184,15 +188,15 @@ struct Entity
 
 struct Room : Entity<RoomID>
 {
-	const wchar_t* name;
-	const wchar_t* description;
+	const wstring name;
+	const wstring description;
 	bool is_forest;
 	RoomConnections connections;
 
-	Room(const wchar_t* name, const wchar_t* description, bool is_forest) : name(name), description(description), is_forest(is_forest) {}
-	Room(const wchar_t* name, const wchar_t* description) : Room(name, description, false) {}
-	Room(const wchar_t* name, bool is_forest) : Room(name, nullptr, is_forest) {}
-	Room(const wchar_t* name) : Room(name, nullptr, false) {}
+	Room(const wstring name, const wstring description, bool is_forest) : name(name), description(description), is_forest(is_forest) {}
+	Room(const wstring name, const wstring description) : Room(name, description, false) {}
+	Room(const wstring name, bool is_forest) : Room(name, L"", is_forest) {}
+	Room(const wstring name) : Room(name, L"" , false) {}
 };
 
 struct CoreData;
@@ -213,15 +217,15 @@ struct Animate : Entity<AnimateID>
 
 struct Item : Entity<ItemID>
 {
-	const char* name;
-	const wchar_t* description;
+	const string name;
+	const wstring description;
 	RoomID room;
 	AnimateID usable_on;
 
-	Item(const char* name, const wchar_t* description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
-	Item(const char* name, const wchar_t* description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
-	Item(const char* name, const wchar_t* description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
-	Item(const char* name, const wchar_t* description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+	Item(const string name, const wstring description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
+	Item(const string name, const wstring description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
+	Item(const string name, const wstring description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
+	Item(const string name, const wstring description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
 
 };
 
@@ -292,12 +296,4 @@ struct CoreData
 	Status status{};
 
 	CoreData();
-};
-
-struct ParseData
-{
-	Command command;
-	ItemID item1;
-	ItemID item2;
-	bool parse_error;
 };

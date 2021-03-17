@@ -52,7 +52,10 @@ class Window
 {
 	friend class Console;
 
-	int scanf(int check_input, int length, const char* allowed_characters, const char* format_string, ...);
+	template<class TChar>
+	const std::basic_string<TChar>& replace(const std::basic_string<TChar>& format, const std::basic_string<TChar>& value);
+
+	int scanf(int check_input, int length, const string& allowed_characters, const string& format, const string& value);
 
 protected:
 	WINDOW* wnd;
@@ -74,7 +77,7 @@ protected:
 	void set_position(int y, int x);
 	void clear_line();
 	void set_scrollable(bool enable);
-	int get_string_input(const char* allowed_characters, char* input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals);
+	int get_string_input(const string& allowed_characters, string& input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals);
 
 public:
 	void clear();
@@ -83,15 +86,19 @@ public:
 	void unset_attribute(chtype attr);
 	void refresh();
 	void get_size(int& y, int& x);
-	void print_centered(const char* str);
-	int print(const char* format, ...);
-	void print(char c);
-	int write(const wchar_t* text);
-	void write_block(int y, int x, Color color, const wchar_t** block, int rowcount);
-	void write_block(int y, int x, Color color, const wchar_t** block, int topy, int leftx, int bottomy, int rightx);
-	void write(int y, int x, Color color, const wchar_t* text);
+	void print_centered(const string& str);
+
+	template<class TChar>
+	int print(const std::basic_string<TChar>& format, const std::basic_string<TChar>& value);
+
+	int print(char c);
+
+	int write(const wstring& text);
+	void write_block(int y, int x, Color color, const wstring* block, int rowcount);
+	void write_block(int y, int x, Color color, const wstring* block, int topy, int leftx, int bottomy, int rightx);
+	void write(int y, int x, Color color, const wstring& text);
 	void wait_for_key(bool prompt = false);
-	int get_char_input(const char* allowed);
+	int get_char_input(const string& allowed);
 };
 
 class InputWindow : protected Window
@@ -101,8 +108,8 @@ class InputWindow : protected Window
 	InputWindow(WINDOW* wnd);
 
 public:
-	void get_string_input(char* input, int max_length);
-	void print_error(const char* format, ...);
+	void get_string_input(string& input);
+	void print_error(const string& format, const string& value);
 };
 
 class Console

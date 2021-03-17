@@ -3,16 +3,16 @@
 
 void show_room_status(CoreData& core)
 {
-	static const wchar_t* youre_at_format = L"Je bevindt je %ls.\n";
-	static const wchar_t* smoldering_forest_description = L"Om je heen zie je de smeulende resten van wat eens bos was.";
+	static const wstring youre_at_format = L"Je bevindt je %ls.\n";
+	static const wstring smoldering_forest_description = L"Om je heen zie je de smeulende resten van wat eens bos was.";
 
 	auto current_room_id = core.status.current_room;
 	auto& current_room = core.rooms[current_room_id];
-	const wchar_t* current_room_name = current_room.name;
+	const wstring current_room_name = current_room.name;
 
-	size_t youre_at_buffer_length = wcslen(youre_at_format) + wcslen(current_room_name);
+	size_t youre_at_buffer_length = youre_at_format.size() + current_room_name.size();
 	wchar_t* youre_at_buffer = new wchar_t[youre_at_buffer_length];
-	swprintf(youre_at_buffer, youre_at_buffer_length, youre_at_format, current_room_name);
+	swprintf(youre_at_buffer, youre_at_buffer_length, youre_at_format.c_str(), current_room_name.c_str());
 	
 	console.main().write(youre_at_buffer);
 
@@ -25,14 +25,16 @@ void show_room_status(CoreData& core)
 	}
 	else
 	{
-		const wchar_t* description = core.status.has_tree_burned && current_room.is_forest 
+		const wstring& description = core.status.has_tree_burned && current_room.is_forest 
 			? smoldering_forest_description
 			: current_room.description;
 
-		if (description)
+		if (description.size() > 0) 
+		{
 			console.main().write(description);
-		
-		console.main().print("\n");
+			console.main().print("\n");
+		}
+
 		show_items(core);
 	}
 

@@ -7,7 +7,7 @@ project(
 set(CURSES_NEED_NCURSES 1)
 set(CURSES_NEED_WIDE 1)
 
-add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE)
+add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE _CRT_SECURE_NO_WARNINGS)
 
 find_package(Curses)
 
@@ -28,7 +28,7 @@ include_directories(include)
 add_executable(
   ${PROJECT_NAME} 
   main.cpp 
-)
+  "include/templates/console.h")
 
 add_subdirectory(src)
 

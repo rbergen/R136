@@ -6,6 +6,7 @@ target_sources(
   init.cpp 
   intro.cpp 
   loadsave.cpp 
+  parser.cpp
   r136.cpp
   random.cpp 
   status.cpp

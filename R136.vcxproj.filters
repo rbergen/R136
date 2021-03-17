@@ -71,6 +71,12 @@
     <ClInclude Include="include\animates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\templates\console.h">
+      <Filter>Header Files\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
@@ -156,6 +162,9 @@
     </ClCompile>
     <ClCompile Include="src\animates\voices.cpp">
       <Filter>Source Files\animates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parser.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
