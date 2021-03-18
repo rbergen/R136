@@ -24,6 +24,9 @@
     <Filter Include="Source Files\animates">
       <UniqueIdentifier>{1398b943-616f-4edd-bba1-d46dee4d875f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\items">
+      <UniqueIdentifier>{80f2adfc-7d9f-4c6d-ba18-4eb4cec5da0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -75,6 +78,15 @@
       <Filter>Header Files\templates</Filter>
     </ClInclude>
     <ClInclude Include="include\parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\items.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\inlines\items.h">
+      <Filter>Header Files\inlines</Filter>
+    </ClInclude>
+    <ClInclude Include="include\items.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -165,6 +177,18 @@
     </ClCompile>
     <ClCompile Include="src\parser.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\types\items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\items\tnt.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\items\bandage.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\items\flashlight.cpp">
+      <Filter>Source Files\items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

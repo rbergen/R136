@@ -170,7 +170,9 @@ enum class AnimateStatus : char
 	status_5 = 5,
 	nightcap_on_head = 5,
 
-	status_6 = 6
+	status_6 = 6,
+
+	undefined = -1
 };
 
 class RoomConnections
@@ -254,11 +256,27 @@ struct Item : Entity<ItemID>
 	RoomID room;
 	AnimateID usable_on;
 
-	Item(const string name, const wstring description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
-	Item(const string name, const wstring description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
-	Item(const string name, const wstring description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
-	Item(const string name, const wstring description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+	Item(const string name, const wstring description, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined);
+	Item(const string name, const wstring description, RoomID room)
+		: Item(name, description, room, AnimateID::undefined) {}
 
+	Item(const string name, const wstring description, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined)
+		: Item(name, description, RoomID::undefined, usable_on, sets_target_to_status) {}
+
+	Item(const string name, const wstring description)
+		: Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+
+	void inspect(CoreData& core);
+	virtual void use(CoreData& core);
+
+protected:
+	AnimateStatus sets_target_to_status;
+	bool is_target_present(CoreData& core);
+	AnimateStatus& target_status(CoreData& core);
+	void report_pointless_use();
+
+	virtual void use_if_target_present(CoreData& core);
+	virtual void use_to_status(CoreData& core, AnimateStatus to_status = AnimateStatus::undefined);
 };
 
 struct Status

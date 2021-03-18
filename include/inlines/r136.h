@@ -42,6 +42,54 @@ inline bool RoomConnections::is_open(Command direction) const
 	return (*this)[direction] != RoomID::undefined;
 }
 
+inline Item::Item(const string name, const wstring description, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status) :
+	name(name),
+	description(description),
+	room(room),
+	usable_on(usable_on),
+	sets_target_to_status(sets_target_to_status)
+{}
+
+inline void Item::use_if_target_present(CoreData& core)
+{
+	use_to_status(core);
+}
+
+inline bool Item::is_target_present(CoreData& core)
+{
+	return core.animates.contains(usable_on) && core.animates[usable_on].room == core.status.current_room;
+}
+
+inline AnimateStatus& Item::target_status(CoreData& core)
+{
+	return core.animates[usable_on].status;
+}
+
+inline void Item::report_pointless_use()
+{
+	console.main().print("Dat heeft geen zin.\n");
+}
+
+inline void Item::use_to_status(CoreData& core, AnimateStatus to_status)
+{
+	if (to_status == AnimateStatus::undefined)
+		to_status = sets_target_to_status;
+
+	if (to_status == AnimateStatus::undefined || to_value(usable_on) < 0)
+		return;
+
+	core.inventory.remove(*this);
+	core.animates[usable_on].status = to_status;
+}
+
+inline void Item::use(CoreData& core)
+{
+	if (is_target_present(core))
+		use_if_target_present(core);
+	else
+		report_pointless_use();
+}
+
 inline Inventory::Inventory(int capacity) : BoundedCollection<ItemID>(capacity) {}
 
 inline bool Inventory::add(ItemID item)

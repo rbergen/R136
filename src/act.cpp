@@ -238,6 +238,7 @@ void use(CoreData& core, ItemID item_id)
 		break;
 
 	case ItemID::bandage:
+		// class implemented
 
 		if (status.life_points == max_life_points)
 		{
@@ -257,6 +258,7 @@ void use(CoreData& core, ItemID item_id)
 		break;
 
 	case ItemID::tnt:
+		// class implemented
 
 		console.main().print("Je pakt een staafje en gooit het op de grond. Er volgt een explosie die samen-\n"
 				 "gaat met een harde knal. Je wordt even verblind door de flits van de ontplof-\n"
@@ -268,13 +270,13 @@ void use(CoreData& core, ItemID item_id)
 		break;
 
 	case ItemID::thermal_suit:
-
+		// class implemented
 		console.main().print("Je hebt het pak al aan.\n");
 
 		break;
 
 	case ItemID::gasmask:
-
+		// class implemented
 		console.main().print("Je hebt het gasmasker al op.\n");
 
 		break;
@@ -292,18 +294,21 @@ void use(CoreData& core, ItemID item_id)
 		switch (item_id)
 		{
 		case ItemID::bone:
+			// class implemented
 
 			animates[AnimateID::door].status = AnimateStatus::door_open;
 
 			break;
 
 		case ItemID::diskette:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::computer, AnimateStatus::computer_is_reading);
 
 			break;
 
 		case ItemID::hashis:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::barbecue, animates[AnimateID::barbecue].status == AnimateStatus::initial_burn
 				? AnimateStatus::hashis_on_fire : AnimateStatus::cookie_is_baking);
@@ -311,6 +316,7 @@ void use(CoreData& core, ItemID item_id)
 			break;
 
 		case ItemID::hound_meat:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::barbecue, animates[AnimateID::barbecue].status == AnimateStatus::initial_burn
 				? AnimateStatus::meat_on_fire : AnimateStatus::cookie_is_baking);
@@ -320,18 +326,20 @@ void use(CoreData& core, ItemID item_id)
 		case ItemID::red_crystal:
 		case ItemID::green_crystal:
 		case ItemID::blue_crystal:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::dragon_head, next_status(animates[AnimateID::dragon_head].status));
 
 			break;
 
 		case ItemID::cookie:
-
+			// class implemented
 			use_item_to_status(core, item, AnimateID::dragon, AnimateStatus::cookie_is_thrown);
 
 			break;
 
 		case ItemID::nightcap:
+			// class implemented
 
 			if (animates[AnimateID::dragon].status != AnimateStatus::sleeping_lightly)
 			{
@@ -344,30 +352,35 @@ void use(CoreData& core, ItemID item_id)
 			break;
 
 		case ItemID::bomb:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::lava, AnimateStatus::bomb_dropped);
 
 			break;
 
 		case ItemID::flamethrower:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::tree, AnimateStatus::tree_on_fire);
 
 			break;
 
 		case ItemID::poisined_meat:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::gnu, AnimateStatus::poisonous_meat_fed);
 
 			break;
 
 		case ItemID::booklet:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::red_troll, AnimateStatus::booklet_thrown);
 
 			break;
 
 		case ItemID::gas_grenade:
+			// class implemented
 
 			use_item_to_status(core, item, AnimateID::swelling, AnimateStatus::swelling_gassed);
 
@@ -465,18 +478,6 @@ void pickup(CoreData& core, ItemID item_id)
 	console.main().print("Je pakt {0} op en steekt deze in een van je zakken.\n", item.name);
 
 	core.inventory.add(item);
-}
-
-void inspect(CoreData& core, ItemID item_id)
-{
-	if (!is_room_lit(core))
-	{
-		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
-		return;
-	}
-
-	console.main().print(core.items[item_id].description);
-	console.main().print("\n");
 }
 
 void wait(void)

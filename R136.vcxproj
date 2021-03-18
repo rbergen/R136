@@ -164,7 +164,9 @@
     <ClInclude Include="include\constants\r136.h" />
     <ClInclude Include="include\init.h" />
     <ClInclude Include="include\inlines\console.h" />
+    <ClInclude Include="include\inlines\items.h" />
     <ClInclude Include="include\inlines\r136.h" />
+    <ClInclude Include="include\items.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\r136.h" />
@@ -173,9 +175,11 @@
     <ClInclude Include="include\templates\r136.h" />
     <ClInclude Include="include\types\animates.h" />
     <ClInclude Include="include\types\console.h" />
+    <ClInclude Include="include\types\items.h" />
     <ClInclude Include="include\types\r136.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\types\items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\animates\barbecue.cpp" />
     <ClCompile Include="src\animates\computer.cpp" />
@@ -199,6 +203,9 @@
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
+    <ClCompile Include="src\items\bandage.cpp" />
+    <ClCompile Include="src\items\flashlight.cpp" />
+    <ClCompile Include="src\items\tnt.cpp" />
     <ClCompile Include="src\loadsave.cpp" />
     <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\r136.cpp" />

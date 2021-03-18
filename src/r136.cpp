@@ -42,3 +42,15 @@ void Animate::load(Animate& animate)
 	strikes_left = animate.strikes_left;
 	status = animate.status;
 }
+
+void Item::inspect(CoreData& core)
+{
+	if (!is_room_lit(core))
+	{
+		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
+		return;
+	}
+
+	console.main().print(core.items[id].description);
+	console.main().print("\n");
+}
