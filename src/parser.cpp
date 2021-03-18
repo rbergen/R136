@@ -1,4 +1,5 @@
 #include "r136.h"
+#include "status.h"
 #include "parser.h"
 
 void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, const string& param_string)
@@ -101,7 +102,7 @@ ItemID Parser::find_owned_item(CoreData& core, const string& item_name)
 
 ItemID Parser::find_laying_item(CoreData& core, string& item_name)
 {
-	if (!is_room_lit(core))
+	if (!status::is_room_lit(core))
 		return ItemID::undefined;
 
 	auto item_id = ItemID::undefined;

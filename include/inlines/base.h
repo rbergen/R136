@@ -1,16 +1,27 @@
 #pragma once
 
-#include "types/r136.h"
-#include "constants/r136.h"
-#include <thread>
+// inlines/base.h
+
+#include "types/base.h"
+#include "constants.h"
+
+inline Flashlight& CoreData::flashlight()
+{
+	return *flashlight_ptr;
+}
 
 inline CoreData::CoreData() :
 	animates(EntityMap<AnimateID, Animate>(true)),
 	items(EntityMap<ItemID, Item>(true)),
 	rooms(EntityMap<RoomID, Room>(true)),
-	inventory(Inventory(max_owned_items))
+	inventory(Inventory(constants::max_owned_items))
 
 {}
+
+inline void CoreData::set_flashlight(Flashlight * flashlight_ptr)
+{
+	this->flashlight_ptr = flashlight_ptr;
+}
 
 inline size_t RoomConnections::count() const
 {

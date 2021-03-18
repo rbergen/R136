@@ -44,28 +44,22 @@
     <ClInclude Include="include\console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\init.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\status.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\constants\r136.h">
-      <Filter>Header Files\constants</Filter>
     </ClInclude>
     <ClInclude Include="include\inlines\console.h">
       <Filter>Header Files\inlines</Filter>
     </ClInclude>
-    <ClInclude Include="include\inlines\r136.h">
+    <ClInclude Include="include\inlines\base.h">
       <Filter>Header Files\inlines</Filter>
     </ClInclude>
     <ClInclude Include="include\types\console.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="include\types\r136.h">
+    <ClInclude Include="include\types\base.h">
       <Filter>Header Files\types</Filter>
     </ClInclude>
-    <ClInclude Include="include\templates\r136.h">
+    <ClInclude Include="include\templates\base.h">
       <Filter>Header Files\templates</Filter>
     </ClInclude>
     <ClInclude Include="include\types\animates.h">
@@ -89,6 +83,33 @@
     <ClInclude Include="include\items.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gamedata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\inlines\random.h">
+      <Filter>Header Files\inlines</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\random.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\startup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\inlines\general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\types\general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
@@ -100,10 +121,7 @@
     <ClCompile Include="src\intro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\loadsave.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\random.cpp">
+    <ClCompile Include="src\gamedata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\status.cpp">
@@ -178,9 +196,6 @@
     <ClCompile Include="src\parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\types\items.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\items\tnt.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
@@ -190,11 +205,17 @@
     <ClCompile Include="src\items\flashlight.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
+    <ClCompile Include="src\general.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="src\CMakeLists.txt">
       <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="src\items\CMakeLists.txt">
+      <Filter>Source Files\items</Filter>
     </Text>
     <Text Include="src\animates\CMakeLists.txt">
       <Filter>Source Files\animates</Filter>

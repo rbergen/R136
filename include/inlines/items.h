@@ -1,6 +1,8 @@
 #pragma once
 
-#include "r136.h"
+// inlines/items.h
+
+#include "../r136.h"
 #include "types/items.h"
 
 inline void Bone::use_if_target_present(CoreData& core)
@@ -26,12 +28,19 @@ inline void Nightcap::use_if_target_present(CoreData& core)
 		report_pointless_use();
 }
 
-void Gasmask::use(CoreData& core)
+inline void Gasmask::use(CoreData& core)
 {
 	console.main().print("Je hebt het gasmasker al op.\n");
 }
 
-void HeatSuit::use(CoreData& core)
+inline void HeatSuit::use(CoreData& core)
 {
-	console.main().print("Je hebt het gasmasker al op.\n");
+	console.main().print("Je hebt het hittepak al aan.\n");
+}
+
+inline Flashlight::Flashlight(string name, const wstring description, RoomID room) : Item(name, description, room)
+{
+	is_on = false;
+	has_batteries = false;
+	battery_level = constants::max_lamp_points;
 }

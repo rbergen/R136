@@ -1,6 +1,6 @@
 #pragma once
 
-// types/r136.h
+// types/base.h
 
 #include <vector>
 #include <map>
@@ -15,7 +15,7 @@ enum class RoomType : char
 	cave,
 	outdoor,
 	indoor,
-	undefined
+	undefined = -1
 };
 
 enum class RoomID : char
@@ -284,8 +284,6 @@ struct Status
 	char paper_route_pos;
 	RoomID current_room;
 	char life_points;
-	bool is_lamp_on;
-	char lamp_points;
 	bool has_tree_burned;
 };
 
@@ -336,14 +334,22 @@ public:
 	bool remove(Item& item);
 };
 
+#include "types/items.h"
+
 struct CoreData
 {
 	EntityMap<RoomID, Room> rooms;
 	EntityMap<AnimateID, Animate> animates;
 	EntityMap<ItemID, Item> items;
 	Inventory inventory;
+	Flashlight& flashlight();
 	std::vector<RoomID> paperroute;
 	Status status{};
 
 	CoreData();
+
+	void set_flashlight(Flashlight* flashlight_ptr);
+
+private:
+	Flashlight* flashlight_ptr;
 };

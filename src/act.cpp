@@ -1,11 +1,26 @@
 #include "r136.h"
 #include "act.h"
 #include "parser.h"
+#include "status.h"
+#include "random.h"
 
 InputWindow& input_window()
 {
 	static InputWindow* window = &console.input();
 	return *window;
+}
+
+bool progress_animates(CoreData& core)
+{
+	for (auto& element : core.animates)
+	{
+		Animate& animate = *element.second;
+
+		if (animate.room == core.status.current_room)
+			return animate.progress_status(core);
+	}
+
+	return true;
 }
 
 bool perform_command(CoreData& core)
@@ -72,7 +87,7 @@ bool perform_command(CoreData& core)
 
 			if (gnu.room == status.current_room && gnu.status != AnimateStatus::dead)
 			{
-				switch (get_random_number(5))
+				switch (random::get_number(5))
 				{
 				case 0:
 					gnu.room = RoomID::gnu_cave;
@@ -183,7 +198,7 @@ void use(CoreData& core, ItemID item_id)
 		{
 			console.main().print("Je haalt uit met je zwaard");
 
-			if (get_random_number(100) > 70)
+			if (random::get_number(100) > 70)
 				console.main().print(", maar het monster ontwijkt.\n");
 			else
 			{
@@ -194,7 +209,7 @@ void use(CoreData& core, ItemID item_id)
 			if (monster.strikes_left == 1)
 				console.main().print("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
 
-			if (!monster.strikes_left || get_random_number(100) > 30)
+			if (!monster.strikes_left || random::get_number(100) > 30)
 				break;
 
 			console.main().print("\nJe kunt nog een slag uitdelen. Wil je dat? ");
@@ -212,7 +227,7 @@ void use(CoreData& core, ItemID item_id)
 		if (!monster.strikes_left)
 		{
 			monster.status = AnimateStatus::dead;
-			progress_animate_status(core);
+			progress_animates(core);
 		}
 
 		console.main().wait_for_key(true);
@@ -223,7 +238,7 @@ void use(CoreData& core, ItemID item_id)
 		if (status.is_lamp_on)
 		{
 			status.is_lamp_on = !status.is_lamp_on;
-			console.main().print("Je zet de zaklamp uit.{0}", is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
+			console.main().print("Je zet de zaklamp uit.{0}", status::is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
 			break;
 		}
 
@@ -387,7 +402,7 @@ void use(CoreData& core, ItemID item_id)
 			break;
 		}
 
-		progress_animate_status(core);
+		progress_animates(core);
 
 		console.main().wait_for_key(true);
 		break;
@@ -482,7 +497,7 @@ void pickup(CoreData& core, ItemID item_id)
 
 void wait(void)
 {
-	switch(get_random_number(5))
+	switch(random::get_number(5))
 	{
 	case 0:
 		console.main().print("Je pulkt wat in je neus.\n");

@@ -1,21 +1,21 @@
 #include "r136.h"
 #include "items.h"
+#include "status.h"
 
 void Flashlight::use(CoreData& core)
 {
-
-	if (status.is_lamp_on)
+	if (is_on)
 	{
-		status.is_lamp_on = !status.is_lamp_on;
-		console.main().print("Je zet de zaklamp uit.{0}", is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
-		break;
+		is_on = false;
+		console.main().print("Je zet de zaklamp uit.{0}", status::is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
+		return;
 	}
 
-	if (status.lamp_points)
+	if (has_batteries || battery_level)
 	{
-		status.is_lamp_on = !status.is_lamp_on;
+		is_on = true;
 		console.main().print("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
 	}
 	else
-		console.main().print("Zonder nieuwe batterijen doet'ie het niet...\n");
+		console.main().print("Zonder nieuwe batterijen doet-ie het niet...\n");
 }

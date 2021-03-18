@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/r136.h"
+#include "types/base.h"
 
 bool perform_command(CoreData& core);
 

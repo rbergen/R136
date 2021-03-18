@@ -1,5 +1,6 @@
 #include "r136.h"
 #include "animates.h"
+#include "random.h"
 
 HellHound::HellHound(RoomID room, int strikes_to_kill) : Animate(room, strikes_to_kill) {}
 
@@ -32,7 +33,7 @@ bool HellHound::progress_status(CoreData& core)
 		console.main().print("De honger van de hellehond is nog niet gestild. Een diep gegrom komt uit zijn\n");
 		console.main().print("keel, en hij staat klaar om opnieuw aan te vallen.\n\n");
 
-		core.animates[AnimateID::hellhound].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
+		core.animates[AnimateID::hellhound].status = random::get_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 

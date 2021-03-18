@@ -161,25 +161,31 @@
     <ClInclude Include="include\act.h" />
     <ClInclude Include="include\animates.h" />
     <ClInclude Include="include\console.h" />
-    <ClInclude Include="include\constants\r136.h" />
-    <ClInclude Include="include\init.h" />
+    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\gamedata.h" />
+    <ClInclude Include="include\general.h" />
     <ClInclude Include="include\inlines\console.h" />
+    <ClInclude Include="include\inlines\general.h" />
     <ClInclude Include="include\inlines\items.h" />
-    <ClInclude Include="include\inlines\r136.h" />
+    <ClInclude Include="include\inlines\base.h" />
+    <ClInclude Include="include\inlines\random.h" />
     <ClInclude Include="include\items.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\r136.h" />
+    <ClInclude Include="include\random.h" />
+    <ClInclude Include="include\startup.h" />
     <ClInclude Include="include\status.h" />
     <ClInclude Include="include\templates\console.h" />
-    <ClInclude Include="include\templates\r136.h" />
+    <ClInclude Include="include\templates\base.h" />
     <ClInclude Include="include\types\animates.h" />
     <ClInclude Include="include\types\console.h" />
+    <ClInclude Include="include\types\general.h" />
     <ClInclude Include="include\types\items.h" />
-    <ClInclude Include="include\types\r136.h" />
+    <ClInclude Include="include\types\base.h" />
+    <ClInclude Include="include\types\random.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\types\items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\animates\barbecue.cpp" />
     <ClCompile Include="src\animates\computer.cpp" />
@@ -201,15 +207,15 @@
     <ClCompile Include="src\animates\vacuum.cpp" />
     <ClCompile Include="src\animates\voices.cpp" />
     <ClCompile Include="src\console.cpp" />
+    <ClCompile Include="src\general.cpp" />
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\items\bandage.cpp" />
     <ClCompile Include="src\items\flashlight.cpp" />
     <ClCompile Include="src\items\tnt.cpp" />
-    <ClCompile Include="src\loadsave.cpp" />
+    <ClCompile Include="src\gamedata.cpp" />
     <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\r136.cpp" />
-    <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\status.cpp" />
     <ClCompile Include="src\act.cpp" />
   </ItemGroup>
@@ -217,6 +223,7 @@
     <Text Include="CMakeLists.txt" />
     <Text Include="src\animates\CMakeLists.txt" />
     <Text Include="src\CMakeLists.txt" />
+    <Text Include="src\items\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

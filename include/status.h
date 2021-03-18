@@ -1,6 +1,9 @@
 #pragma once
 
-#include "types/r136.h"
+#include "types/base.h"
 
-void show_open_directions(RoomConnections& connections);
-void show_items(CoreData& core);
+namespace status
+{
+	bool is_room_lit(CoreData& core);
+	void show_room_status(CoreData& core);
+}

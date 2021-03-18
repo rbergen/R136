@@ -1,5 +1,7 @@
 #include "types/console.h"
 
+// templates/console.h
+
 template<class TChar>
 const std::basic_string<TChar> Window::replace(const std::basic_string<TChar>& format, const std::basic_string<TChar>& tag, const std::basic_string<TChar>& value)
 {

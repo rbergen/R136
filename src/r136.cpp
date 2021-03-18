@@ -1,4 +1,5 @@
 #include "r136.h"
+#include "status.h"
 
 bool RoomConnections::is_direction_command(Command command) const
 {
@@ -45,7 +46,7 @@ void Animate::load(Animate& animate)
 
 void Item::inspect(CoreData& core)
 {
-	if (!is_room_lit(core))
+	if (!status::is_room_lit(core))
 	{
 		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
 		return;

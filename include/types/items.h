@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/r136.h"
+#include "types/base.h"
 
 struct Diskette : Item
 {
@@ -69,7 +69,11 @@ struct Bandage : Item
 
 struct Flashlight : Item
 {
-	Flashlight(string name, const wstring description, RoomID room) : Item(name, description, room) {}
+	bool is_on;
+	bool has_batteries;
+	int battery_level;
+
+	Flashlight(string name, const wstring description, RoomID room);
 
 	void use(CoreData& core) override;
 };
@@ -116,3 +120,4 @@ struct Crystal : Item
 protected:
 	void use_if_target_present(CoreData& core) override;
 };
+

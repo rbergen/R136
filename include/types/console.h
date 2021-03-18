@@ -6,7 +6,7 @@
 #error (PD)Curses must be built with wide-character support
 #endif
 
-#include "types/r136.h"
+#include "types/base.h"
 
 // Figure out which (name)curses header to include
 #ifdef HAVE_NCURSES_NCURSES_H

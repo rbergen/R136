@@ -3,9 +3,9 @@ target_sources(
 	PRIVATE 
 	act.cpp
   console.cpp 
+  gamedata.cpp
   init.cpp 
   intro.cpp 
-  loadsave.cpp 
   parser.cpp
   r136.cpp
   random.cpp 
@@ -13,3 +13,4 @@ target_sources(
 )
 
 add_subdirectory(animates)
+add_subdirectory(items)

@@ -1,5 +1,6 @@
 ﻿#include "r136.h"
 #include "animates.h"
+#include "random.h"
 
 RedTroll::RedTroll(RoomID room) : Animate(room) {}
 
@@ -34,7 +35,7 @@ bool RedTroll::progress_status(CoreData& core)
 	case AnimateStatus::status_3:
 		console.main().print("Het schuim loopt uit de trol z'n bek. Hij heft opnieuw zijn zweep.\n\n");
 
-		core.animates[AnimateID::red_troll].status = get_random_status(AnimateStatus::status_2, AnimateStatus::status_3);
+		core.animates[AnimateID::red_troll].status = random::get_status(AnimateStatus::status_2, AnimateStatus::status_3);
 
 		break;
 

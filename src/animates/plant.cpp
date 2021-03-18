@@ -1,5 +1,6 @@
 #include "r136.h"
 #include "animates.h"
+#include "random.h"
 
 Plant::Plant(RoomID room, int strikes_to_kill) : Animate(room, strikes_to_kill) {}
 
@@ -15,7 +16,7 @@ bool Plant::progress_status(CoreData& core)
 		console.main().print("nek.\n\n");
 
 		core.status.life_points--; //   Wond
-		core.animates[AnimateID::plant].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
+		core.animates[AnimateID::plant].status = random::get_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 
@@ -34,7 +35,7 @@ bool Plant::progress_status(CoreData& core)
 		console.main().print("je weer los.\n\n");
 
 		core.status.life_points--; //   Wond
-		core.animates[AnimateID::plant].status = get_random_status(AnimateStatus::status_1, AnimateStatus::status_2);
+		core.animates[AnimateID::plant].status = random::get_status(AnimateStatus::status_1, AnimateStatus::status_2);
 
 		break;
 
