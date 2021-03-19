@@ -38,7 +38,8 @@ namespace actions
 			console.main().print("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
 			console.main().print("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
 			console.main().print("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
-			console.main().print("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.\n\n");
+			console.main().print("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.");
+			console.main().empty_line();
 			general::force_exit();
 		}
 
@@ -58,8 +59,9 @@ namespace actions
 			} 
 			while (parse_data.parse_error);
 
+			console.main().empty_line();
 			console.main().print_centered("---***---");
-			console.main().print("\n\n");
+			console.main().empty_line();
 
 			auto& status = core.status;
 
@@ -113,7 +115,7 @@ namespace actions
 				break;
 			}
 
-			console.main().print("\n");
+			console.main().empty_line();
 		} 	
 		while (parse_data.command == Command::status || parse_data.command == Command::help || parse_data.command == Command::finish);
 

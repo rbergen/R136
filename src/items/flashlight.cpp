@@ -3,22 +3,24 @@
 #include "items.h"
 #include "status.h"
 
-void Flashlight::use(CoreData& core)
+bool Flashlight::use(CoreData& core)
 {
 	if (is_on)
 	{
 		is_on = false;
-		console.main().print("Je zet de zaklamp uit.{0}", status::is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
-		return;
+		console.main().print("Je zet de zaklamp uit.{0}\n", status::is_room_lit(core) ? "\n" : " Je ziet niets meer.\n");
+		return false;
 	}
 
 	if (has_bunny_batteries || battery_level)
 	{
 		is_on = true;
-		console.main().print("Je zet de zaklamp aan. De straal verlicht de omtrek.\n");
+		console.main().print("Je zet de zaklamp aan. De straal verlicht de omtrek.\n\n");
+		return false;
 	}
-	else
-		console.main().print("Zonder nieuwe batterijen doet-ie het niet...\n");
+
+	console.main().print("Zonder nieuwe batterijen doet-ie het niet...\n\n");
+	return true;
 }
 
 void Flashlight::decrease_battery_level(CoreData& core)

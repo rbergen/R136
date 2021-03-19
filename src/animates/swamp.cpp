@@ -11,7 +11,8 @@ bool Swamp::progress_status(CoreData& core)
 	console.main().print("langzaam het moeras in. Als je tot je nek in de pruttelende, modderige massa\n");
 	console.main().print("zit houd je je adem in en doe je je ogen dicht. Je blijft zakken in de smurrie,\n");
 	console.main().print("en na enige tijd verlies je je bewustzijn.\n");
-	console.main().print("Als je weer bijkomt merk je dat je op een harde ondergrond ligt... in een grot.\n\n");
+	console.main().print("Als je weer bijkomt merk je dat je op een harde ondergrond ligt... in een grot.");
+	console.main().empty_line();
 
 	switch (core.status.current_room)
 	{

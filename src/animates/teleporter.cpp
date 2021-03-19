@@ -15,7 +15,8 @@ bool Teleporter::progress_status(CoreData& core)
 	console.main().print("hoeveelheden data over de beeldschermen flitsen. Even later zie je een\n");
 	console.main().print("oogverblindende flits en voel je je even gewichtloos.\n");
 	console.main().print("Als je weer kunt zien, merk je dat de lampen en de machine zijn verdwenen.\n");
-	console.main().print("Sterker nog, je ligt buiten...\n\n");
+	console.main().print("Sterker nog, je ligt buiten...");
+	console.main().empty_line();
 
 	core.status.current_room = RoomID::forest1;
 

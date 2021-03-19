@@ -110,6 +110,7 @@ inline void Window::clear_line()
 {
 	wmove(wnd, getcury(wnd), 0);
 	wclrtoeol(wnd);
+	register_line_end();
 }
 
 inline void Window::set_scrollable(bool enable)
@@ -127,10 +128,23 @@ inline void Window::clear()
 	werase(wnd);
 }
 
+inline void Window::register_line_end()
+{
+	if (is_line_ended)
+		is_empty_line = true;
+
+	is_line_ended = true;
+}
+
 inline void Window::clear(Color color)
 {
 	wbkgd(wnd, color_map.get_attrs(color));
 	werase(wnd);
+}
+
+inline void Window::clear_line_end()
+{
+	is_empty_line = is_line_ended = false;
 }
 
 inline void Window::set_attribute(chtype attr)
@@ -150,17 +164,36 @@ inline void Window::refresh()
 
 inline int Window::print(char c)
 {
+	if (c == new_line)
+		register_line_end();
+	else
+		clear_line_end();
+
 	return waddch(wnd, c);
 }
 
 inline int Window::print(const string& text)
 {
+	check_line_ends(text, new_line);
+
 	return waddstr(wnd, text.c_str());
 }
 
 inline int Window::print(const wstring& text)
 {
+	check_line_ends(text, wnew_line);
+
 	return waddwstr(wnd, text.c_str());
+}
+
+inline void Window::print_centered(const string& text)
+{
+	print_centered_template(text);
+}
+
+inline void Window::print_centered(const wstring& text)
+{
+	print_centered_template(text);
 }
 
 inline int Window::print(const string& format, const string& value)
@@ -171,6 +204,25 @@ inline int Window::print(const string& format, const string& value)
 inline int Window::print(const wstring& format, const wstring& value)
 {
 	return print(replace(format, wstring(L"{0}"), value));
+}
+
+inline bool Window::end_line()
+{
+	if (is_line_ended)
+		return false;
+
+	print(new_line);
+	return true;
+}
+
+inline bool Window::empty_line()
+{
+	if (is_empty_line)
+		return false;
+
+	end_line();
+	print(new_line);
+	return true;
 }
 
 inline InputWindow::InputWindow(WINDOW* wnd) : Window(wnd, true, Color::bold) {}

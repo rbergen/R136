@@ -178,6 +178,7 @@
     <ClInclude Include="include\status.h" />
     <ClInclude Include="include\templates\console.h" />
     <ClInclude Include="include\templates\base.h" />
+    <ClInclude Include="include\templates\items.h" />
     <ClInclude Include="include\types\animates.h" />
     <ClInclude Include="include\types\console.h" />
     <ClInclude Include="include\types\general.h" />

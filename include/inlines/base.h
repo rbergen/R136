@@ -3,8 +3,9 @@
 // inlines/base.h
 
 #include "types/base.h"
-#include "../console.h"
+#include "types/console.h"
 #include "constants.h"
+#include "templates/base.h"
 
 inline Flashlight& CoreData::flashlight()
 {
@@ -59,9 +60,9 @@ inline Item::Item(const string name, const wstring description, RoomID room, Ani
 	sets_target_to_status(sets_target_to_status)
 {}
 
-inline void Item::use_if_target_present(CoreData& core)
+inline bool Item::use_with_target_present(CoreData& core)
 {
-	use_to_status(core);
+	return use_to_status(core);
 }
 
 inline bool Item::is_target_present(CoreData& core)
@@ -79,24 +80,27 @@ inline void Item::report_pointless_use()
 	console.main().print("Dat heeft geen zin.\n");
 }
 
-inline void Item::use_to_status(CoreData& core, AnimateStatus to_status)
+inline bool Item::use_to_status(CoreData& core, AnimateStatus to_status)
 {
 	if (to_status == AnimateStatus::undefined)
 		to_status = sets_target_to_status;
 
 	if (to_status == AnimateStatus::undefined || to_value(usable_on) < 0)
-		return;
+		return false;
 
 	core.inventory.remove(*this);
 	core.animates[usable_on].status = to_status;
+
+	return true;
 }
 
-inline void Item::use(CoreData& core)
+inline bool Item::use(CoreData& core)
 {
 	if (is_target_present(core))
-		use_if_target_present(core);
-	else
-		report_pointless_use();
+		return use_with_target_present(core);
+
+	report_pointless_use();
+	return true;
 }
 
 inline Inventory::Inventory(int capacity) : BoundedCollection<ItemID>(capacity) {}

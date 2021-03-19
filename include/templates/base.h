@@ -5,18 +5,6 @@
 #include "types/base.h"
 #include <stdexcept>
 
-template <class E>
-constexpr auto to_value(E e) noexcept
-{
-	return static_cast<std::underlying_type_t<E>>(e);
-}
-
-template<class L>
-constexpr L combines_with(L value) { return -(value + 2); }
-
-constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }
-constexpr ItemID combines_with(AnimateID animate) { return static_cast<ItemID>(combines_with(to_value(animate))); }
-
 template<class TEntity >
 BoundedCollection<TEntity>::BoundedCollection(int capacity) :
 	max_item_count(capacity)

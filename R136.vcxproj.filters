@@ -107,6 +107,9 @@
     <ClInclude Include="include\inlines\general.h">
       <Filter>Header Files\inlines</Filter>
     </ClInclude>
+    <ClInclude Include="include\templates\items.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">

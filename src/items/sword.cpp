@@ -4,7 +4,7 @@
 #include "items.h"
 #include "random.h"
 
-void Sword::use(CoreData& core)
+bool Sword::use(CoreData& core)
 {
 	AnimateID monsterID;
 	auto& animates = core.animates;
@@ -17,7 +17,7 @@ void Sword::use(CoreData& core)
 	else
 	{
 		report_pointless_use();
-		return;
+		return false;
 	}
 
 	auto& monster = animates[monsterID];
@@ -27,36 +27,45 @@ void Sword::use(CoreData& core)
 		console.main().print("Je haalt uit met je zwaard");
 
 		if (random::get_number(100) > 70)
-			console.main().print(", maar het monster ontwijkt.\n");
+			console.main().print(", maar het monster ontwijkt.");
 		else
 		{
-			console.main().print(" en je raakt het monster hard.\n");
+			console.main().print(" en je raakt het monster hard.");
 			monster.strikes_left--;
 		}
 
-		if (monster.strikes_left == 1)
-			console.main().print("\nHet monster is zwaar gewond en je baadt in zijn bloed.\n");
+		console.main().empty_line();
+
+		if (monster.strikes_left == 1) 
+		{
+			console.main().print("Het monster is zwaar gewond en je baadt in zijn bloed.");
+			console.main().empty_line();
+		}
 
 		if (!monster.strikes_left || random::get_number(100) > 30)
-			break;
-
-		console.main().print("\nJe kunt nog een slag uitdelen. Wil je dat? ");
-
-		if (tolower(console.main().get_char_input("jJnN")) != 'j')
 		{
-			console.main().print("\n");
+			console.main().wait_for_key(true);
 			break;
 		}
 
-		console.main().print("\n");
+		console.main().print("Je kunt nog een slag uitdelen. Wil je dat? ");
+
+		if (tolower(console.main().get_char_input("jJnN")) != 'j')
+		{
+			console.main().empty_line();
+			break;
+		}
+
+		console.main().empty_line();
 	}
-	console.main().print("\n");
+
+	console.main().empty_line();
 
 	if (!monster.strikes_left)
 	{
 		monster.status = AnimateStatus::dead;
-		actions::progress_animates(core);
+		return true;
 	}
 
-	console.main().wait_for_key(true);
+	return false;
 }

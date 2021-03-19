@@ -11,7 +11,8 @@ bool Mist::progress_status(CoreData& core)
 	console.main().print(L"ziet. Je verliest je orïentatiegevoel en stommelt paniekerig door de grot, op\n");
 	console.main().print("zoek naar een uitgang.\n");
 	console.main().print("Net als je begint te denken dat je nooit een uitgang uit deze grot zult vinden,\n");
-	console.main().print("struikel je voorover een andere grot in.\n\n");
+	console.main().print("struikel je voorover een andere grot in.");
+	console.main().empty_line();
 
 	switch (random::get_number(3))
 	{

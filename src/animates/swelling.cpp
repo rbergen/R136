@@ -12,14 +12,14 @@ bool Swelling::progress_status(CoreData& core)
 		console.main().print("Er staat hier een wezen dat nog het meest lijkt op een gezwel. Het kijkt je\n");
 		console.main().print("aan met 2 gluiperige ogen, op zijn huid zitten schurftvlekken, en op zijn\n");
 		console.main().print("mondhoeken groeien algen. Met zijn lange, glibberige tentakels houdt het zich\n");
-		console.main().print("vast aan alle wanden van de grot en verspert zo je weg.\n\n");
+		console.main().print("vast aan alle wanden van de grot en verspert zo je weg.");
 
 		core.animates[AnimateID::swelling].status++;
 
 		break;
 
 	case AnimateStatus::status_1:
-		console.main().print("Het gezwel zit nog steeds aan de grotwanden vastgezogen, en het trilt licht.\n\n");
+		console.main().print("Het gezwel zit nog steeds aan de grotwanden vastgezogen, en het trilt licht.");
 
 		break;
 
@@ -31,7 +31,7 @@ bool Swelling::progress_status(CoreData& core)
 			console.main().print("Het gezwel begint langzaam steeds heftiger te trillen, en langzaam komen\n");
 			console.main().print("overal scheuren in zijn schurfterige huid. Zijn tentakels komen langzaam met\n");
 			console.main().print("een luid slurpend geluid los van de rotswanden, en hij zakt helemaal in el-\n");
-			console.main().print("kaar.\n\n");
+			console.main().print("kaar.");
 		}
 		else
 			// geen masker... oeps!
@@ -39,7 +39,7 @@ bool Swelling::progress_status(CoreData& core)
 			console.main().print("Je kunt nog zien dat het gezwel langzaam steeds heftiger begint te trillen,\n");
 			console.main().print("voordat je zelf een kloppende hoofdpijn krijgt en onderuit gaat. Je hebt niets\n");
 			console.main().print("om je tegen het gas te beschermen, en je valt flauw. Na een tijdje kom je weer\n");
-			console.main().print("bij.\n\n");
+			console.main().print("bij.");
 
 			core.status.life_points -= 4; //    Grote wond
 		}
@@ -52,10 +52,14 @@ bool Swelling::progress_status(CoreData& core)
 	case AnimateStatus::dead:
 		console.main().print("Op het gescheurde lichaam van het gezwel zitten allemaal schimmels. Uit zijn\n");
 		console.main().print("maag kruipen pissebedden en oorkruipers. Er verspreidt zich een sterke rot-\n");
-		console.main().print("lucht, en er ontstaat langzaam een klein slijmplasje.\n\n");
+		console.main().print("lucht, en er ontstaat langzaam een klein slijmplasje.");
 
 		break;
+
+	default:
+		return true;
 	}
 
+	console.main().empty_line();
 	return true;
 }

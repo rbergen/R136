@@ -45,7 +45,7 @@ namespace status
 				}
 			}
 
-			console.main().print(".\n");
+			console.main().print(".");
 		}
 
 		void show_open_directions(RoomConnections& connections)
@@ -94,7 +94,7 @@ namespace status
 				}
 			}
 
-			console.main().print(".\n");
+			console.main().print(".");
 		}
 	}
 
@@ -113,9 +113,13 @@ namespace status
 		auto& current_room = core.rooms[current_room_id];
 
 		console.main().print(L"Je bevindt je {0}.\n", current_room.name);
+		console.main().end_line();
 
 		if (!is_room_lit(core))
-			console.main().print("Het is stekedonker en je ziet geen hand voor ogen.\n");
+		{
+			console.main().print("Het is stekedonker en je ziet geen hand voor ogen.");
+			console.main().end_line();
+		}
 		else
 		{
 			const wstring& description = core.status.has_tree_burned && current_room.type == RoomType::forest
@@ -125,13 +129,14 @@ namespace status
 			if (description.size() > 0)
 			{
 				console.main().print(description);
-				console.main().print("\n");
+				console.main().end_line();
 			}
 
 			show_items(core);
+			console.main().end_line();
 		}
 
 		show_open_directions(current_room.connections);
-		console.main().print("\n");
+		console.main().empty_line();
 	}
 }

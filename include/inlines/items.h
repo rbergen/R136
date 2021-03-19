@@ -2,43 +2,60 @@
 
 // inlines/items.h
 
-#include "../base.h"
-#include "types/items.h"
+#include "types/base.h"
+#include "templates/items.h"
 
-inline void Bone::use_if_target_present(CoreData& core)
+inline bool Bone::use_with_target_present(CoreData& core)
 {
 	target_status(core) = AnimateStatus::door_open;
+	
+	return true;
 }
 
-inline void Ingredient::use_if_target_present(CoreData& core)
+inline bool Ingredient::use_with_target_present(CoreData& core)
 {
 	use_to_status(core, target_status(core) == AnimateStatus::initial_burn ? sets_target_to_status : AnimateStatus::cookie_is_baking);
+
+	return true;
 }
 
-inline void Crystal::use_if_target_present(CoreData& core)
+inline bool Crystal::use_with_target_present(CoreData& core)
 {
 	use_to_status(core, next_status(target_status(core)));
+
+	return true;
 }
 
-inline void Nightcap::use_if_target_present(CoreData& core)
+inline bool Nightcap::use_with_target_present(CoreData& core)
 {
 	if (target_status(core) == AnimateStatus::sleeping_lightly)
-		use_to_status(core);
-	else
-		report_pointless_use();
+		return use_to_status(core);
+
+	report_pointless_use();
+	return false;
 }
 
-inline void Gasmask::use(CoreData& core)
+inline bool Gasmask::use(CoreData& core)
 {
-	console.main().print("Je hebt het gasmasker al op.\n");
+	console.main().print("Je hebt het gasmasker al op.\n\n");
+	return false;
 }
 
-inline void HeatSuit::use(CoreData& core)
+inline bool ThermalSuit::use(CoreData& core)
 {
-	console.main().print("Je hebt het hittepak al aan.\n");
+	console.main().print("Je hebt het hittepak al aan.\n\n");
+	return false;
 }
 
-inline Flashlight::Flashlight(string name, const wstring description, RoomID room) : Item(name, description, room)
+inline CombinableItem::CombinableItem(string name, const wstring description, RoomID room, ItemID combines_with)
+	: Item(name, description, room, item::combines_with(combines_with)) {}
+
+inline bool CombinableItem::does_combine_with(ItemID item)
+{
+	return item::combines_with(usable_on) == item;
+}
+
+inline Flashlight::Flashlight(string name, const wstring description, RoomID room, ItemID combines_with) : CombinableItem(name, description, room, combines_with)
 {
 	is_on = false;
 	has_bunny_batteries = false;

@@ -29,6 +29,41 @@ const std::basic_string<TChar> Window::replace(const std::basic_string<TChar>& f
 }
 
 template<class TChar>
+void Window::check_line_ends(const std::basic_string<TChar>& text, TChar c)
+{
+	if (text.empty())
+		return;
+
+	if (text.back() != c)
+	{
+		clear_line_end();
+		return;
+	}
+
+	register_line_end();
+
+	if (text.length() > 1 && text[text.length() - 2] == c)
+		register_line_end();
+}
+
+template<class TChar>
+void Window::print_centered_template(const std::basic_string<TChar>& str)
+{
+	set_color(standard_color);
+
+	int win_width = getmaxx(wnd);
+	int str_length = (int)str.length();
+
+	clear_line();
+
+	int x = (win_width - str_length) / 2;
+	set_position(get_y(), x < 0 ? 0 : x);
+	print(str);
+
+	unset_color(standard_color);
+}
+
+template<class TChar>
 void InputWindow::print_error_template(const std::basic_string<TChar>& text)
 {
 	set_position(0, 0);

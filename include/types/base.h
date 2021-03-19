@@ -10,6 +10,13 @@
 using std::string;
 using std::wstring;
 
+// this is obviously a template, but of such a general and fundamental nature that it is included here
+template <class E>
+constexpr auto to_value(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
+
 enum class RoomType : char
 {
 	forest,
@@ -268,7 +275,7 @@ struct Item : Entity<ItemID>
 		: Item(name, description, RoomID::undefined, AnimateID::undefined) {}
 
 	void inspect(CoreData& core);
-	virtual void use(CoreData& core);
+	virtual bool use(CoreData& core);
 
 protected:
 	AnimateStatus sets_target_to_status;
@@ -276,8 +283,8 @@ protected:
 	AnimateStatus& target_status(CoreData& core);
 	void report_pointless_use();
 
-	virtual void use_if_target_present(CoreData& core);
-	virtual void use_to_status(CoreData& core, AnimateStatus to_status = AnimateStatus::undefined);
+	virtual bool use_with_target_present(CoreData& core);
+	virtual bool use_to_status(CoreData& core, AnimateStatus to_status = AnimateStatus::undefined);
 };
 
 struct Status

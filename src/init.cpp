@@ -1,5 +1,6 @@
 ﻿#include "base.h"
 #include "animates.h"
+#include "items.h"
 #include "constants.h"
 #include "startup.h"
 #include <ctime>
@@ -10,50 +11,47 @@ namespace startup
 {
 	namespace 
 	{
-		template<class T, size_t N>
-		constexpr size_t size(T(&)[N]) { return N; }
-
-		std::unique_ptr<Room> rooms[] = { // { name, description, is_forest }
-			std::make_unique<Forest>(L"in het bos",				L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden."),
-			std::make_unique<Forest>(L"in het bos",				L"Aan de zuidkant zie je een hek dat toegang geeft tot een donkere plaats."),
+		std::unique_ptr<Room> rooms[] { // { name, description, is_forest }
+			std::make_unique<Forest>(L"in het bos",					L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden."),
+			std::make_unique<Forest>(L"in het bos",					L"Aan de zuidkant zie je een hek dat toegang geeft tot een donkere plaats."),
 			std::make_unique<Forest>(L"in het bos", 				L"Er komt een modderige geur uit het oosten."),
-			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
-			std::make_unique<Forest>(L"in het bos",				L"Er komt een modderige geur uit het westen."),
-			std::make_unique<Forest>(L"in het bos",				L"Pas op voor de laaghangende takken!"),
+			std::make_unique<Outdoor>(L"in het moeras",				L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Forest>(L"in het bos",					L"Er komt een modderige geur uit het westen."),
+			std::make_unique<Forest>(L"in het bos",					L"Pas op voor de laaghangende takken!"),
 			std::make_unique<Outdoor>(L"op de begraafplaats",		L"Een lucht van rottend vlees dringt in je neus. Je denkt dat je een grafsteen\nziet bewegen."),
 			std::make_unique<Forest>(L"in het bos"),
-			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
-			std::make_unique<Outdoor>(L"op een open plek",		L"Er komt een modderige geur uit het westen."),
+			std::make_unique<Outdoor>(L"in het moeras",				L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Outdoor>(L"op een open plek",			L"Er komt een modderige geur uit het westen."),
 			std::make_unique<Forest>(L"in het bos"),
-			std::make_unique<Forest>(L"in het bos",				L"Je trapt bijna in een bereklem."),
-			std::make_unique<Outdoor>(L"op een open plek",		L"Door de mist zie je nog net de omtrekken van het donkere bos."),
-			std::make_unique<Outdoor>(L"op het moeraspad",		L"Er ligt hier een skelet, waarschijnlijk een van je voorgangers."),
-			std::make_unique<Outdoor>(L"op een open plek",		L"Bij het licht van een halve maan onderscheid je nog net de vorm van een galg."),
-			std::make_unique<Forest>(L"in het bos",				L"In de verte hoor je het trieste gehuil van een weerwolf."),
+			std::make_unique<Forest>(L"in het bos",					L"Je trapt bijna in een bereklem."),
+			std::make_unique<Outdoor>(L"op een open plek",			L"Door de mist zie je nog net de omtrekken van het donkere bos."),
+			std::make_unique<Outdoor>(L"op het moeraspad",			L"Er ligt hier een skelet, waarschijnlijk een van je voorgangers."),
+			std::make_unique<Outdoor>(L"op een open plek",			L"Bij het licht van een halve maan onderscheid je nog net de vorm van een galg."),
+			std::make_unique<Forest>(L"in het bos",					L"In de verte hoor je het trieste gehuil van een weerwolf."),
 			std::make_unique<Forest>(L"in het bos"),
-			std::make_unique<Outdoor>(L"op een open plek",		L"Er ligt hier een dood konijn dat wordt belaagd door vliegen."),
-			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Outdoor>(L"op een open plek",			L"Er ligt hier een dood konijn dat wordt belaagd door vliegen."),
+			std::make_unique<Outdoor>(L"in het moeras",				L"Er hangt een griezelige nevel over het stinkende oppervlak."),
 			std::make_unique<Indoor>(L"in de ruïne",				L"De ruïne is een spookachtige bouwval. Er is hier een wankele trap die naar\nbeneden leidt."),
 
-			std::make_unique<Cave>(L"in de slijmgrot",			L"De wanden van deze grot zijn bekleed met een snotachtig slijm."),
+			std::make_unique<Cave>(L"in de slijmgrot",				L"De wanden van deze grot zijn bekleed met een snotachtig slijm."),
 			std::make_unique<Cave>(L"in de zwarte grot",			L"Je ziet geen hand voor ogen."),
 			std::make_unique<Cave>(L"in de drugsgrot"),
-			std::make_unique<Cave>(L"in de geile grot",			L"Aan de muren hangen gelige, gescheurde Playboy-posters."),
-			std::make_unique<Cave>(L"in de dwangbuisgrot",		L"Er hangt hier een dwangbuis, met daarin een verminkt lijk."),
+			std::make_unique<Cave>(L"in de geile grot",				L"Aan de muren hangen gelige, gescheurde Playboy-posters."),
+			std::make_unique<Cave>(L"in de dwangbuisgrot",			L"Er hangt hier een dwangbuis, met daarin een verminkt lijk."),
 			std::make_unique<Cave>(L"in een verwaarloosde grot"),
 			std::make_unique<Cave>(L"in een lege grot"),
-			std::make_unique<Cave>(L"in de hoofdgrot",			L"Er staat hier een batterij aan mysterieuze apparatuur."),
+			std::make_unique<Cave>(L"in de hoofdgrot",				L"Er staat hier een batterij aan mysterieuze apparatuur."),
 			std::make_unique<Cave>(L"in de hiërogliefengrot",		L"Op de wanden staan hiërogliefen waar je geen wijs uit wordt."),
-			std::make_unique<Cave>(L"in de stankgrot",			L"Er hangt hier een smerige lucht die je herinnert aan de zware lucht van een\nbeerput."),
+			std::make_unique<Cave>(L"in de stankgrot",				L"Er hangt hier een smerige lucht die je herinnert aan de zware lucht van een\nbeerput."),
 			std::make_unique<Cave>(L"in een troosteloze grot"),
-			std::make_unique<Indoor>(L"in de TL-grot",			L"De grot wordt zwak verlicht door een lichtbron die hoog aan het plafond hangt."),
+			std::make_unique<Indoor>(L"in de TL-grot",				L"De grot wordt zwak verlicht door een lichtbron die hoog aan het plafond hangt."),
 			std::make_unique<Cave>(L"in een kleine grot"),
 			std::make_unique<Cave>(L"in de ijsgrot",				L"In deze grot lijkt het net of alles van ijs is, en je krijgt rillingen."),
-			std::make_unique<Cave>(L"in de kaktusgrot",			L"Je bent omringd door giftige kaktussen die in deze grot staan."),
+			std::make_unique<Cave>(L"in de kaktusgrot",				L"Je bent omringd door giftige kaktussen die in deze grot staan."),
 			std::make_unique<Cave>(L"in de stalagmietengrot",		L"Hier zie je een traliewerk van stalagmieten."),
-			std::make_unique<Cave>(L"in de stormgrot",			L"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden."),
+			std::make_unique<Cave>(L"in de stormgrot",				L"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden."),
 			std::make_unique<Cave>(L"in de mistgrot",				L"Een dichte mist belemmert je zicht, en je verliest je orïentatiegevoel."),
-			std::make_unique<Cave>(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
+			std::make_unique<Cave>(L"in de wenteltrapgrot",			L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
 			std::make_unique<Cave>(L"in de tentakelgrot",			L"Van alle kanten komen grote tentakels die je aftasten en groene sporen op je\nhuid achterlaten."),
 
 			std::make_unique<Cave>(L"in de vuilnisgrot",			L"In deze grot ligt een grote stapel rottende etensresten. De stank is bijna on-\ndraaglijk."),
@@ -66,10 +64,10 @@ namespace startup
 			std::make_unique<Cave>(L"in de rotsgrot",				L"Overal zie je hier scherpe rotspunten. Aan een aantal ervan zitten bruine kors-\nten."),
 			std::make_unique<Outdoor>(L"in de leegte"),
 			std::make_unique<Outdoor>(L"op de zandbank",			L"Op de vloer liggen vreemde patronen, gevormd uit verschillende soorten zand."),
-			std::make_unique<Cave>(L"in de martelgrot",			L"Onder de vage schemering van de martelvuren zie je nog net een duimschroef en\nwat stekelige voorwerpen waar nog wat bloed aan zit."),
+			std::make_unique<Cave>(L"in de martelgrot",				L"Onder de vage schemering van de martelvuren zie je nog net een duimschroef en\nwat stekelige voorwerpen waar nog wat bloed aan zit."),
 			std::make_unique<Cave>(L"in een lege grot"),
 			std::make_unique<Cave>(L"in de veilige grot",			L"Dit is de enige grot waar je je een beetje veilig voelt."),
-			std::make_unique<Outdoor>(L"in de nauwe rotsspleet",	L"Aan alle kanten wordt je omringd door hoge rotsmuren. Alleen in het westen zie\nje een opening."),
+			std::make_unique<Outdoor>(L"in de nauwe rotsspleet", 	L"Aan alle kanten wordt je omringd door hoge rotsmuren. Alleen in het westen zie\nje een opening."),
 			std::make_unique<Cave>(L"in de oliegrot",				L"Vanuit het zuiden verspreidt zich een enorme hitte, die in deze grot nog net\ndraaglijk is."),
 			std::make_unique<Cave>(L"in een lege grot"),
 			std::make_unique<Cave>(L"in een wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
@@ -81,18 +79,18 @@ namespace startup
 			std::make_unique<Indoor>(L"in de radioactieve grot",	L"Door de hoge radioactiviteit is deze grot zwak verlicht."),
 			std::make_unique<Cave>(L"in de i-grot"),
 			std::make_unique<Cave>(L"in de p-grot"),
-			std::make_unique<Cave>(L"in de a-grot",				L"In deze grot bevindt zich het stenen beeld van een oud, jou onbekend wezen."),
-			std::make_unique<Cave>(L"in de dodengrot",			L"De naam van deze grot spreekt voor zich..."),
+			std::make_unique<Cave>(L"in de a-grot",					L"In deze grot bevindt zich het stenen beeld van een oud, jou onbekend wezen."),
+			std::make_unique<Cave>(L"in de dodengrot",				L"De naam van deze grot spreekt voor zich..."),
 			std::make_unique<Cave>(L"in de r-grot"),
 			std::make_unique<Cave>(L"in de e-grot"),
-			std::make_unique<Cave>(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
+			std::make_unique<Cave>(L"in de wenteltrapgrot",			L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
 			std::make_unique<Cave>(L"in de P-grot"),
 			std::make_unique<Cave>(L"in de grot der verdoemenis",	L"In deze grot heerst een haast verstikkende sfeer, en je voelt je niet prettig."),
 			std::make_unique<Cave>(L"in de vacuumgrot"),
 			std::make_unique<Cave>(L"in de rode grot"),
 			std::make_unique<Cave>(L"in de neongrot",				L"Deze grot is fel gekleurd. Er staan patronen die je doen denken aan zwarte ma-\ngie."),
-			std::make_unique<Cave>(L"in de bloedgrot",			L"Het geraamte van een groot beest ligt hier op de grond en een aantal ingewanden\nliggen er naast."),
-			std::make_unique<Cave>(L"in de vleermuisgrot",		L"In deze grot fladderen overal vleermuizen, op zoek naar hun prooi."),
+			std::make_unique<Cave>(L"in de bloedgrot",				L"Het geraamte van een groot beest ligt hier op de grond en een aantal ingewanden\nliggen er naast."),
+			std::make_unique<Cave>(L"in de vleermuisgrot",			L"In deze grot fladderen overal vleermuizen, op zoek naar hun prooi."),
 			std::make_unique<Cave>(L"in de slangengrot",			L"Je hoort het geluid van een ratelslang. Bij de weg naar het noorden staat een\ndoodskop getekend, die een gevaar aanduidt."),
 			std::make_unique<Cave>(L"in de kwabbengrot"),
 			std::make_unique<Cave>(L"in de glibbergrot",			L"Je glijdt bijna uit over de zeepachtige prut die overal in de grot ligt. Tus-\nsen de glibberige massa steekt een paal omhoog met daarop een pijl die naar\nhet oosten wijst."),
@@ -182,7 +180,7 @@ namespace startup
 			{RoomID::teleport_cave, Command::west}, {RoomID::teleport_cave, Command::north}
 		};
 
-		std::unique_ptr<Animate> animates[] = { // { room, strike }
+		std::unique_ptr<Animate> animates[] { // { room, strike }
 			std::make_unique<HellHound>(RoomID::forest2, 4),
 			std::make_unique<RedTroll>(RoomID::horny_cave),
 			std::make_unique<Plant>(RoomID::neglected_cave, 6),
@@ -207,51 +205,49 @@ namespace startup
 		};
 
 		std::unique_ptr<Item> items[] { // { name, description, room, useable_on }
-			std::make_unique<Item>("het hellehondvlees", L"Het is een goor stuk vlees dat naar kots ruikt.", AnimateID::barbecue),
-			std::make_unique<Item>("het hittepak", L"Dit aluminiumkleurig pak beschermt je tegen grote hitte of kou.", RoomID::forest4),
-			std::make_unique<Item>("het groen kristal", L"Het is een helder, groengekleurd kristal. Even zie je een mysterieuze twinke-\nling", AnimateID::dragon_head),
-			std::make_unique<Item>("het zwaard", L"Het is een magisch zwaard dat er niet al te sterk uit ziet, maar veel kracht\nuitstraalt. In het heft zit een paarse robijn.", RoomID::forest5),
-			std::make_unique<Item>("het bot", L"Het is een menselijk, verbleekt dijbeen, dat er sterk uit ziet. Je kunt er veel\nkracht mee zetten.", RoomID::swamp_path, AnimateID::door),
-			std::make_unique<Item>("de diskette", L"Het is een grijze 3,5 inch diskette van het merk 'Spirits' met daarop waar-\nschijnlijk belangrijke data.", RoomID::slime_cave, AnimateID::computer),
-			std::make_unique<Item>("de hasj", L"Het is een zakje met spul dat lijkt op tabak.", RoomID::drugs_cave, AnimateID::barbecue),
-			std::make_unique<Item>("het rood kristal", L"Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", AnimateID::dragon_head),
-			std::make_unique<Item>("de slaapmuts", L"Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", RoomID::straitjacket_cave, AnimateID::dragon),
-			std::make_unique<Item>("de noekietronenbom", L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5° - 105°, Codenaam: R136.", RoomID::main_cave, AnimateID::lava),
-			std::make_unique<Item>("de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", RoomID::fluorescent_cave, combines_with(ItemID::batteries)),
-			std::make_unique<Item>("het verband", L"Het is een witte doos met een rood kruis waarin wat verband en een paar pleis-\nters zitten.", RoomID::tentacle_cave),
-			std::make_unique<Item>("de vlammenwerper", L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\nactivatieknop. Uit de pijp komt een klein waakvlammetje.", RoomID::garbage_cave, AnimateID::tree),
+			std::make_unique<HoundMeat>("het hellehondvlees", L"Het is een goor stuk vlees dat naar kots ruikt."),
+			std::make_unique<ThermalSuit>("het hittepak", L"Dit aluminiumkleurig pak beschermt je tegen grote hitte of kou.", RoomID::forest4),
+			std::make_unique<Crystal>("het groen kristal", L"Het is een helder, groengekleurd kristal. Even zie je een mysterieuze twinke-\nling"),
+			std::make_unique<Sword>("het zwaard", L"Het is een magisch zwaard dat er niet al te sterk uit ziet, maar veel kracht\nuitstraalt. In het heft zit een paarse robijn.", RoomID::forest5),
+			std::make_unique<Bone>("het bot", L"Het is een menselijk, verbleekt dijbeen, dat er sterk uit ziet. Je kunt er veel\nkracht mee zetten.", RoomID::swamp_path),
+			std::make_unique<Diskette>("de diskette", L"Het is een grijze 3,5 inch diskette van het merk 'Spirits' met daarop waar-\nschijnlijk belangrijke data.", RoomID::slime_cave),
+			std::make_unique<Hashis>("de hasj", L"Het is een zakje met spul dat lijkt op tabak.", RoomID::drugs_cave),
+			std::make_unique<Crystal>("het rood kristal", L"Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinke-\nling."),
+			std::make_unique<Nightcap>("de slaapmuts", L"Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", RoomID::straitjacket_cave),
+			std::make_unique<Bomb>("de noekietronenbom", L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten\neen aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er\nzit een bordje op: -5° - 105°, Codenaam: R136.", RoomID::main_cave),
+			std::make_unique<Flashlight>("de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", RoomID::fluorescent_cave, ItemID::batteries),
+			std::make_unique<Bandage>("het verband", L"Het is een witte doos met een rood kruis waarin wat verband en een paar pleis-\nters zitten.", RoomID::tentacle_cave),
+			std::make_unique<Flamethrower>("de vlammenwerper", L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een\nactivatieknop. Uit de pijp komt een klein waakvlammetje.", RoomID::garbage_cave),
 			std::make_unique<Item>("het kookboek", L"Het is een oud, vergeeld kookboek met daarin een koekjesrecept. Er staat:\n'Pak wat hellehond en wat hasj, en gooi het in de barbecue'.\nDat is alles.", RoomID::food_cave),
-			std::make_unique<Item>("de tnt", L"De T.N.T. is een bosje rode staven met een velletje waarop staat: 'Pas op!\nSchokgevoelig!'", RoomID::empty_cave51),
-			std::make_unique<Item>("het mosterdgaspatroon", L"Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te activeren.", combines_with(ItemID::ignition)),
-			std::make_unique<Item>("het giftige vlees", L"Het is een stuk vlees dat er op zich lekker uit ziet, maar een paar groene\nvlekken heeft. Er zit een dode mier op.", RoomID::safe_cave, AnimateID::gnu),
-			std::make_unique<Item>("de ontsteking", L"De ontsteking is een kastje met een T-vormige hendel erop.", RoomID::scooby_cave, combines_with(ItemID::gas_capsule)),
-			std::make_unique<Item>("het pakje batterijen", L"Het is een pakketje met penlights. Konijntjes kunnen er uren mee trommelen.", RoomID::radioactive_cave, combines_with(ItemID::flashlight)),
-			std::make_unique<Item>("het gasmasker", L"Het is een groen masker met een rond filter en 2 plastic ooggaten.", RoomID::i_cave),
+			std::make_unique<TNT>("de tnt", L"De T.N.T. is een bosje rode staven met een velletje waarop staat: 'Pas op!\nSchokgevoelig!'", RoomID::empty_cave51),
+			std::make_unique<CombinableItem>("het mosterdgaspatroon", L"Het is een patroon dat mosterdgas onder druk bevat. Er zitten draadjes aan, en\nje kunt niets vinden om hem te activeren.", ItemID::ignition),
+			std::make_unique<PoisonedMeat>("het giftige vlees", L"Het is een stuk vlees dat er op zich lekker uit ziet, maar een paar groene\nvlekken heeft. Er zit een dode mier op.", RoomID::safe_cave),
+			std::make_unique<CombinableItem>("de ontsteking", L"De ontsteking is een kastje met een T-vormige hendel erop.", RoomID::scooby_cave, ItemID::gas_capsule),
+			std::make_unique<CombinableItem>("het pakje batterijen", L"Het is een pakketje met penlights. Konijntjes kunnen er uren mee trommelen.", RoomID::radioactive_cave, ItemID::flashlight),
+			std::make_unique<Gasmask>("het gasmasker", L"Het is een groen masker met een rond filter en 2 plastic ooggaten.", RoomID::i_cave),
 			std::make_unique<Item>("het papier", L"Het is een geel vel papier met gekrulde hoeken. Het handschrift is bijna on-\nleesbaar, en met moeite ontcijfer je: 'Voed de drakekop met de 3 gekleurde\nkristallen'."),
-			std::make_unique<Item>("het boekje", L"Het is een vies, kleverig boekje met op de voorkant een ontklede trol. Je\nkrijgt kotsneigingen.", RoomID::damnation_cave, AnimateID::red_troll),
-			std::make_unique<Item>("het blauw kristal", L"Het is een helder, blauwgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", RoomID::red_cave, AnimateID::dragon_head),
-			std::make_unique<Item>("het koekje", L"Het is een rond koekje dat naar ammoniak stinkt.", AnimateID::dragon),
-			std::make_unique<Item>("de mosterdgasgranaat", L"Door het indrukken van de hendel kan het mosterdgas ontstnappen.", AnimateID::swelling)
+			std::make_unique<Booklet>("het boekje", L"Het is een vies, kleverig boekje met op de voorkant een ontklede trol. Je\nkrijgt kotsneigingen.", RoomID::damnation_cave),
+			std::make_unique<Crystal>("het blauw kristal", L"Het is een helder, blauwgekleurd kristal. Even zie je een mysterieuze twinke-\nling.", RoomID::red_cave),
+			std::make_unique<Cookie>("het koekje", L"Het is een rond koekje dat naar ammoniak stinkt."),
+			std::make_unique<GasGrenade>("de mosterdgasgranaat", L"Door het indrukken van de hendel kan het mosterdgas ontstnappen.")
 		};
 
 		template <typename TKey, class TValue>
-		void fill_map(EntityMap<TKey, TValue>& map, std::unique_ptr<TValue> values[])
+		void fill_map(EntityMap<TKey, TValue>& map, std::unique_ptr<TValue> values[], int count)
 		{
 			static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
 
 			map.clear();
 
-			for (size_t i = 0; i < values.size(); i++)
+			for (size_t i = 0; i < count; i++)
 			{
 				values[i]->id = static_cast<TKey>(i);
 				map.add_or_set(std::move(values[i]));
 			}
 		}
 
-		bool set_room_connections(std::unique_ptr<Room> rooms[])
+		bool set_room_connections(std::unique_ptr<Room> rooms[], int count)
 		{
-			size_t count = size<Room>();
-
 			// Interconnect rooms with neighbours
 			for (size_t i = 0; i < count; i++)
 			{
@@ -302,11 +298,11 @@ namespace startup
 
 		srand(abs((int)time(NULL)));
 
-		set_room_connections(rooms);
+		set_room_connections(rooms, to_value(RoomID::COUNT));
 
-		fill_map(core.rooms, rooms);
-		fill_map(core.animates, animates);
-		fill_map(core.items, items);
+		fill_map(core.rooms, rooms, to_value(RoomID::COUNT));
+		fill_map(core.animates, animates, to_value(AnimateID::COUNT));
+		fill_map(core.items, items, to_value(ItemID::COUNT));
 
 		core.set_flashlight(dynamic_cast<Flashlight*>(&core.items[ItemID::flashlight]));
 	}

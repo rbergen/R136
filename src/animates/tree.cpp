@@ -18,12 +18,13 @@ bool Tree::progress_status(CoreData& core)
 		console.main().print("Uit de pijp van de vlammenwerper spuit een enorme vlam. De boom begint langzaam\n");
 		console.main().print("te branden, en weldra staat hij in lichterlaaie. De vlammen slaan om zich heen,\n");
 		console.main().print("en het hele bos begint mee te branden. Je bent omringd door een enorme vuurzee,\n");
-		console.main().print("en de hitte is enorm.\n\n");
+		console.main().print("en de hitte is enorm.");
 
 		if (core.items[ItemID::thermal_suit].room != RoomID::owned)
 		{
+			console.main().empty_line();
 			console.main().print("Je hebt niets om je te beschermen tegen de hitte, en je loopt flinke brandwon-\n");
-			console.main().print("den op.\n\n");
+			console.main().print("den op.");
 
 			core.status.life_points -= 4; //   Levenswond
 		}
@@ -37,10 +38,14 @@ bool Tree::progress_status(CoreData& core)
 
 	case AnimateStatus::status_2:
 		console.main().print("Uit de grond steken nog een paar wortels, en er naast ligt een verkoold stuk\n");
-		console.main().print("bord met daarop \"R   n e  op n v u  ver  d n\".\n\n");
+		console.main().print("bord met daarop \"R   n e  op n v u  ver  d n\".");
 
 		break;
+
+	default:
+		return true;
 	}
 
+	console.main().empty_line();
 	return true;
 }
