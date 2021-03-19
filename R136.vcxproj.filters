@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\constants">
-      <UniqueIdentifier>{c0c25b83-c418-4800-9c3f-8fc598bfc613}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\inlines">
       <UniqueIdentifier>{938ca956-6e8f-4773-bcfd-1c623cb6082e}</UniqueIdentifier>
     </Filter>
@@ -32,13 +29,10 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\r136.h">
+    <ClInclude Include="include\base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\act.h">
+    <ClInclude Include="include\actions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\console.h">
@@ -104,11 +98,14 @@
     <ClInclude Include="include\general.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\inlines\general.h">
+    <ClInclude Include="include\commands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\types\general.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\inlines\general.h">
+      <Filter>Header Files\inlines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,13 +124,13 @@
     <ClCompile Include="src\status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\act.cpp">
+    <ClCompile Include="src\actions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\r136.cpp">
+    <ClCompile Include="src\base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\animates\barbecue.cpp">
@@ -208,6 +205,18 @@
     <ClCompile Include="src\general.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\items\sword.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\simple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\location.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -220,5 +229,6 @@
     <Text Include="src\animates\CMakeLists.txt">
       <Filter>Source Files\animates</Filter>
     </Text>
+    <Text Include="src\commands\CMakeLists.txt" />
   </ItemGroup>
 </Project>

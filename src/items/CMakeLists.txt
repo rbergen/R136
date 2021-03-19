@@ -3,5 +3,6 @@ target_sources(
 	PRIVATE 
 	bandage.cpp
 	flashlight.cpp
+	sword.cpp
 	tnt.cpp
 )

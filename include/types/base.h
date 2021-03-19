@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <string>
 
 using std::string;
@@ -292,20 +293,15 @@ class EntityMap
 {
 	static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
 
-	std::map<TKey, TValue*> map;
-	bool delete_values;
+	std::map<TKey, std::unique_ptr<TValue>> map;
 
 public:
-	EntityMap(bool delete_values = false);
-	~EntityMap();
-
-	void add_or_set(TValue& value);
-	void add_or_set(TValue* value);
+	void add_or_set(std::unique_ptr<TValue> value);
 	bool contains(TKey key);
 	void clear();
 	TValue& operator[](TKey key);
-	typename std::map<TKey, TValue*>::iterator begin();
-	typename std::map<TKey, TValue*>::iterator end();
+	typename std::map<TKey, std::unique_ptr<TValue>>::iterator begin();
+	typename std::map<TKey, std::unique_ptr<TValue>>::iterator end();
 };
 
 template<class TEntity>

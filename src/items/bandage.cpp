@@ -1,9 +1,11 @@
-#include "r136.h"
+#include "base.h"
+#include "console.h"
+#include "constants.h"
 #include "items.h"
 
 void Bandage::use(CoreData& core)
 {
-	if (core.status.life_points == max_life_points)
+	if (core.status.life_points == constants::max_life_points)
 	{
 		console.main().print("Je bent nog helemaal heel!\n");
 		return;
@@ -13,7 +15,7 @@ void Bandage::use(CoreData& core)
 		"op je lippen van de pijn als het verband je nog bloedende wonden raakt.\n\n"
 		"Je bent weer zo goed als nieuw.\n");
 
-	core.status.life_points = max_life_points;
+	core.status.life_points = constants::max_life_points;
 
 	core.inventory.remove(*this);
 

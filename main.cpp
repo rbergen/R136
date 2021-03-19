@@ -1,7 +1,8 @@
-﻿#include "r136.h"
+﻿#include "base.h"
+#include "console.h"
 #include "gamedata.h"
 #include "status.h"
-#include "main.h"
+#include "actions.h"
 #include "startup.h"
 
 int main()
@@ -22,8 +23,8 @@ int main()
 	while (true)
 	{
 		status::show_room_status(core);
-		if (progress_animates(core))
-			if (!perform_command(core))
+		if (actions::progress_animates(core))
+			if (!actions::perform_command(core))
 				break;
 	}
 

@@ -36,14 +36,12 @@ public:
 
 class ColorMap
 {
-	std::map<Color, ColorSet*> color_sets;
+	std::map<Color, std::unique_ptr<ColorSet>> color_sets;
 	void add(Color color, short foreground, short background, chtype style);
 	void add(Color color, short foreground, short background);
-	void add(ColorSet* set);
+	void add(std::unique_ptr<ColorSet> set);
 
 public:
-	~ColorMap();
-
 	chtype get_attrs(Color color);
 	void initialize();
 };

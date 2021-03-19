@@ -1,4 +1,5 @@
-#include "r136.h"
+#include "base.h"
+#include "console.h"
 #include "items.h"
 
 void TNT::use(CoreData& core)

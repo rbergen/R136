@@ -2,7 +2,7 @@
 
 // inlines/random.h
 
-#include "../r136.h"
+#include "../base.h"
 #include "types/random.h"
 
 inline int get_number(int max)

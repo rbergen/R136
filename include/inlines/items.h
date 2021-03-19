@@ -2,7 +2,7 @@
 
 // inlines/items.h
 
-#include "../r136.h"
+#include "../base.h"
 #include "types/items.h"
 
 inline void Bone::use_if_target_present(CoreData& core)
@@ -41,6 +41,6 @@ inline void HeatSuit::use(CoreData& core)
 inline Flashlight::Flashlight(string name, const wstring description, RoomID room) : Item(name, description, room)
 {
 	is_on = false;
-	has_batteries = false;
+	has_bunny_batteries = false;
 	battery_level = constants::max_lamp_points;
 }

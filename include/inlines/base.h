@@ -3,6 +3,7 @@
 // inlines/base.h
 
 #include "types/base.h"
+#include "../console.h"
 #include "constants.h"
 
 inline Flashlight& CoreData::flashlight()
@@ -11,9 +12,6 @@ inline Flashlight& CoreData::flashlight()
 }
 
 inline CoreData::CoreData() :
-	animates(EntityMap<AnimateID, Animate>(true)),
-	items(EntityMap<ItemID, Item>(true)),
-	rooms(EntityMap<RoomID, Room>(true)),
 	inventory(Inventory(constants::max_owned_items))
 
 {}
@@ -142,9 +140,4 @@ inline AnimateStatus& operator++(AnimateStatus& status)
 {
 	status = next_status(status);
 	return status;
-}
-
-inline void sleep_ms(int n)
-{
-	std::this_thread::sleep_for(std::chrono::milliseconds(n));
 }

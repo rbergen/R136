@@ -1,4 +1,6 @@
-﻿#include "r136.h"
+﻿#include "base.h"
+#include "console.h"
+#include "general.h"
 #include "startup.h"
 
 namespace startup
@@ -120,7 +122,7 @@ namespace startup
 					console.fullscreen().print(0, spider_x, Color::inverse, spider[spider_switch], drop_index - 1, 0, spider_bottom_y, spider_right_x);
 					console.fullscreen().refresh();
 
-					sleep_ms(50);
+					general::sleep_ms(50);
 				}
 			}
 
@@ -134,7 +136,7 @@ namespace startup
 					console.fullscreen().print(drop_index + 1, spider_x, Color::inverse, spider[spider_switch], block_row_count);
 
 					console.fullscreen().refresh();
-					sleep_ms(50);
+					general::sleep_ms(50);
 				}
 			}
 		}
@@ -215,13 +217,13 @@ namespace startup
 				console.fullscreen().print(i, left_letter_final_x, Color::inverse, letters[letter_r_low], block_row_count);
 
 				console.fullscreen().refresh();
-				sleep_ms(5);
+				general::sleep_ms(5);
 
 				console.fullscreen().print(i, left_letter_final_x, Color::inverse, clear_left_letter_spaces);
 				console.fullscreen().print(i + 1, left_letter_final_x, Color::inverse, letters[letter_r], block_row_count);
 
 				console.fullscreen().refresh();
-				sleep_ms(5);
+				general::sleep_ms(5);
 			}
 
 			int digits_final_x = left_letter_final_x + letter_width + 3;
@@ -267,11 +269,11 @@ namespace startup
 
 		swoop_in_letters(screen_right_x, screen_middle_x, left_letter_final_x);
 
-		sleep_ms(2000);
+		general::sleep_ms(2000);
 
 		swoop_in_digits(screen_bottom_y, screen_right_x, screen_middle_x, spider_x, left_letter_final_x);
 
-		sleep_ms(2500);
+		general::sleep_ms(2500);
 
 		console.fullscreen().clear(Color::normal);
 		console.process_resize();

@@ -1,4 +1,6 @@
-#include "r136.h"
+#include "base.h"
+#include "console.h"
+#include "general.h"
 #include "animates.h"
 
 Lava::Lava(RoomID room) : Animate(room) {}
@@ -37,7 +39,7 @@ bool Lava::progress_status(CoreData& core)
 		console.main().print("sie is voltooid, en vermoeid en vol van gemengde gevoelens verlaat je het\n");
 		console.main().print("grottenstelsel.\n\n");
 
-		force_exit();
+		general::force_exit();
 	}
 
 	return true;

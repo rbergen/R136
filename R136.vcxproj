@@ -158,8 +158,9 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\act.h" />
+    <ClInclude Include="include\actions.h" />
     <ClInclude Include="include\animates.h" />
+    <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\console.h" />
     <ClInclude Include="include\constants.h" />
     <ClInclude Include="include\gamedata.h" />
@@ -170,9 +171,8 @@
     <ClInclude Include="include\inlines\base.h" />
     <ClInclude Include="include\inlines\random.h" />
     <ClInclude Include="include\items.h" />
-    <ClInclude Include="include\main.h" />
     <ClInclude Include="include\parser.h" />
-    <ClInclude Include="include\r136.h" />
+    <ClInclude Include="include\base.h" />
     <ClInclude Include="include\random.h" />
     <ClInclude Include="include\startup.h" />
     <ClInclude Include="include\status.h" />
@@ -206,23 +206,28 @@
     <ClCompile Include="src\animates\tree.cpp" />
     <ClCompile Include="src\animates\vacuum.cpp" />
     <ClCompile Include="src\animates\voices.cpp" />
+    <ClCompile Include="src\commands\item.cpp" />
+    <ClCompile Include="src\commands\location.cpp" />
+    <ClCompile Include="src\commands\simple.cpp" />
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\general.cpp" />
     <ClCompile Include="src\init.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\items\bandage.cpp" />
     <ClCompile Include="src\items\flashlight.cpp" />
+    <ClCompile Include="src\items\sword.cpp" />
     <ClCompile Include="src\items\tnt.cpp" />
     <ClCompile Include="src\gamedata.cpp" />
     <ClCompile Include="src\parser.cpp" />
-    <ClCompile Include="src\r136.cpp" />
+    <ClCompile Include="src\base.cpp" />
     <ClCompile Include="src\status.cpp" />
-    <ClCompile Include="src\act.cpp" />
+    <ClCompile Include="src\actions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="src\animates\CMakeLists.txt" />
     <Text Include="src\CMakeLists.txt" />
+    <Text Include="src\commands\CMakeLists.txt" />
     <Text Include="src\items\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,5 @@
-#include "r136.h"
+#include "base.h"
+#include "console.h"
 #include "status.h"
 
 bool RoomConnections::is_direction_command(Command command) const

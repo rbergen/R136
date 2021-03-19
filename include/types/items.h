@@ -67,15 +67,23 @@ struct Bandage : Item
 	void use(CoreData& core) override;
 };
 
+struct Sword : Item
+{
+	Sword(string name, const wstring description, RoomID room) : Item(name, description, room) {}
+
+	void use(CoreData& core) override;
+};
+
 struct Flashlight : Item
 {
 	bool is_on;
-	bool has_batteries;
+	bool has_bunny_batteries;
 	int battery_level;
 
 	Flashlight(string name, const wstring description, RoomID room);
 
 	void use(CoreData& core) override;
+	void decrease_battery_level(CoreData& core);
 };
 
 struct Gasmask : Item

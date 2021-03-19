@@ -1,4 +1,7 @@
-#include "r136.h"
+#include "base.h"
+#include "console.h"
+#include "startup.h"
+#include "gamedata.h"
 #include <iostream>
 #include <fstream>
 
@@ -23,69 +26,53 @@ namespace game_data
 		}
 
 		template<>
-		bool load<Animate>(std::ifstream& file, Animate& animate)
+		bool load(std::ifstream& file, Animate& animate)
 		{
-			if (!load(file, animate.room))
-				return false;
-
-			if (!load(file, animate.status))
-				return false;
-
-			return load(file, animate.strikes_left);
+			return load(file, animate.room)
+				&& load(file, animate.status)
+				&& load(file, animate.strikes_left);
 		}
 
 		template<>
-		bool save<Animate>(std::ofstream& file, Animate& animate)
+		bool save(std::ofstream& file, Animate& animate)
 		{
-			if (!save(file, animate.room))
-				return false;
-
-			if (!save(file, animate.status))
-				return false;
-
-			return save(file, animate.strikes_left);
+			return save(file, animate.room)
+				&& save(file, animate.status)
+				&& save(file, animate.strikes_left);
 		}
 
 		template<>
-		bool load<Status>(std::ifstream& file, Status& status)
+		bool load(std::ifstream& file, Status& status)
 		{
-			if (!load(file, status.current_room))
-				return false;
-
-			if (!load(file, status.has_tree_burned))
-				return false;
-
-			if (!load(file, status.is_lamp_on))
-				return false;
-
-			if (!load(file, status.lamp_points))
-				return false;
-
-			if (!load(file, status.life_points))
-				return false;
-
-			return load(file, status.paper_route_pos);
+			return load(file, status.current_room)
+				&& load(file, status.has_tree_burned)
+				&& load(file, status.life_points)
+				&& load(file, status.paper_route_pos);
 		}
 
 		template<>
-		bool save<Status>(std::ofstream& file, Status& status)
+		bool save(std::ofstream& file, Status& status)
 		{
-			if (!save(file, status.current_room))
-				return false;
+			return save(file, status.current_room) 
+				&& save(file, status.has_tree_burned)
+				&& save(file, status.life_points)
+				&& save(file, status.paper_route_pos);
+		}
 
-			if (!save(file, status.has_tree_burned))
-				return false;
+		template<>
+		bool load(std::ifstream& file, Flashlight& flashlight)
+		{
+			return load(file, flashlight.is_on) 
+				&& load(file, flashlight.battery_level) 
+				&& load(file, flashlight.has_bunny_batteries);
+		}
 
-			if (!save(file, status.is_lamp_on))
-				return false;
-
-			if (!save(file, status.lamp_points))
-				return false;
-
-			if (!save(file, status.life_points))
-				return false;
-
-			return save(file, status.paper_route_pos);
+		template<>
+		bool save(std::ofstream& file, Flashlight& flashlight)
+		{
+			return save(file, flashlight.is_on)
+				&& save(file, flashlight.battery_level)
+				&& save(file, flashlight.has_bunny_batteries);
 		}
 
 		bool handle_load_fail(CoreData& core, std::ifstream& file)
@@ -96,11 +83,11 @@ namespace game_data
 			console.main().print("\n\n");
 
 			file.close();
-			remove();
+			game_data::remove();
 
 			console.main().wait_for_key();
 
-			initialize(core);
+			startup::initialize(core);
 
 			return false;
 		}
@@ -113,7 +100,7 @@ namespace game_data
 			console.main().print("\n\n");
 
 			file.close();
-			remove();
+			game_data::remove();
 
 			return false;
 		}
@@ -138,7 +125,7 @@ namespace game_data
 		if (console.main().get_char_input("12") != '2')
 		{
 			file.close();
-			remove();
+			game_data::remove();
 
 			return false;
 		}
@@ -180,6 +167,9 @@ namespace game_data
 		}
 
 		if (!load(file, core.status))
+			return handle_load_fail(core, file);
+
+		if (!load(file, core.flashlight()))
 			return handle_load_fail(core, file);
 
 		file.close();
@@ -232,6 +222,9 @@ namespace game_data
 				return handle_save_fail(file);
 
 		if (!save(file, core.status))
+			return handle_save_fail(file);
+
+		if (!save(file, core.flashlight()))
 			return handle_save_fail(file);
 
 		file.close();

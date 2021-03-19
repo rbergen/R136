@@ -1,4 +1,4 @@
-#include "r136.h"
+#include "base.h"
 #include "console.h"
 #include <stdexcept>
 #include <clocale>
@@ -24,15 +24,6 @@ void ColorSet::initialize()
 	value = COLOR_PAIR(color_value) | style;
 
 	is_initialized = true;
-}
-
-ColorMap::~ColorMap()
-{
-	for (auto element = color_sets.begin(); element != color_sets.end();) 
-	{
-		delete element->second;
-		element = color_sets.erase(element);
-	}
 }
 
 void ColorMap::initialize()

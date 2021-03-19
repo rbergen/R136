@@ -1,4 +1,5 @@
-﻿#include "r136.h"
+﻿#include "base.h"
+#include "console.h"
 #include "status.h"
 
 namespace status
@@ -101,7 +102,7 @@ namespace status
 	{
 		auto& status = core.status;
 
-		return core.rooms[status.current_room].type != RoomType::cave || status.is_lamp_on;
+		return core.rooms[status.current_room].type != RoomType::cave || core.flashlight().is_on;
 	}
 
 	void show_room_status(CoreData& core)

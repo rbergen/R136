@@ -1,4 +1,6 @@
-﻿#include "r136.h"
+﻿#include "base.h"
+#include "console.h"
+#include "random.h"
 #include "animates.h"
 
 Mist::Mist(RoomID room) : Animate(room) {}
@@ -11,7 +13,7 @@ bool Mist::progress_status(CoreData& core)
 	console.main().print("Net als je begint te denken dat je nooit een uitgang uit deze grot zult vinden,\n");
 	console.main().print("struikel je voorover een andere grot in.\n\n");
 
-	switch (get_random_number(3))
+	switch (random::get_number(3))
 	{
 	case 0:
 		core.status.current_room = RoomID::storm_cave;

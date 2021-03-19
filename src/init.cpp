@@ -1,4 +1,4 @@
-﻿#include "r136.h"
+﻿#include "base.h"
 #include "animates.h"
 #include "constants.h"
 #include "startup.h"
@@ -8,91 +8,95 @@
 
 namespace startup
 {
-	namespace {
-		std::vector<Room*> rooms = { // { name, description, is_forest }
-			new Forest(L"in het bos",				L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden."),
-			new Forest(L"in het bos",				L"Aan de zuidkant zie je een hek dat toegang geeft tot een donkere plaats."),
-			new Forest(L"in het bos", 				L"Er komt een modderige geur uit het oosten."),
-			new Outdoor(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
-			new Forest(L"in het bos",				L"Er komt een modderige geur uit het westen."),
-			new Forest(L"in het bos",				L"Pas op voor de laaghangende takken!"),
-			new Outdoor(L"op de begraafplaats",		L"Een lucht van rottend vlees dringt in je neus. Je denkt dat je een grafsteen\nziet bewegen."),
-			new Forest(L"in het bos"),
-			new Outdoor(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
-			new Outdoor(L"op een open plek",		L"Er komt een modderige geur uit het westen."),
-			new Forest(L"in het bos"),
-			new Forest(L"in het bos",				L"Je trapt bijna in een bereklem."),
-			new Outdoor(L"op een open plek",		L"Door de mist zie je nog net de omtrekken van het donkere bos."),
-			new Outdoor(L"op het moeraspad",		L"Er ligt hier een skelet, waarschijnlijk een van je voorgangers."),
-			new Outdoor(L"op een open plek",		L"Bij het licht van een halve maan onderscheid je nog net de vorm van een galg."),
-			new Forest(L"in het bos",				L"In de verte hoor je het trieste gehuil van een weerwolf."),
-			new Forest(L"in het bos"),
-			new Outdoor(L"op een open plek",		L"Er ligt hier een dood konijn dat wordt belaagd door vliegen."),
-			new Outdoor(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
-			new Indoor(L"in de ruïne",				L"De ruïne is een spookachtige bouwval. Er is hier een wankele trap die naar\nbeneden leidt."),
+	namespace 
+	{
+		template<class T, size_t N>
+		constexpr size_t size(T(&)[N]) { return N; }
 
-			new Cave(L"in de slijmgrot",			L"De wanden van deze grot zijn bekleed met een snotachtig slijm."),
-			new Cave(L"in de zwarte grot",			L"Je ziet geen hand voor ogen."),
-			new Cave(L"in de drugsgrot"),
-			new Cave(L"in de geile grot",			L"Aan de muren hangen gelige, gescheurde Playboy-posters."),
-			new Cave(L"in de dwangbuisgrot",		L"Er hangt hier een dwangbuis, met daarin een verminkt lijk."),
-			new Cave(L"in een verwaarloosde grot"),
-			new Cave(L"in een lege grot"),
-			new Cave(L"in de hoofdgrot",			L"Er staat hier een batterij aan mysterieuze apparatuur."),
-			new Cave(L"in de hiërogliefengrot",		L"Op de wanden staan hiërogliefen waar je geen wijs uit wordt."),
-			new Cave(L"in de stankgrot",			L"Er hangt hier een smerige lucht die je herinnert aan de zware lucht van een\nbeerput."),
-			new Cave(L"in een troosteloze grot"),
-			new Indoor(L"in de TL-grot",			L"De grot wordt zwak verlicht door een lichtbron die hoog aan het plafond hangt."),
-			new Cave(L"in een kleine grot"),
-			new Cave(L"in de ijsgrot",				L"In deze grot lijkt het net of alles van ijs is, en je krijgt rillingen."),
-			new Cave(L"in de kaktusgrot",			L"Je bent omringd door giftige kaktussen die in deze grot staan."),
-			new Cave(L"in de stalagmietengrot",		L"Hier zie je een traliewerk van stalagmieten."),
-			new Cave(L"in de stormgrot",			L"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden."),
-			new Cave(L"in de mistgrot",				L"Een dichte mist belemmert je zicht, en je verliest je orïentatiegevoel."),
-			new Cave(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
-			new Cave(L"in de tentakelgrot",			L"Van alle kanten komen grote tentakels die je aftasten en groene sporen op je\nhuid achterlaten."),
+		std::unique_ptr<Room> rooms[] = { // { name, description, is_forest }
+			std::make_unique<Forest>(L"in het bos",				L"Je bevindt je in een uithoek van een donker bos. Overal hoor je enge geluiden."),
+			std::make_unique<Forest>(L"in het bos",				L"Aan de zuidkant zie je een hek dat toegang geeft tot een donkere plaats."),
+			std::make_unique<Forest>(L"in het bos", 				L"Er komt een modderige geur uit het oosten."),
+			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Forest>(L"in het bos",				L"Er komt een modderige geur uit het westen."),
+			std::make_unique<Forest>(L"in het bos",				L"Pas op voor de laaghangende takken!"),
+			std::make_unique<Outdoor>(L"op de begraafplaats",		L"Een lucht van rottend vlees dringt in je neus. Je denkt dat je een grafsteen\nziet bewegen."),
+			std::make_unique<Forest>(L"in het bos"),
+			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Outdoor>(L"op een open plek",		L"Er komt een modderige geur uit het westen."),
+			std::make_unique<Forest>(L"in het bos"),
+			std::make_unique<Forest>(L"in het bos",				L"Je trapt bijna in een bereklem."),
+			std::make_unique<Outdoor>(L"op een open plek",		L"Door de mist zie je nog net de omtrekken van het donkere bos."),
+			std::make_unique<Outdoor>(L"op het moeraspad",		L"Er ligt hier een skelet, waarschijnlijk een van je voorgangers."),
+			std::make_unique<Outdoor>(L"op een open plek",		L"Bij het licht van een halve maan onderscheid je nog net de vorm van een galg."),
+			std::make_unique<Forest>(L"in het bos",				L"In de verte hoor je het trieste gehuil van een weerwolf."),
+			std::make_unique<Forest>(L"in het bos"),
+			std::make_unique<Outdoor>(L"op een open plek",		L"Er ligt hier een dood konijn dat wordt belaagd door vliegen."),
+			std::make_unique<Outdoor>(L"in het moeras",			L"Er hangt een griezelige nevel over het stinkende oppervlak."),
+			std::make_unique<Indoor>(L"in de ruïne",				L"De ruïne is een spookachtige bouwval. Er is hier een wankele trap die naar\nbeneden leidt."),
 
-			new Cave(L"in de vuilnisgrot",			L"In deze grot ligt een grote stapel rottende etensresten. De stank is bijna on-\ndraaglijk."),
-			new Cave(L"in de echogrot",				L"Hier worden alle geluiden die je maakt tegen de wanden geëcho'd."),
-			new Cave(L"in de geheime grot",			L"Op de grond van deze grot liggen allerlei onbekende en geheimzinnige voorwer-\npen."),
-			new Cave(L"in de voedselgrot",			L"Zo te ruiken is dit waarschijnlijk eens een keuken geweest..."),
-			new Cave(L"in de grot van de gnoe",		L"Hier liggen de geraamtes van wezens die eerder ten prooi zijn gevallen aan de\ngnoe."),
-			new Cave(L"in een lege grot"),
-			new Cave(L"in de ogengrot",				L"Van alle kanten wordt je bespied door rode, bloeddoorlopen ogen die precies\nvolgen wat je doet."),
-			new Cave(L"in de rotsgrot",				L"Overal zie je hier scherpe rotspunten. Aan een aantal ervan zitten bruine kors-\nten."),
-			new Outdoor(L"in de leegte"),
-			new Outdoor(L"op de zandbank",			L"Op de vloer liggen vreemde patronen, gevormd uit verschillende soorten zand."),
-			new Cave(L"in de martelgrot",			L"Onder de vage schemering van de martelvuren zie je nog net een duimschroef en\nwat stekelige voorwerpen waar nog wat bloed aan zit."),
-			new Cave(L"in een lege grot"),
-			new Cave(L"in de veilige grot",			L"Dit is de enige grot waar je je een beetje veilig voelt."),
-			new Outdoor(L"in de nauwe rotsspleet",	L"Aan alle kanten wordt je omringd door hoge rotsmuren. Alleen in het westen zie\nje een opening."),
-			new Cave(L"in de oliegrot",				L"Vanuit het zuiden verspreidt zich een enorme hitte, die in deze grot nog net\ndraaglijk is."),
-			new Cave(L"in een lege grot"),
-			new Cave(L"in een wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
-			new Cave(L"in de spinnengrot",			L"Het wemelt hier van de tarantula's. Bij elke stap die je zet hoor je het onder\nje voeten kraken, en ze kruipen langs je benen omhoog."),
-			new Cave(L"in de pratende grot"),
-			new Cave(L"op de lavaput"),
+			std::make_unique<Cave>(L"in de slijmgrot",			L"De wanden van deze grot zijn bekleed met een snotachtig slijm."),
+			std::make_unique<Cave>(L"in de zwarte grot",			L"Je ziet geen hand voor ogen."),
+			std::make_unique<Cave>(L"in de drugsgrot"),
+			std::make_unique<Cave>(L"in de geile grot",			L"Aan de muren hangen gelige, gescheurde Playboy-posters."),
+			std::make_unique<Cave>(L"in de dwangbuisgrot",		L"Er hangt hier een dwangbuis, met daarin een verminkt lijk."),
+			std::make_unique<Cave>(L"in een verwaarloosde grot"),
+			std::make_unique<Cave>(L"in een lege grot"),
+			std::make_unique<Cave>(L"in de hoofdgrot",			L"Er staat hier een batterij aan mysterieuze apparatuur."),
+			std::make_unique<Cave>(L"in de hiërogliefengrot",		L"Op de wanden staan hiërogliefen waar je geen wijs uit wordt."),
+			std::make_unique<Cave>(L"in de stankgrot",			L"Er hangt hier een smerige lucht die je herinnert aan de zware lucht van een\nbeerput."),
+			std::make_unique<Cave>(L"in een troosteloze grot"),
+			std::make_unique<Indoor>(L"in de TL-grot",			L"De grot wordt zwak verlicht door een lichtbron die hoog aan het plafond hangt."),
+			std::make_unique<Cave>(L"in een kleine grot"),
+			std::make_unique<Cave>(L"in de ijsgrot",				L"In deze grot lijkt het net of alles van ijs is, en je krijgt rillingen."),
+			std::make_unique<Cave>(L"in de kaktusgrot",			L"Je bent omringd door giftige kaktussen die in deze grot staan."),
+			std::make_unique<Cave>(L"in de stalagmietengrot",		L"Hier zie je een traliewerk van stalagmieten."),
+			std::make_unique<Cave>(L"in de stormgrot",			L"Door deze grot loeit een harde wind, waardoor je je vast moet grijpen aan een\nvan de wanden."),
+			std::make_unique<Cave>(L"in de mistgrot",				L"Een dichte mist belemmert je zicht, en je verliest je orïentatiegevoel."),
+			std::make_unique<Cave>(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
+			std::make_unique<Cave>(L"in de tentakelgrot",			L"Van alle kanten komen grote tentakels die je aftasten en groene sporen op je\nhuid achterlaten."),
 
-			new Cave(L"in de skoebiegrot",			L"Uit alle richtingen komen rare geluiden, als in een gesticht."),
-			new Indoor(L"in de radioactieve grot",	L"Door de hoge radioactiviteit is deze grot zwak verlicht."),
-			new Cave(L"in de i-grot"),
-			new Cave(L"in de p-grot"),
-			new Cave(L"in de a-grot",				L"In deze grot bevindt zich het stenen beeld van een oud, jou onbekend wezen."),
-			new Cave(L"in de dodengrot",			L"De naam van deze grot spreekt voor zich..."),
-			new Cave(L"in de r-grot"),
-			new Cave(L"in de e-grot"),
-			new Cave(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
-			new Cave(L"in de P-grot"),
-			new Cave(L"in de grot der verdoemenis",	L"In deze grot heerst een haast verstikkende sfeer, en je voelt je niet prettig."),
-			new Cave(L"in de vacuumgrot"),
-			new Cave(L"in de rode grot"),
-			new Cave(L"in de neongrot",				L"Deze grot is fel gekleurd. Er staan patronen die je doen denken aan zwarte ma-\ngie."),
-			new Cave(L"in de bloedgrot",			L"Het geraamte van een groot beest ligt hier op de grond en een aantal ingewanden\nliggen er naast."),
-			new Cave(L"in de vleermuisgrot",		L"In deze grot fladderen overal vleermuizen, op zoek naar hun prooi."),
-			new Cave(L"in de slangengrot",			L"Je hoort het geluid van een ratelslang. Bij de weg naar het noorden staat een\ndoodskop getekend, die een gevaar aanduidt."),
-			new Cave(L"in de kwabbengrot"),
-			new Cave(L"in de glibbergrot",			L"Je glijdt bijna uit over de zeepachtige prut die overal in de grot ligt. Tus-\nsen de glibberige massa steekt een paal omhoog met daarop een pijl die naar\nhet oosten wijst."),
-			new Cave(L"in de teleportgrot")
+			std::make_unique<Cave>(L"in de vuilnisgrot",			L"In deze grot ligt een grote stapel rottende etensresten. De stank is bijna on-\ndraaglijk."),
+			std::make_unique<Cave>(L"in de echogrot",				L"Hier worden alle geluiden die je maakt tegen de wanden geëcho'd."),
+			std::make_unique<Cave>(L"in de geheime grot",			L"Op de grond van deze grot liggen allerlei onbekende en geheimzinnige voorwer-\npen."),
+			std::make_unique<Cave>(L"in de voedselgrot",			L"Zo te ruiken is dit waarschijnlijk eens een keuken geweest..."),
+			std::make_unique<Cave>(L"in de grot van de gnoe",		L"Hier liggen de geraamtes van wezens die eerder ten prooi zijn gevallen aan de\ngnoe."),
+			std::make_unique<Cave>(L"in een lege grot"),
+			std::make_unique<Cave>(L"in de ogengrot",				L"Van alle kanten wordt je bespied door rode, bloeddoorlopen ogen die precies\nvolgen wat je doet."),
+			std::make_unique<Cave>(L"in de rotsgrot",				L"Overal zie je hier scherpe rotspunten. Aan een aantal ervan zitten bruine kors-\nten."),
+			std::make_unique<Outdoor>(L"in de leegte"),
+			std::make_unique<Outdoor>(L"op de zandbank",			L"Op de vloer liggen vreemde patronen, gevormd uit verschillende soorten zand."),
+			std::make_unique<Cave>(L"in de martelgrot",			L"Onder de vage schemering van de martelvuren zie je nog net een duimschroef en\nwat stekelige voorwerpen waar nog wat bloed aan zit."),
+			std::make_unique<Cave>(L"in een lege grot"),
+			std::make_unique<Cave>(L"in de veilige grot",			L"Dit is de enige grot waar je je een beetje veilig voelt."),
+			std::make_unique<Outdoor>(L"in de nauwe rotsspleet",	L"Aan alle kanten wordt je omringd door hoge rotsmuren. Alleen in het westen zie\nje een opening."),
+			std::make_unique<Cave>(L"in de oliegrot",				L"Vanuit het zuiden verspreidt zich een enorme hitte, die in deze grot nog net\ndraaglijk is."),
+			std::make_unique<Cave>(L"in een lege grot"),
+			std::make_unique<Cave>(L"in een wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
+			std::make_unique<Cave>(L"in de spinnengrot",			L"Het wemelt hier van de tarantula's. Bij elke stap die je zet hoor je het onder\nje voeten kraken, en ze kruipen langs je benen omhoog."),
+			std::make_unique<Cave>(L"in de pratende grot"),
+			std::make_unique<Cave>(L"op de lavaput"),
+
+			std::make_unique<Cave>(L"in de skoebiegrot",			L"Uit alle richtingen komen rare geluiden, als in een gesticht."),
+			std::make_unique<Indoor>(L"in de radioactieve grot",	L"Door de hoge radioactiviteit is deze grot zwak verlicht."),
+			std::make_unique<Cave>(L"in de i-grot"),
+			std::make_unique<Cave>(L"in de p-grot"),
+			std::make_unique<Cave>(L"in de a-grot",				L"In deze grot bevindt zich het stenen beeld van een oud, jou onbekend wezen."),
+			std::make_unique<Cave>(L"in de dodengrot",			L"De naam van deze grot spreekt voor zich..."),
+			std::make_unique<Cave>(L"in de r-grot"),
+			std::make_unique<Cave>(L"in de e-grot"),
+			std::make_unique<Cave>(L"in de wenteltrapgrot",		L"In deze grot bevindt zich een grote, stenen wenteltrap die waarschijnlijk naar\nandere niveaus leidt."),
+			std::make_unique<Cave>(L"in de P-grot"),
+			std::make_unique<Cave>(L"in de grot der verdoemenis",	L"In deze grot heerst een haast verstikkende sfeer, en je voelt je niet prettig."),
+			std::make_unique<Cave>(L"in de vacuumgrot"),
+			std::make_unique<Cave>(L"in de rode grot"),
+			std::make_unique<Cave>(L"in de neongrot",				L"Deze grot is fel gekleurd. Er staan patronen die je doen denken aan zwarte ma-\ngie."),
+			std::make_unique<Cave>(L"in de bloedgrot",			L"Het geraamte van een groot beest ligt hier op de grond en een aantal ingewanden\nliggen er naast."),
+			std::make_unique<Cave>(L"in de vleermuisgrot",		L"In deze grot fladderen overal vleermuizen, op zoek naar hun prooi."),
+			std::make_unique<Cave>(L"in de slangengrot",			L"Je hoort het geluid van een ratelslang. Bij de weg naar het noorden staat een\ndoodskop getekend, die een gevaar aanduidt."),
+			std::make_unique<Cave>(L"in de kwabbengrot"),
+			std::make_unique<Cave>(L"in de glibbergrot",			L"Je glijdt bijna uit over de zeepachtige prut die overal in de grot ligt. Tus-\nsen de glibberige massa steekt een paal omhoog met daarop een pijl die naar\nhet oosten wijst."),
+			std::make_unique<Cave>(L"in de teleportgrot")
 		};
 
 		struct LevelConnection
@@ -178,31 +182,31 @@ namespace startup
 			{RoomID::teleport_cave, Command::west}, {RoomID::teleport_cave, Command::north}
 		};
 
-		std::vector<Animate*> animates = { // { room, strike }
-			new HellHound(RoomID::forest2, 4),
-			new RedTroll(RoomID::horny_cave),
-			new Plant(RoomID::neglected_cave, 6),
-			new Gnu(RoomID::gnu_cave),
-			new Dragon(RoomID::torture_cave),
-			new Swelling(RoomID::bat_cave),
-			new Door(RoomID::empty_cave45),
-			new Voices(RoomID::talking_cave),
-			new Barbecue(RoomID::open_space17),
-			new Tree(RoomID::forest10),
-			new GreenCrystal(RoomID::forest4),
-			new Computer(RoomID::echo_cave),
-			new DragonHead(RoomID::small_cave),
-			new Lava(RoomID::lava_pit),
-			new Vacuum(RoomID::vacuum_cave),
-			new Hatch(RoomID::r_cave),
-			new Swamp(RoomID::north_swamp),
-			new Swamp(RoomID::middle_swamp),
-			new Swamp(RoomID::south_swamp),
-			new Mist(RoomID::mist_cave),
-			new Teleporter(RoomID::teleport_cave)
+		std::unique_ptr<Animate> animates[] = { // { room, strike }
+			std::make_unique<HellHound>(RoomID::forest2, 4),
+			std::make_unique<RedTroll>(RoomID::horny_cave),
+			std::make_unique<Plant>(RoomID::neglected_cave, 6),
+			std::make_unique<Gnu>(RoomID::gnu_cave),
+			std::make_unique<Dragon>(RoomID::torture_cave),
+			std::make_unique<Swelling>(RoomID::bat_cave),
+			std::make_unique<Door>(RoomID::empty_cave45),
+			std::make_unique<Voices>(RoomID::talking_cave),
+			std::make_unique<Barbecue>(RoomID::open_space17),
+			std::make_unique<Tree>(RoomID::forest10),
+			std::make_unique<GreenCrystal>(RoomID::forest4),
+			std::make_unique<Computer>(RoomID::echo_cave),
+			std::make_unique<DragonHead>(RoomID::small_cave),
+			std::make_unique<Lava>(RoomID::lava_pit),
+			std::make_unique<Vacuum>(RoomID::vacuum_cave),
+			std::make_unique<Hatch>(RoomID::r_cave),
+			std::make_unique<Swamp>(RoomID::north_swamp),
+			std::make_unique<Swamp>(RoomID::middle_swamp),
+			std::make_unique<Swamp>(RoomID::south_swamp),
+			std::make_unique<Mist>(RoomID::mist_cave),
+			std::make_unique<Teleporter>(RoomID::teleport_cave)
 		};
 
-		std::vector<std::unique_ptr<Item>> items = { // { name, description, room, useable_on }
+		std::unique_ptr<Item> items[] { // { name, description, room, useable_on }
 			std::make_unique<Item>("het hellehondvlees", L"Het is een goor stuk vlees dat naar kots ruikt.", AnimateID::barbecue),
 			std::make_unique<Item>("het hittepak", L"Dit aluminiumkleurig pak beschermt je tegen grote hitte of kou.", RoomID::forest4),
 			std::make_unique<Item>("het groen kristal", L"Het is een helder, groengekleurd kristal. Even zie je een mysterieuze twinke-\nling", AnimateID::dragon_head),
@@ -231,7 +235,7 @@ namespace startup
 		};
 
 		template <typename TKey, class TValue>
-		void fill_map(EntityMap<TKey, TValue>& map, std::vector<std::unique_ptr<TValue>> values)
+		void fill_map(EntityMap<TKey, TValue>& map, std::unique_ptr<TValue> values[])
 		{
 			static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
 
@@ -240,13 +244,13 @@ namespace startup
 			for (size_t i = 0; i < values.size(); i++)
 			{
 				values[i]->id = static_cast<TKey>(i);
-				map.add_or_set(values[i]);
+				map.add_or_set(std::move(values[i]));
 			}
 		}
 
-		bool set_room_connections(std::vector<Room*> rooms)
+		bool set_room_connections(std::unique_ptr<Room> rooms[])
 		{
-			size_t count = rooms.size();
+			size_t count = size<Room>();
 
 			// Interconnect rooms with neighbours
 			for (size_t i = 0; i < count; i++)

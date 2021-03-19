@@ -30,21 +30,21 @@ inline chtype ColorSet::get_attrs()
 
 inline void ColorMap::add(Color color, short foreground, short background, chtype style)
 {
-	add(new ColorSet(color, foreground, background, style));
+	add(std::make_unique<ColorSet>(color, foreground, background, style));
 }
 
 inline void ColorMap::add(Color color, short foreground, short background)
 {
-	add(new ColorSet(color, foreground, background));
+	add(std::make_unique <ColorSet>(color, foreground, background));
 }
 
-inline void ColorMap::add(ColorSet* set)
+inline void ColorMap::add(std::unique_ptr<ColorSet> set)
 {
 	auto element = color_sets.find(set->get_color());
 	if (element == color_sets.end())
-		color_sets.insert(std::make_pair(set->get_color(), set));
+		color_sets.insert(std::make_pair(set->get_color(), std::move(set)));
 	else
-		element->second = set;
+		element->second.reset(set.get());
 }
 
 inline chtype ColorMap::get_attrs(Color color)
