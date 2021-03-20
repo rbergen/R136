@@ -239,7 +239,7 @@ namespace startup
 
 			map.clear();
 
-			for (size_t i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				values[i]->id = static_cast<TKey>(i);
 				map.add_or_set(std::move(values[i]));
@@ -249,7 +249,7 @@ namespace startup
 		bool set_room_connections(std::unique_ptr<Room> rooms[], int count)
 		{
 			// Interconnect rooms with neighbours
-			for (size_t i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				Room& room = *rooms[i];
 				room.connections.clear();
@@ -260,7 +260,7 @@ namespace startup
 			}
 
 			// Seperate layers
-			for (size_t i = 0; i < count; i += 20)
+			for (int i = 0; i < count; i += 20)
 			{
 				for (int j = 0; j < 16; j += 5)
 				{

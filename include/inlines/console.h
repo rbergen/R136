@@ -101,6 +101,11 @@ inline int Window::get_y()
 	return getcury(wnd);
 }
 
+inline int Window::get_width()
+{
+	return getmaxx(wnd);
+}
+
 inline void Window::set_position(int y, int x)
 {
 	wmove(wnd, y, x);

@@ -35,7 +35,7 @@ void Window::check_line_ends(const std::basic_string<TChar>& text, TChar c)
 		return;
 
 	// line break can be explicit (through c), or implicit because the text on the last line of output is as wide as the window
-	if (text.back() != c && (text.length() + get_x()) % getmaxx(wnd))
+	if (text.back() != c && (text.length() + get_x()) % get_width())
 	{
 		clear_line_end();
 		return;
@@ -57,12 +57,12 @@ void Window::print_centered_template(const std::basic_string<TChar>& str)
 {
 	set_color(standard_color);
 
-	int win_width = getmaxx(wnd);
+	int width = get_width();
 	int str_length = (int)str.length();
 
 	clear_line();
 
-	int x = (win_width - str_length) / 2;
+	int x = (width - str_length) / 2;
 	set_position(get_y(), x < 0 ? 0 : x);
 	print(str);
 
@@ -73,7 +73,7 @@ template<class TChar>
 void Window::print_template(const std::basic_string<TChar>& text, TChar space, TChar line_break)
 {
 	std::basic_string<TChar> copy = text;
-	int width = getmaxx(wnd);
+	int width = get_width();
 	size_t break_index;
 
 	// we may not be at the start of the line
