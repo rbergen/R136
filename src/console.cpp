@@ -196,7 +196,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 			else 
 			{
 				input[input_pos] = input_char;
-				print(input_char);
+				print((char)input_char);
 			}
 
 			if (input_pos < input_length - 1)
@@ -224,7 +224,7 @@ void Window::print(int y, int x, Color color, const wstring* block, int rowcount
 	for (int i = 0; i < rowcount; i++)
 	{
 		set_position(y + i, x);
-		print(block[i]);
+		print_line(block[i]);
 	}
 
 	unset_color(color);
@@ -237,7 +237,7 @@ void Window::print(int y, int x, Color color, const wstring* block, int top_y, i
 	for (int i = top_y; i <= bottom_y; i++)
 	{
 		set_position(y + i - top_y, x);
-		print(block[i].substr(left_x, (size_t)right_x - left_x + 1));
+		print_line(block[i].substr(left_x, (size_t)right_x - left_x + 1));
 	}
 
 	unset_color(color);
@@ -248,7 +248,7 @@ void Window::print(int y, int x, Color color, const wstring& text)
 	set_color(color);
 
 	set_position(y, x);
-	print(text);
+	print_line(text);
 
 	unset_color(color);
 }

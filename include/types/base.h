@@ -48,7 +48,7 @@ enum class RoomID : char
 	damnation_cave, vacuum_cave, red_cave, neon_cave, blood_cave,
 	bat_cave, snake_cave, lobe_cave, slippery_cave, teleport_cave,
 
-	COUNT, undefined = -1, owned = -2
+	COUNT, undefined = -1, in_posession = -2
 };
 
 enum class Color : short
@@ -276,6 +276,7 @@ struct Item : Entity<ItemID>
 
 	void inspect(CoreData& core);
 	virtual bool use(CoreData& core);
+	bool is_in_posession();
 
 protected:
 	AnimateStatus sets_target_to_status;

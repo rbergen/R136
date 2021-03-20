@@ -27,9 +27,6 @@ namespace status
 				if (item.room != core.status.current_room)
 					continue;
 
-				if (getcurx(stdscr) > 54)
-					console.main().print("\n");
-
 				console.main().print(item.name);
 
 				switch (--count)

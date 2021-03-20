@@ -9,15 +9,13 @@ bool Door::progress_status(CoreData& core)
 	switch (core.animates[AnimateID::door].status)
 	{
 	case AnimateStatus::initial:
-		console.main().print("In het noorden zit een grote, vastgeroeste deur. Hij is met blote handen niet\n");
-		console.main().print("meer open te krijgen.");
+		console.main().print("In het noorden zit een grote, vastgeroeste deur. Hij is met blote handen niet meer open te krijgen.");
 
 		break;
 
 	case AnimateStatus::door_open:
-		console.main().print(L"Je zet één eind van het bot onder de deur, en op het andere begin je te duwen.\n");
-		console.main().print("Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een\n");
-		console.main().print("kier. Je geeft nog een duw, en langzaam draait de deur open.");
+		console.main().print(L"Je zet één eind van het bot onder de deur, en op het andere begin je te duwen.\n"
+			"Na lang wrikken begint de deur hevig te kraken en te piepen, en vormt zich een kier. Je geeft nog een duw, en langzaam draait de deur open.");
 
 		core.rooms[RoomID::empty_cave45].connections.set(Command::north, RoomID::garbage_cave);
 		core.animates[AnimateID::door].status++;

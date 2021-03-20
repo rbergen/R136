@@ -35,10 +35,10 @@ namespace actions
 
 		if (core.status.life_points <= 0)
 		{
-			console.main().print("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op\n");
-			console.main().print("de grond met moeite naar adem snakt, hoor je in de verte een luid gelach.\n");
-			console.main().print("Dan zakken je ogen dicht en stopt je hart met kloppen.\n");
-			console.main().print("Op hetzelfde moment ontploft de bom en sterft de aarde met jou.");
+			console.main().print("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op de grond met moeite naar adem snakt, "
+				"hoor je in de verte een luid gelach.\n"
+				"Dan zakken je ogen dicht en stopt je hart met kloppen.\n"
+				"Op hetzelfde moment ontploft de bom en sterft de aarde met jou.");
 			console.main().empty_line();
 			general::force_exit();
 		}

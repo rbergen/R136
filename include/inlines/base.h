@@ -103,6 +103,11 @@ inline bool Item::use(CoreData& core)
 	return true;
 }
 
+inline bool Item::is_in_posession()
+{
+	return room == RoomID::in_posession;
+}
+
 inline Inventory::Inventory(int capacity) : BoundedCollection<ItemID>(capacity) {}
 
 inline bool Inventory::add(ItemID item)
@@ -115,7 +120,7 @@ inline bool Inventory::add(Item& item)
 	if (!BoundedCollection<ItemID>::add(item.id))
 		return false;
 
-	item.room = RoomID::owned;
+	item.room = RoomID::in_posession;
 	return true;
 }
 

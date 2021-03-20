@@ -319,7 +319,7 @@ namespace startup
 		console.main().empty_line();
 
 		console.main().set_attribute(A_BOLD);
-		console.main().print_centered("Versie 3.3.1, (C) 1998, 2021 R.I.P.");
+		console.main().print_centered("Versie 3.3.2, (C) 1998, 2021 R.I.P.");
 		console.main().unset_attribute(A_BOLD);
 		console.main().empty_line();
 	}
@@ -328,49 +328,39 @@ namespace startup
 	{
 		console.main().clear();
 
-		console.main().print("Terwijl je op het punt staat je avontuur te beginnen, denk je nog even na\n");
-		console.main().print("over waarom je hier, in deze verlaten, neertroostige omgeving staat.");
+		console.main().print("Terwijl je op het punt staat je avontuur te beginnen, denk je nog even na over waarom je hier, in deze verlaten, "
+			"neertroostige omgeving staat.");
 		console.main().empty_line();
-		console.main().print("Het verhaal begint op het moment dat je met drie andere wetenschappers een\n");
-		console.main().print("project begon over straling. In een vergevorderd stadium van het onderzoek\n");
-		console.main().print("werd er een fout gemaakt. In plaats van de gebruikelijke stoffen werden er\n");
-		console.main().print("andere, agressievere in de kernsplitser gebracht.\n");
-		console.main().print("Het resultaat was even interessant als bedreigend: er ontstond een nieuwe\n");
-		console.main().print("straling, de positronenstraling. Deze straling heft elektronen op waardoor\n");
-		console.main().print("stoffen compleet in het niets verdwijnen. Een bepaald gedeelte van de reactor\n");
-		console.main().print("loste dan ook op in de lucht, en net op tijd kon een wereldramp voorkomen\n");
+		console.main().print("Het verhaal begint op het moment dat je met drie andere wetenschappers een project begon over straling. "
+			"In een vergevorderd stadium van het onderzoek werd er een fout gemaakt. In plaats van de gebruikelijke stoffen werden er andere, "
+			"agressievere in de kernsplitser gebracht.\n"
+			"Het resultaat was even interessant als bedreigend: er ontstond een nieuwe straling, de positronenstraling. Deze straling heft elektronen "
+			"op waardoor stoffen compleet in het niets verdwijnen. Een bepaald gedeelte van de reactor loste dan ook op in de lucht, en net op tijd "
+			"kon een wereldramp voorkomen\n");
 		console.main().print(L"worden door het heldhaftig optreden van één van je collega's.\n");
-		console.main().print("De betreffende wetenschapper werd even blootgesteld aan de straling, en na\n");
-		console.main().print("het gebeuren zonderde hij zich af.");
+		console.main().print("De betreffende wetenschapper werd even blootgesteld aan de straling, en na het gebeuren zonderde hij zich af.");
 		console.main().empty_line();
-		console.main().print("Geschrokken door wat er gebeurde werd er besloten alles geheim te houden en\n");
-		console.main().print("het project te stoppen.\n");
-		console.main().print("De wetenschapper die aan de straling was blootgesteld hield zich niet aan de\n");
-		console.main().print("afspraak en stal wat van de agressieve stof. Hij bouwde een bom, de posi-\n");
-		console.main().print("tronenbom genaamd.");
+		console.main().print("Geschrokken door wat er gebeurde werd er besloten alles geheim te houden en het project te stoppen.\n"
+			"De wetenschapper die aan de straling was blootgesteld hield zich niet aan de afspraak en stal wat van de agressieve stof. "
+			"Hij bouwde een bom, de positronenbom genaamd.");
 
 		console.main().wait_for_key(true);
 		console.main().clear();
 
-		console.main().print("Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de\n");
-		console.main().print("wereld daarvoor laten boeten. Daarom verborg hij de bom, met een tijdmecha-\n");
-		console.main().print("nisme op een plaats die niemand zou durven betreden; de vallei der verderf.\n\n");
+		console.main().print("Hij vond dat de wereld de schuld had van zijn mutaties en hij wilde de wereld daarvoor laten boeten. "
+			"Daarom verborg hij de bom, met een tijdmechanisme op een plaats die niemand zou durven betreden; de vallei der verderf.");
+		console.main().empty_line();
 		console.main().print(L"Eén van de wetenschappers rook onraad en wilde de zaak gaan onderzoeken.\n");
-		console.main().print("Drie dagen later werd hij met een vleesmes in zijn rug op de stoep van zijn\n");
-		console.main().print("huis gevonden.\n");
-		console.main().print("Toen zijn huis werd doorzocht stootte men op twee dingen: de plaats waar de\n");
-		console.main().print("bom lag en licht radioactieve voetstappen.\n");
-		console.main().print("Jij en je collega begrepen wat er aan de hand was, en jullie besloten dat er\n");
-		console.main().print("moest worden ingegrepen. Aangezien je niet echt een held bent, werd er beslo-\n");
-		console.main().print("ten dat de andere wetenschapper op pad zou gaan. Jij zou achterblijven om\n");
-		console.main().print("zijn reis te coördineren via een geheime radiofrequentie.\n");
-		console.main().print("Je hebt nooit meer iets van hem gehoord.");
+		console.main().print("Drie dagen later werd hij met een vleesmes in zijn rug op de stoep van zijn huis gevonden.\n"
+			"Toen zijn huis werd doorzocht stootte men op twee dingen: de plaats waar de bom lag en licht radioactieve voetstappen.\n"
+			"Jij en je collega begrepen wat er aan de hand was, en jullie besloten dat er moest worden ingegrepen. Aangezien je niet echt een held bent, "
+			"werd er besloten dat de andere wetenschapper op pad zou gaan. Jij zou achterblijven om zijn reis te coördineren via een geheime radiofrequentie.\n"
+			"Je hebt nooit meer iets van hem gehoord.");
 		console.main().empty_line();
 		console.main().print("Nu ben jij aan de beurt.");
 		console.main().empty_line();
-		console.main().print("Je staat op de trap die naar de vallei leidt. Rechts van je staat een ver-\n");
-		console.main().print(L"weerd bordje: \"Betreden op eigen risico\". Je kijkt nog één keer achterom,\n");
-		console.main().print("en met trillende benen loop je naar beneden...");
+		console.main().print("Je staat op de trap die naar de vallei leidt. Rechts van je staat een verweerd bordje: \"Betreden op eigen risico\". ");
+		console.main().print(L"Je kijkt nog één keer achterom, en met trillende benen loop je naar beneden...");
 
 		console.main().wait_for_key(true);
 		console.main().clear();

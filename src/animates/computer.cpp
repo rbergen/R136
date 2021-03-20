@@ -9,9 +9,8 @@ bool Computer::progress_status(CoreData& core)
 	switch (core.animates[AnimateID::computer].status)
 	{
 	case AnimateStatus::initial:
-		console.main().print("Er staat een computer van het merk Beull die bestaat bestaat uit een kast met\n");
-		console.main().print("een 3.5-inch drive en een monitor. Op de monitor staat: \"Datadisk invoeren\n");
-		console.main().print("a.u.b.\".");
+		console.main().print("Er staat een computer van het merk Beull die bestaat bestaat uit een kast met een 3.5-inch drive en een monitor. "
+			"Op de monitor staat: \"Datadisk invoeren a.u.b.\".");
 
 		core.animates[AnimateID::computer].status++;
 
@@ -23,10 +22,9 @@ bool Computer::progress_status(CoreData& core)
 		break;
 
 	case AnimateStatus::computer_is_reading:
-		console.main().print("De drive begint te lezen en na korte tijd verschijnt er informatie op het\n");
-		console.main().print("scherm. Er staat: \"In het onderste grottenstelsel moet men een letter-\n");
-		console.main().print("route volgen die resulteert in de naam van het te vinden voorwerp.\".\n");
-		console.main().print("Na even wordt het scherm zwart.");
+		console.main().print("De drive begint te lezen en na korte tijd verschijnt er informatie op het scherm. "
+			"Er staat: \"In het onderste grottenstelsel moet men een letter route volgen die resulteert in de naam van het te vinden voorwerp.\".\n"
+			"Na even wordt het scherm zwart.");
 
 		core.animates[AnimateID::computer].status++;
 

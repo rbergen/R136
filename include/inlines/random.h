@@ -5,7 +5,7 @@
 #include "types/base.h"
 #include "types/random.h"
 
-namespace random
+namespace randomizer
 {
 	inline int get_number(int max)
 	{

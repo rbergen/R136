@@ -56,6 +56,9 @@ class Window
 	template<class TChar>
 	void print_centered_template(const std::basic_string<TChar>& str);
 
+	template<class TChar>
+	void print_template(const std::basic_string<TChar>& text, TChar space, TChar line_break);
+
 protected:
 	static const char new_line = '\n';
 	static const wchar_t wnew_line = L'\n';
@@ -96,12 +99,18 @@ public:
 	void unset_attribute(chtype attr);
 	void refresh();
 	void get_size(int& y, int& x);
-	int print(const string& format, const string& value);
-	int print(const wstring& format, const wstring& value);
+	
+	void print(const string& format, const string& value);
+	void print(const wstring& format, const wstring& value);
 
 	int print(char c);
-	int print(const string& text);
-	int print(const wstring& text);
+	int print(wchar_t c);
+
+	int print_line(const string& text);
+	int print_line(const wstring& text);
+
+	void print(const string& text);
+	void print(const wstring& text);
 
 	void print_centered(const string& text);
 	void print_centered(const wstring& text);

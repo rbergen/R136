@@ -30,10 +30,8 @@ namespace commands
 		case ItemID::flashlight:
 		case ItemID::batteries:
 
-			console.main().print("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen\n"
-				"vallen. Daarna steek je de \"trommelbatterijen\" erin en schroeft de lamp weer\n"
-				"dicht. Nadat je een paar keer op de zaklantaarn hebt geslagen zie je dat hij\n"
-				"het doet.");
+			console.main().print("Je schroeft de zaklamp open en schudt totdat de oude batterijen er uit komen vallen. "
+				"Daarna steek je de \"trommelbatterijen\" erin en schroeft de lamp weer dicht. Nadat je een paar keer op de zaklantaarn hebt geslagen zie je dat hij het doet.");
 
 			core.flashlight().has_bunny_batteries = true;
 			core.inventory.remove(core.items[ItemID::batteries]);
@@ -43,8 +41,7 @@ namespace commands
 		case ItemID::gas_capsule:
 		case ItemID::ignition:
 
-			console.main().print("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het\n"
-				"resultaat een werkende mosterdgasgranaat.");
+			console.main().print("Je plaatst de ontsteker op het mosterdgaspatroon. Na enig friemelen is het resultaat een werkende mosterdgasgranaat.");
 
 			core.inventory.remove(core.items[ItemID::gas_capsule]);
 			core.inventory.remove(core.items[ItemID::ignition]);
@@ -59,16 +56,14 @@ namespace commands
 
 		if (item_id == ItemID::flashlight)
 		{
-			console.main().print("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt\n"
-				"missen.");
+			console.main().print("Je bent inmiddels zo aan je zaklamp gehecht geraakt dat je hem niet meer kunt missen.");
 
 			return;
 		}
 
 		if (item_id == ItemID::batteries)
 		{
-			console.main().print("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt\n"
-				"missen.");
+			console.main().print("Je bent inmiddels zo aan je batterijen gehecht geraakt dat je ze niet meer kunt missen.");
 
 			return;
 		}

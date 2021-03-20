@@ -78,9 +78,9 @@ namespace game_data
 		bool handle_load_fail(CoreData& core, std::ifstream& file)
 		{
 			console.main().print_centered("Fout bij lezen status.");
-			console.main().print("\n\n");
+			console.main().empty_line();
 			console.main().print_centered("Je start een nieuw spel.");
-			console.main().print("\n\n");
+			console.main().empty_line();
 
 			file.close();
 			game_data::remove();
@@ -95,9 +95,9 @@ namespace game_data
 		bool handle_save_fail(std::ofstream& file)
 		{
 			console.main().print_centered("Fout bij wegschrijven status.");
-			console.main().print("\n\n");
+			console.main().empty_line();
 			console.main().print_centered("Status niet opgeslagen!");
-			console.main().print("\n\n");
+			console.main().empty_line();
 
 			file.close();
 			game_data::remove();
@@ -143,7 +143,7 @@ namespace game_data
 			item_id = static_cast<ItemID>(i);
 
 			core.items[static_cast<ItemID>(i)].room = room_id;
-			if (room_id == RoomID::owned)
+			if (room_id == RoomID::in_posession)
 				core.inventory.add(item_id);
 		}
 
@@ -166,10 +166,7 @@ namespace game_data
 			core.animates[static_cast<AnimateID>(i)].load(animate);
 		}
 
-		if (!load(file, core.status))
-			return handle_load_fail(core, file);
-
-		if (!load(file, core.flashlight()))
+		if (!load(file, core.status) || !load(file, core.flashlight()))
 			return handle_load_fail(core, file);
 
 		file.close();
@@ -181,22 +178,25 @@ namespace game_data
 	{
 		std::ofstream file;
 
-		console.main().print("\n\nWil je je huidige status opslaan? ");
+		console.main().empty_line();
+		console.main().print("Wil je je huidige status opslaan? ");
 
 		if (tolower(console.main().get_char_input("jJnN")) != 'j')
 		{
-			console.main().print("\n");
+			console.main().end_line();
 			return true;
 		}
 
 		while (file.open(saved_status_path, std::ios::out | std::ios::binary | std::ios::trunc), !file.good())
 		{
-			console.main().print("\n\nKon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+			console.main().empty_line();
+			console.main().print("Kon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
 
 			if (tolower(console.main().get_char_input("jJnN")) != 'j')
 			{
-				console.main().print("\n\nStatus niet opgeslagen!\n");
-
+				console.main().empty_line();
+				console.main().print("Status niet opgeslagen!");
+				console.main().end_line();
 				return false;
 			}
 		}
@@ -221,10 +221,7 @@ namespace game_data
 			if (!save(file, core.animates[static_cast<AnimateID>(i)]))
 				return handle_save_fail(file);
 
-		if (!save(file, core.status))
-			return handle_save_fail(file);
-
-		if (!save(file, core.flashlight()))
+		if (!save(file, core.status) || !save(file, core.flashlight()))
 			return handle_save_fail(file);
 
 		file.close();

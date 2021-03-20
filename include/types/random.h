@@ -2,7 +2,7 @@
 
 #include "types/base.h"
 
-namespace random
+namespace randomizer
 {
 	int get_number(int max);
 

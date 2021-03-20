@@ -11,9 +11,10 @@ bool Bandage::use(CoreData& core)
 		return false;
 	}
 
-	console.main().print("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even\n"
-		"op je lippen van de pijn als het verband je nog bloedende wonden raakt.\n\n"
-		"Je bent weer zo goed als nieuw.\n\n");
+	console.main().print("Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even op je lippen van de pijn als het verband je nog bloedende wonden raakt.");
+	console.main().empty_line();
+	console.main().print("Je bent weer zo goed als nieuw.");
+	console.main().empty_line();
 
 	core.status.life_points = constants::max_life_points;
 

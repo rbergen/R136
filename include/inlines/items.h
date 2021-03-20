@@ -37,13 +37,15 @@ inline bool Nightcap::use_with_target_present(CoreData& core)
 
 inline bool Gasmask::use(CoreData& core)
 {
-	console.main().print("Je hebt het gasmasker al op.\n\n");
+	console.main().print("Je hebt het gasmasker al op.");
+	console.main().empty_line();
 	return false;
 }
 
 inline bool ThermalSuit::use(CoreData& core)
 {
-	console.main().print("Je hebt het hittepak al aan.\n\n");
+	console.main().print("Je hebt het hittepak al aan.");
+	console.main().empty_line();
 	return false;
 }
 

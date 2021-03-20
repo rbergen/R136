@@ -26,7 +26,7 @@ bool Sword::use(CoreData& core)
 	{
 		console.main().print("Je haalt uit met je zwaard");
 
-		if (random::get_number(100) > 70)
+		if (randomizer::get_number(100) > 70)
 			console.main().print(", maar het monster ontwijkt.");
 		else
 		{
@@ -42,7 +42,7 @@ bool Sword::use(CoreData& core)
 			console.main().empty_line();
 		}
 
-		if (!monster.strikes_left || random::get_number(100) > 30)
+		if (!monster.strikes_left || randomizer::get_number(100) > 30)
 		{
 			console.main().wait_for_key(true);
 			break;

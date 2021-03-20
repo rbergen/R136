@@ -1,6 +1,7 @@
 #include "base.h"
 #include "console.h"
 #include "random.h"
+#include "actions.h"
 #include "commands.h"
 
 namespace commands
@@ -13,7 +14,7 @@ namespace commands
 
 			if (gnu.room == core.status.current_room && gnu.status != AnimateStatus::dead)
 			{
-				switch (random::get_number(5))
+				switch (randomizer::get_number(5))
 				{
 				case 0:
 					gnu.room = RoomID::gnu_cave;
@@ -46,7 +47,13 @@ namespace commands
 					status.paper_route_pos = 0;
 
 				if (status.paper_route_pos == core.paperroute.size())
+				{
 					core.animates[AnimateID::hatch].status = AnimateStatus::hatch_opening;
+
+					actions::progress_animates(core);
+
+					console.main().wait_for_key(true);
+				}
 			}
 		}
 	}

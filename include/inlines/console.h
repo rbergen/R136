@@ -172,14 +172,34 @@ inline int Window::print(char c)
 	return waddch(wnd, c);
 }
 
-inline int Window::print(const string& text)
+inline int Window::print(wchar_t c)
+{
+	if (c == wnew_line)
+		register_line_end();
+	else
+		clear_line_end();
+
+	return waddnwstr(wnd, &c, 1);
+}
+
+inline void Window::print(const string& text)
+{
+	print_template(text, ' ', '\n');
+}
+
+inline void Window::print(const wstring& text)
+{
+	print_template(text, L' ', L'\n');
+}
+
+inline int Window::print_line(const string& text)
 {
 	check_line_ends(text, new_line);
 
 	return waddstr(wnd, text.c_str());
 }
 
-inline int Window::print(const wstring& text)
+inline int Window::print_line(const wstring& text)
 {
 	check_line_ends(text, wnew_line);
 
@@ -196,14 +216,14 @@ inline void Window::print_centered(const wstring& text)
 	print_centered_template(text);
 }
 
-inline int Window::print(const string& format, const string& value)
+inline void Window::print(const string& format, const string& value)
 {
-	return print(replace(format, string("{0}"), value));
+	print(replace(format, string("{0}"), value));
 }
 
-inline int Window::print(const wstring& format, const wstring& value)
+inline void Window::print(const wstring& format, const wstring& value)
 {
-	return print(replace(format, wstring(L"{0}"), value));
+	print(replace(format, wstring(L"{0}"), value));
 }
 
 inline bool Window::end_line()

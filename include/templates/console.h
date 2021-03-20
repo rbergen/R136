@@ -42,8 +42,13 @@ void Window::check_line_ends(const std::basic_string<TChar>& text, TChar c)
 
 	register_line_end();
 
-	if (text.length() > 1 && text[text.length() - 2] == c)
-		register_line_end();
+	if (text.length() > 1)
+	{
+		if (text[text.length() - 2] == c)
+			register_line_end();
+		else
+			is_empty_line = false;
+	}
 }
 
 template<class TChar>
@@ -61,6 +66,45 @@ void Window::print_centered_template(const std::basic_string<TChar>& str)
 	print(str);
 
 	unset_color(standard_color);
+}
+
+template<class TChar>
+void Window::print_template(const std::basic_string<TChar>& text, TChar space, TChar line_break)
+{
+	std::basic_string<TChar> copy = text;
+	int width = getmaxx(wnd);
+	size_t break_index;
+
+	while (copy.length() > (width - get_x()))
+	{
+		break_index = copy.find(line_break);
+
+		if (break_index == string::npos || break_index > (width - get_x()))
+			break_index = copy.find_last_of(space, width - get_x());
+	
+		if (break_index == string::npos) 
+		{
+			if (get_x() == 0)
+				break_index = width;
+			else
+			{
+				print(line_break);
+				continue;
+			}
+		}
+
+		print_line(copy.substr(0, break_index));
+
+		if (break_index != width)
+			print(line_break);
+
+		copy.erase(0, break_index + 1);
+		while (!copy.empty() && copy.front() == space)
+			copy.erase(0, 1);
+	} 
+
+	if (!copy.empty())
+		print_line(copy);
 }
 
 template<class TChar>
