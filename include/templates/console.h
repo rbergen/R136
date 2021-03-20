@@ -53,18 +53,15 @@ void Window::check_line_ends(const std::basic_string<TChar>& text, TChar c)
 }
 
 template<class TChar>
-void Window::print_centered_template(const std::basic_string<TChar>& str)
+void Window::print_centered_template(const std::basic_string<TChar>& text)
 {
 	set_color(standard_color);
 
-	int width = get_width();
-	int str_length = (int)str.length();
-
 	clear_line();
 
-	int x = (width - str_length) / 2;
+	int x = (get_width() - (int)text.length()) / 2;
 	set_position(get_y(), x < 0 ? 0 : x);
-	print(str);
+	print(text);
 
 	unset_color(standard_color);
 }
