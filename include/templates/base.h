@@ -1,21 +1,9 @@
 #pragma once
 
-//templates/r136.h
+//templates/base.h
 
-#include "types/r136.h"
+#include "types/base.h"
 #include <stdexcept>
-
-template <class E>
-constexpr auto to_value(E e) noexcept
-{
-	return static_cast<std::underlying_type_t<E>>(e);
-}
-
-template<class L>
-constexpr L combines_with(L value) { return -(value + 2); }
-
-constexpr AnimateID combines_with(ItemID item) { return static_cast<AnimateID>(combines_with(to_value(item))); }
-constexpr ItemID combines_with(AnimateID animate) { return static_cast<ItemID>(combines_with(to_value(animate))); }
 
 template<class TEntity >
 BoundedCollection<TEntity>::BoundedCollection(int capacity) :
@@ -82,43 +70,14 @@ typename std::vector<TEntity>::iterator BoundedCollection<TEntity>::end()
 }
 
 template<class TKey, class TValue>
-inline EntityMap<TKey, TValue>::EntityMap(bool delete_values) :
-	delete_values(delete_values)
-{}
-
-template<class TKey, class TValue>
-inline EntityMap<TKey, TValue>::~EntityMap()
-{
-	if (!delete_values)
-		return;
-
-	for (auto element = map.begin(); element != map.end();)
-	{
-		delete element->second;
-		element = map.erase(element);
-	}
-}
-
-template<class TKey, class TValue>
-void EntityMap<TKey, TValue>::add_or_set(TValue& value)
-{
-	auto key = value.id;
-	auto element = map.find(key);
-	if (element == map.end())
-		map.insert(std::make_pair(key, &value));
-	else
-		element->second = &value;
-}
-
-template<class TKey, class TValue>
-void EntityMap<TKey, TValue>::add_or_set(TValue* value)
+void EntityMap<TKey, TValue>::add_or_set(std::unique_ptr<TValue> value)
 {
 	auto key = value->id;
 	auto element = map.find(key);
 	if (element == map.end())
-		map.insert(std::make_pair(key, value));
+		map.insert(std::make_pair(key, std::move(value)));
 	else
-		element->second = value;
+		element->second.reset(value.get());
 }
 
 template<class TKey, class TValue>
@@ -138,13 +97,13 @@ TValue& EntityMap<TKey, TValue>::operator[](TKey key)
 }
 
 template<class TKey, class TValue>
-typename std::map<TKey, TValue*>::iterator EntityMap<TKey, TValue>::begin()
+typename std::map<TKey, std::unique_ptr<TValue>>::iterator EntityMap<TKey, TValue>::begin()
 {
 	return map.begin();
 }
 
 template<class TKey, class TValue>
-typename std::map<TKey, TValue*>::iterator EntityMap<TKey, TValue>::end()
+typename std::map<TKey, std::unique_ptr<TValue>>::iterator EntityMap<TKey, TValue>::end()
 {
 	return map.end();
 }

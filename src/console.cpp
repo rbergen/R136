@@ -1,4 +1,4 @@
-#include "r136.h"
+#include "base.h"
 #include "console.h"
 #include <stdexcept>
 #include <clocale>
@@ -9,12 +9,12 @@ Console console;
 
 enum class Key : char 
 {
-	kEscape = -2,
-	kEnter = 5,
+	escape = -2,
+	enter = 5,
 	up = 8,
 	down = 2,
-	kTab = 6,
-	kShiftTab = 4
+	tab = 6,
+	shift_tab = 4
 };
 
 void ColorSet::initialize()
@@ -24,15 +24,6 @@ void ColorSet::initialize()
 	value = COLOR_PAIR(color_value) | style;
 
 	is_initialized = true;
-}
-
-ColorMap::~ColorMap()
-{
-	for (auto element = color_sets.begin(); element != color_sets.end();) 
-	{
-		delete element->second;
-		element = color_sets.erase(element);
-	}
 }
 
 void ColorMap::initialize()
@@ -50,7 +41,9 @@ void ColorMap::initialize()
 Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
 	wnd(wnd),
 	standard_color(standard_color),
-	notify_console_of_resize(true)
+	notify_console_of_resize(true),
+	is_line_ended(true),
+	is_empty_line(true)
 {
 	keypad(wnd, enable_keypad);
 	touchwin(wnd);
@@ -63,7 +56,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 	int result = 0, current_x, current_y;
 	int input_char;
 
-	int input_length = (int)input.size();
+	int input_length = (int)input.length();
 	get_position(current_y, current_x);
 
 	insert_on = insert_flag & 1;
@@ -136,7 +129,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 
 		case KEY_BTAB: /* Shift-Tab */
 			if (enable_directionals)
-				result = to_value(Key::kShiftTab);
+				result = to_value(Key::shift_tab);
 
 			break;
 
@@ -159,18 +152,18 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 
 		case KEY_STAB: /* Tab */
 			if (enable_directionals)
-				result = to_value(Key::kTab);
+				result = to_value(Key::tab);
 
 			break;
 
 		case KEY_ENTER: /* Enter */
 		case 10:
-			result = to_value(Key::kEnter);
+			result = to_value(Key::enter);
 			break;
 
 		case 27: /* Escape */
 			if (enable_escape)
-				result = to_value(Key::kEscape);
+				result = to_value(Key::escape);
 			else
 			{
 				input.assign(' ', input_length);
@@ -203,7 +196,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 			else 
 			{
 				input[input_pos] = input_char;
-				print(input_char);
+				print((char)input_char);
 			}
 
 			if (input_pos < input_length - 1)
@@ -219,25 +212,10 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 
 	set_position(current_y, current_x);
 
+	clear_line_end();
+
 	return result;
 }
-
-void Window::print_centered(const string& str)
-{
-	set_color(standard_color);
-
-	int win_width = getmaxx(wnd);
-	int str_length = (int)str.size();
-
-	clear_line();
-
-	int x = (win_width - str_length) / 2;
-	set_position(get_y(), x < 0 ? 0 : x);
-	print(str);
-
-	unset_color(standard_color);
-}
-
 
 void Window::print(int y, int x, Color color, const wstring* block, int rowcount)
 {
@@ -246,7 +224,7 @@ void Window::print(int y, int x, Color color, const wstring* block, int rowcount
 	for (int i = 0; i < rowcount; i++)
 	{
 		set_position(y + i, x);
-		print(block[i]);
+		print_line(block[i]);
 	}
 
 	unset_color(color);
@@ -259,7 +237,7 @@ void Window::print(int y, int x, Color color, const wstring* block, int top_y, i
 	for (int i = top_y; i <= bottom_y; i++)
 	{
 		set_position(y + i - top_y, x);
-		print(block[i].substr(left_x, (size_t)right_x - left_x + 1));
+		print_line(block[i].substr(left_x, (size_t)right_x - left_x + 1));
 	}
 
 	unset_color(color);
@@ -270,7 +248,7 @@ void Window::print(int y, int x, Color color, const wstring& text)
 	set_color(color);
 
 	set_position(y, x);
-	print(text);
+	print_line(text);
 
 	unset_color(color);
 }
@@ -279,6 +257,7 @@ void Window::wait_for_key(bool prompt)
 {
 	if (prompt)
 	{
+		empty_line();
 		set_color(Color::bold);
 		print("[Druk op een toets]");
 		unset_color(Color::bold);
@@ -303,6 +282,7 @@ void Window::wait_for_key(bool prompt)
 	{
 		set_position(get_y(), 0);
 		clear_line();
+		register_line_end();
 	}
 }
 
@@ -333,7 +313,7 @@ int Window::get_char_input(const string& allowed)
 
 void InputWindow::get_string_input(string& input)
 {
-	int max_length = (int)input.size();
+	int max_length = (int)input.length();
 
 	console.main().refresh();
 

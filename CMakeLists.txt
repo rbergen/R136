@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15.0)
 
 project(
   R136 
-  VERSION 3.3.1)
+  VERSION 3.3.2)
 
 set(CURSES_NEED_NCURSES 1)
 set(CURSES_NEED_WIDE 1)

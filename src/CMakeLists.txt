@@ -1,15 +1,17 @@
 target_sources(
 	${PROJECT_NAME} 
 	PRIVATE 
-	act.cpp
+	actions.cpp
+  base.cpp
   console.cpp 
+  gamedata.cpp
+  general.cpp
   init.cpp 
   intro.cpp 
-  loadsave.cpp 
   parser.cpp
-  r136.cpp
-  random.cpp 
   status.cpp
 )
 
 add_subdirectory(animates)
+add_subdirectory(commands)
+add_subdirectory(items)

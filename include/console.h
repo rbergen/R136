@@ -9,4 +9,5 @@
 	== 3: Insert on at start, use block cursor to indicate Insert off. */
 constexpr int insert_flag = 3;
 
+#include "templates/console.h"
 #include "inlines/console.h"

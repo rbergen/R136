@@ -1,13 +1,21 @@
 #pragma once
 
-// types/r136.h
+// types/base.h
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <string>
 
 using std::string;
 using std::wstring;
+
+// this is obviously a template, but of such a general and fundamental nature that it is included here
+template <class E>
+constexpr auto to_value(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
 
 enum class RoomType : char
 {
@@ -15,7 +23,7 @@ enum class RoomType : char
 	cave,
 	outdoor,
 	indoor,
-	undefined
+	undefined = -1
 };
 
 enum class RoomID : char
@@ -40,7 +48,7 @@ enum class RoomID : char
 	damnation_cave, vacuum_cave, red_cave, neon_cave, blood_cave,
 	bat_cave, snake_cave, lobe_cave, slippery_cave, teleport_cave,
 
-	COUNT, undefined = -1, owned = -2
+	COUNT, undefined = -1, in_posession = -2
 };
 
 enum class Color : short
@@ -170,7 +178,9 @@ enum class AnimateStatus : char
 	status_5 = 5,
 	nightcap_on_head = 5,
 
-	status_6 = 6
+	status_6 = 6,
+
+	undefined = -1
 };
 
 class RoomConnections
@@ -254,11 +264,28 @@ struct Item : Entity<ItemID>
 	RoomID room;
 	AnimateID usable_on;
 
-	Item(const string name, const wstring description, RoomID room, AnimateID usable_on) : name(name), description(description), room(room), usable_on(usable_on) {}
-	Item(const string name, const wstring description, RoomID room) : Item(name, description, room, AnimateID::undefined) {}
-	Item(const string name, const wstring description, AnimateID usable_on) : Item(name, description, RoomID::undefined, usable_on) {}
-	Item(const string name, const wstring description) : Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+	Item(const string name, const wstring description, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined);
+	Item(const string name, const wstring description, RoomID room)
+		: Item(name, description, room, AnimateID::undefined) {}
 
+	Item(const string name, const wstring description, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined)
+		: Item(name, description, RoomID::undefined, usable_on, sets_target_to_status) {}
+
+	Item(const string name, const wstring description)
+		: Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+
+	void inspect(CoreData& core);
+	virtual bool use(CoreData& core);
+	bool is_in_posession();
+
+protected:
+	AnimateStatus sets_target_to_status;
+	bool is_target_present(CoreData& core);
+	AnimateStatus& target_status(CoreData& core);
+	void report_pointless_use();
+
+	virtual bool use_with_target_present(CoreData& core);
+	virtual bool use_to_status(CoreData& core, AnimateStatus to_status = AnimateStatus::undefined);
 };
 
 struct Status
@@ -266,8 +293,6 @@ struct Status
 	char paper_route_pos;
 	RoomID current_room;
 	char life_points;
-	bool is_lamp_on;
-	char lamp_points;
 	bool has_tree_burned;
 };
 
@@ -276,20 +301,15 @@ class EntityMap
 {
 	static_assert(std::is_base_of<Entity<TKey>, TValue>::value, "TValue must inherit from Entity<TKey>");
 
-	std::map<TKey, TValue*> map;
-	bool delete_values;
+	std::map<TKey, std::unique_ptr<TValue>> map;
 
 public:
-	EntityMap(bool delete_values = false);
-	~EntityMap();
-
-	void add_or_set(TValue& value);
-	void add_or_set(TValue* value);
+	void add_or_set(std::unique_ptr<TValue> value);
 	bool contains(TKey key);
 	void clear();
 	TValue& operator[](TKey key);
-	typename std::map<TKey, TValue*>::iterator begin();
-	typename std::map<TKey, TValue*>::iterator end();
+	typename std::map<TKey, std::unique_ptr<TValue>>::iterator begin();
+	typename std::map<TKey, std::unique_ptr<TValue>>::iterator end();
 };
 
 template<class TEntity>
@@ -318,14 +338,22 @@ public:
 	bool remove(Item& item);
 };
 
+#include "types/items.h"
+
 struct CoreData
 {
 	EntityMap<RoomID, Room> rooms;
 	EntityMap<AnimateID, Animate> animates;
 	EntityMap<ItemID, Item> items;
 	Inventory inventory;
+	Flashlight& flashlight();
 	std::vector<RoomID> paperroute;
 	Status status{};
 
 	CoreData();
+
+	void set_flashlight(Flashlight* flashlight_ptr);
+
+private:
+	Flashlight* flashlight_ptr;
 };

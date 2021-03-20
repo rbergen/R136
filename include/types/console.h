@@ -6,7 +6,7 @@
 #error (PD)Curses must be built with wide-character support
 #endif
 
-#include "types/r136.h"
+#include "types/base.h"
 
 // Figure out which (name)curses header to include
 #ifdef HAVE_NCURSES_NCURSES_H
@@ -36,14 +36,12 @@ public:
 
 class ColorMap
 {
-	std::map<Color, ColorSet*> color_sets;
+	std::map<Color, std::unique_ptr<ColorSet>> color_sets;
 	void add(Color color, short foreground, short background, chtype style);
 	void add(Color color, short foreground, short background);
-	void add(ColorSet* set);
+	void add(std::unique_ptr<ColorSet> set);
 
 public:
-	~ColorMap();
-
 	chtype get_attrs(Color color);
 	void initialize();
 };
@@ -52,7 +50,19 @@ class Window
 {
 	friend class Console;
 
+	bool is_line_ended;
+	bool is_empty_line;
+
+	template<class TChar>
+	void print_centered_template(const std::basic_string<TChar>& str);
+
+	template<class TChar>
+	void print_template(const std::basic_string<TChar>& text, TChar space, TChar line_break);
+
 protected:
+	static const char new_line = '\n';
+	static const wchar_t wnew_line = L'\n';
+
 	WINDOW* wnd;
 	Color standard_color;
 	bool notify_console_of_resize;
@@ -65,6 +75,9 @@ protected:
 	template<class TChar>
 	const std::basic_string<TChar> replace(const std::basic_string<TChar>& format, const std::basic_string<TChar>& tag, const std::basic_string<TChar>& value);
 
+	template<class TChar>
+	void check_line_ends(const std::basic_string<TChar>& text, TChar c);
+
 	void resize(int height, int width);
 	void move(int y, int x, int height, int width);
 	void set_color(Color color);
@@ -74,6 +87,8 @@ protected:
 	int get_y();
 	void set_position(int y, int x);
 	void clear_line();
+	void register_line_end();
+	void clear_line_end();
 	void set_scrollable(bool enable);
 	int get_string_input(const string& allowed_characters, string& input, int input_y, int input_x, int force_case, int enable_escape, int enable_directionals);
 
@@ -84,18 +99,29 @@ public:
 	void unset_attribute(chtype attr);
 	void refresh();
 	void get_size(int& y, int& x);
-	void print_centered(const string& str);
-
-	int print(const string& format, const string& value);
-	int print(const wstring& format, const wstring& value);
+	
+	void print(const string& format, const string& value);
+	void print(const wstring& format, const wstring& value);
 
 	int print(char c);
-	int print(const string& text);
-	int print(const wstring& text);
+	int print(wchar_t c);
+
+	int print_line(const string& text);
+	int print_line(const wstring& text);
+
+	void print(const string& text);
+	void print(const wstring& text);
+
+	void print_centered(const string& text);
+	void print_centered(const wstring& text);
 
 	void print(int y, int x, Color color, const wstring* block, int rowcount);
 	void print(int y, int x, Color color, const wstring* block, int topy, int leftx, int bottomy, int rightx);
 	void print(int y, int x, Color color, const wstring& text);
+	
+	bool end_line();
+	bool empty_line();
+
 	void wait_for_key(bool prompt = false);
 	int get_char_input(const string& allowed);
 };
@@ -146,3 +172,5 @@ public:
 };
 
 extern ColorMap color_map;
+extern Console console;
+
