@@ -1,4 +1,5 @@
 ﻿#include "base.h"
+#include "console.h"
 #include "animates.h"
 #include "items.h"
 #include "constants.h"
