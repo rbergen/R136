@@ -85,6 +85,7 @@ protected:
 	void get_position(int& y, int& x);
 	int get_x();
 	int get_y();
+	int get_width();
 	void set_position(int y, int x);
 	void clear_line();
 	void register_line_end();
