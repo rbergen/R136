@@ -38,6 +38,10 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      env:
+        LDFLAGS: -L/usr/local/opt/ncurses/lib
+        CPPFLAGS: -I/usr/local/opt/ncurses/include
+        PKG_CONFIG_PATH: /usr/local/opt/ncurses/lib/pkgconfig
 
     - name: Build
       working-directory: ${{github.workspace}}/build
