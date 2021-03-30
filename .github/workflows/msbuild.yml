@@ -26,6 +26,10 @@ jobs:
     - name: Install PDCurses vcpkg
       working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
       run: vcpkg install pdcurses:${{env.BUILD_PLATFORM}}-windows
+      
+    - name: Enable vcpkg integration
+      working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
+      run: vcpkg integrate install    
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
