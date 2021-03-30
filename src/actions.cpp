@@ -113,6 +113,9 @@ namespace actions
 			case Command::help:
 				commands::show_help();
 				break;
+
+			default:
+				break;
 			}
 
 			console.main().empty_line();

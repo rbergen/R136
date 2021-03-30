@@ -76,6 +76,9 @@ namespace status
 				case Command::down:
 					console.main().print("beneden");
 					break;
+
+				default:
+					break;
 				}
 
 				switch (--count)

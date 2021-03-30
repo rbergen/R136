@@ -40,6 +40,9 @@ bool Barbecue::progress_status(CoreData& core)
 		core.animates[AnimateID::barbecue].status = AnimateStatus::initial_burn;
 
 		break;
+
+	default:
+		break;
 	}
 
 	console.main().empty_line();

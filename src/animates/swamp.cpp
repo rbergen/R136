@@ -25,6 +25,10 @@ bool Swamp::progress_status(CoreData& core)
 	case RoomID::south_swamp:
 		core.status.current_room = RoomID::rock_cave;
 		break;
+
+	default:
+		core.status.current_room = RoomID::swamp_path;
+		break;
 	}
 
 	return false;

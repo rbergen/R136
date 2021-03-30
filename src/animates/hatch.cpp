@@ -25,6 +25,9 @@ bool Hatch::progress_status(CoreData& core)
 		console.main().print("Het luik aan het plafond hangt nu open. Er zit een leeg gat.");
 
 		break;
+
+	default:
+		break;
 	}
 
 	return true;

@@ -74,6 +74,9 @@ bool Parser::check_found_item(ParseData& parse_data, ItemID item, const string& 
 		parse_data.parse_error = true;
 
 		return false;
+
+	default:
+		break;
 	}
 
 	return true;
@@ -195,6 +198,9 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 		parse_data.item1 = find_laying_item(core, input_string);
 		check_found_item(parse_data, parse_data.item1, input_string, "je ziet hier geen \"{0}\" die je kunt meenemen");
 
+		break;
+
+	default:
 		break;
 	}
 

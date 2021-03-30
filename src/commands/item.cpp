@@ -48,6 +48,9 @@ namespace commands
 			core.inventory.add(core.items[ItemID::gas_grenade]);
 
 			break;
+
+		default:
+			break;
 		}
 	}
 
