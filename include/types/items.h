@@ -93,7 +93,7 @@ struct CombinableItem : Item
 	CombinableItem(string name, const wstring description, RoomID room, ItemID combines_with);
 	CombinableItem(string name, const wstring description, ItemID combines_with) : CombinableItem(name, description, RoomID::undefined, combines_with) {}
 
-	bool does_combine_with(ItemID item);
+	bool combines_with(ItemID item);
 };
 
 struct Flashlight : CombinableItem
@@ -102,8 +102,8 @@ struct Flashlight : CombinableItem
 	bool has_bunny_batteries;
 	int battery_level;
 
-	Flashlight(string name, const wstring description, RoomID room, ItemID combines_with);
-	Flashlight(string name, const wstring description, ItemID combines_with) : Flashlight(name, description, RoomID::undefined, combines_with) {}
+	Flashlight(string name, const wstring description, RoomID room);
+	Flashlight(string name, const wstring description) : Flashlight(name, description, RoomID::undefined) {}
 
 	bool use(CoreData& core) override;
 	void decrease_battery_level(CoreData& core);

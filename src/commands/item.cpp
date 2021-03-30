@@ -19,7 +19,7 @@ namespace commands
 	{
 		auto combinable_item = dynamic_cast<CombinableItem*>(&core.items[item1]);
 
-		if (combinable_item == nullptr || !combinable_item->does_combine_with(item2))
+		if (combinable_item == nullptr || !combinable_item->combines_with(item2))
 		{
 			console.main().print("Dat levert niets bruikbaars op.");
 			return;

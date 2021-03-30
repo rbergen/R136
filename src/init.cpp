@@ -216,7 +216,7 @@ namespace startup
 			std::make_unique<Crystal>("het rood kristal", L"Het is een helder, roodgekleurd kristal. Even zie je een mysterieuze twinkeling."),
 			std::make_unique<Nightcap>("de slaapmuts", L"Het is een Mickey Mouse-slaapmuts met vrolijke kleuren.", RoomID::straitjacket_cave),
 			std::make_unique<Bomb>("de noekietronenbom", L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten een aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er zit een bordje op: -5° - 105°, Codenaam: R136.", RoomID::main_cave),
-			std::make_unique<Flashlight>("de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", RoomID::fluorescent_cave, ItemID::batteries),
+			std::make_unique<Flashlight>("de zaklamp", L"Het is een zwarte, aluminium zaklamp met een halogeenlampje erin.", RoomID::fluorescent_cave),
 			std::make_unique<Bandage>("het verband", L"Het is een witte doos met een rood kruis waarin wat verband en een paar pleisters zitten.", RoomID::tentacle_cave),
 			std::make_unique<Flamethrower>("de vlammenwerper", L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een activatieknop. Uit de pijp komt een klein waakvlammetje.", RoomID::garbage_cave),
 			std::make_unique<Item>("het kookboek", L"Het is een oud, vergeeld kookboek met daarin een koekjesrecept. Er staat: 'Pak wat hellehond en wat hasj, en gooi het in de barbecue'. Dat is alles.", RoomID::food_cave),
