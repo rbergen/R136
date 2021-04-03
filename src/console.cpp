@@ -42,8 +42,8 @@ Window::Window(WINDOW* wnd, bool enable_keypad, Color standard_color) :
 	wnd(wnd),
 	standard_color(standard_color),
 	notify_console_of_resize(true),
-	is_line_ended(true),
-	is_empty_line(true)
+	has_line_ended(true),
+	have_empty_line(true)
 {
 	keypad(wnd, enable_keypad);
 	touchwin(wnd);
@@ -63,6 +63,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 
 	do
 	{
+		console.set_cursor(insert_on ? CursorType::normal : CursorType::block);
 		set_position(input_y, input_x + input_pos);
 		refresh();
 
@@ -213,6 +214,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 	set_position(current_y, current_x);
 
 	clear_line_end();
+	console.set_cursor(CursorType::normal);
 
 	return result;
 }
@@ -265,6 +267,8 @@ void Window::wait_for_key(bool prompt)
 
 	refresh();
 
+	console.set_cursor(CursorType::off);
+
 	while (true)
 	{
 		if (wgetch(wnd) == KEY_RESIZE)
@@ -277,6 +281,8 @@ void Window::wait_for_key(bool prompt)
 		else
 			break;
 	}
+
+	console.set_cursor(CursorType::normal);
 
 	if (prompt)
 	{

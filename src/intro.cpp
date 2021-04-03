@@ -250,6 +250,8 @@ namespace startup
 
 	void run_intro()
 	{
+		console.set_cursor(CursorType::off);
+
 		int screen_bottom_y, screen_right_x;
 
 		console.fullscreen().get_size(screen_bottom_y, screen_right_x);
@@ -277,6 +279,8 @@ namespace startup
 
 		console.fullscreen().clear(Color::normal);
 		console.process_resize();
+
+		console.set_cursor(CursorType::normal);
 	}
 
 	void show_splashscreen(void)

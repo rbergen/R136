@@ -48,7 +48,7 @@ void Window::check_line_ends(const std::basic_string<TChar>& text, TChar c)
 		if (text[text.length() - 2] == c)
 			register_line_end();
 		else
-			is_empty_line = false;
+			have_empty_line = false;
 	}
 }
 

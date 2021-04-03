@@ -19,6 +19,13 @@
 #include <curses.h>
 #endif
 
+enum class CursorType : char
+{
+	off = 0,
+	normal = 1,
+	block = 2
+};
+
 class ColorSet
 {
 	Color color;
@@ -50,8 +57,8 @@ class Window
 {
 	friend class Console;
 
-	bool is_line_ended;
-	bool is_empty_line;
+	bool has_line_ended;
+	bool have_empty_line;
 
 	template<class TChar>
 	void print_centered_template(const std::basic_string<TChar>& str);
@@ -170,7 +177,10 @@ public:
 	void process_resize();
 	void initialize();
 	void release();
+	void set_cursor(CursorType type);
 };
+
+
 
 extern ColorMap color_map;
 extern Console console;

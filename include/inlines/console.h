@@ -135,10 +135,10 @@ inline void Window::clear()
 
 inline void Window::register_line_end()
 {
-	if (is_line_ended)
-		is_empty_line = true;
+	if (has_line_ended)
+		have_empty_line = true;
 
-	is_line_ended = true;
+	has_line_ended = true;
 }
 
 inline void Window::clear(Color color)
@@ -149,7 +149,7 @@ inline void Window::clear(Color color)
 
 inline void Window::clear_line_end()
 {
-	is_empty_line = is_line_ended = false;
+	have_empty_line = has_line_ended = false;
 }
 
 inline void Window::set_attribute(chtype attr)
@@ -189,12 +189,12 @@ inline int Window::print(wchar_t c)
 
 inline void Window::print(const string& text)
 {
-	print_template(text, ' ', '\n');
+	print_template(text, ' ', new_line);
 }
 
 inline void Window::print(const wstring& text)
 {
-	print_template(text, L' ', L'\n');
+	print_template(text, L' ', wnew_line);
 }
 
 inline int Window::print_line(const string& text)
@@ -233,7 +233,7 @@ inline void Window::print(const wstring& format, const wstring& value)
 
 inline bool Window::end_line()
 {
-	if (is_line_ended)
+	if (has_line_ended)
 		return false;
 
 	print(new_line);
@@ -242,7 +242,7 @@ inline bool Window::end_line()
 
 inline bool Window::empty_line()
 {
-	if (is_empty_line)
+	if (have_empty_line)
 		return false;
 
 	end_line();
@@ -295,6 +295,11 @@ inline Window& Console::banner()
 inline void Console::process_resize()
 {
 	setup_windows();
+}
+
+inline void Console::set_cursor(CursorType type)
+{
+	curs_set(to_value(type));
 }
 
 inline Window& Console::fullscreen()
