@@ -297,8 +297,14 @@ inline void Console::process_resize()
 	setup_windows();
 }
 
+inline CursorType Console::get_cursor()
+{
+	return cursor;
+}
+
 inline void Console::set_cursor(CursorType type)
 {
+	cursor = type;
 	curs_set(to_value(type));
 }
 
