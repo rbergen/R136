@@ -161,6 +161,7 @@ class Console
 	Window* banner_window;
 	InputWindow* input_window;
 	bool is_released;
+	CursorType cursor;
 
 	Window& banner();
 
@@ -177,10 +178,9 @@ public:
 	void process_resize();
 	void initialize();
 	void release();
+	CursorType get_cursor();
 	void set_cursor(CursorType type);
 };
-
-
 
 extern ColorMap color_map;
 extern Console console;

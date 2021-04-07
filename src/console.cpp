@@ -4,6 +4,9 @@
 #include <clocale>
 #include <cstring>
 
+constexpr CursorType insert_on_cursor = CursorType::normal;
+constexpr CursorType insert_off_cursor = CursorType::block;
+
 ColorMap color_map;
 Console console;
 
@@ -56,6 +59,8 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 	int result = 0, current_x, current_y;
 	int input_char;
 
+	CursorType cursor = console.get_cursor();
+
 	int input_length = (int)input.length();
 	get_position(current_y, current_x);
 
@@ -63,7 +68,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 
 	do
 	{
-		console.set_cursor(insert_on ? CursorType::normal : CursorType::block);
+		console.set_cursor(insert_on ? insert_on_cursor : insert_off_cursor);
 		set_position(input_y, input_x + input_pos);
 		refresh();
 
@@ -214,7 +219,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 	set_position(current_y, current_x);
 
 	clear_line_end();
-	console.set_cursor(CursorType::normal);
+	console.set_cursor(cursor);
 
 	return result;
 }
@@ -384,6 +389,7 @@ void Console::initialize()
 	color_map.initialize();
 
 	setup_windows();
+	set_cursor(CursorType::normal);
 }
 
 void Console::release()
