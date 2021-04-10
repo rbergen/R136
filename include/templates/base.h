@@ -5,7 +5,7 @@
 #include "types/base.h"
 #include <stdexcept>
 
-template<class TEntity >
+template<class TEntity>
 BoundedCollection<TEntity>::BoundedCollection(int capacity) :
 	max_item_count(capacity)
 {}
