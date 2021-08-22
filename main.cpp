@@ -23,9 +23,8 @@ int main()
 	while (true)
 	{
 		status::show_room_status(core);
-		if (actions::progress_animates(core))
-			if (!actions::perform_command(core))
-				break;
+		if (actions::progress_animates(core) && !actions::perform_command(core))
+			break;
 	}
 
 	game_data::save(core);
