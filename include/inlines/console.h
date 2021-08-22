@@ -278,7 +278,8 @@ inline Console::Console() :
 	fullscreen_window(nullptr),
 	input_window(nullptr),
 	main_window(nullptr),
-	is_released(false)
+	is_released(false),
+	cursor(CursorType::normal)
 {}
 
 inline Console::~Console()
