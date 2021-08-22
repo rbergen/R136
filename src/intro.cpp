@@ -324,7 +324,7 @@ namespace startup
 		console.main().empty_line();
 
 		console.main().set_attribute(A_BOLD);
-		console.main().print_centered("Versie 3.3.2, (C) 1998, 2021 R.I.P.");
+		console.main().print_centered("Versie 3.3.3, (C) 1998, 2021 R.I.P.");
 		console.main().unset_attribute(A_BOLD);
 		console.main().empty_line();
 	}
