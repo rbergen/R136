@@ -272,7 +272,6 @@ inline void InputWindow::print_error(const wstring& text)
 	print_error_template(text);
 }
 
-
 inline Console::Console() :
 	banner_window(nullptr),
 	fullscreen_window(nullptr),
