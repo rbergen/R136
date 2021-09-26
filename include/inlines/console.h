@@ -131,6 +131,7 @@ inline void Window::get_size(int& y, int& x)
 inline void Window::clear()
 {
 	werase(wnd);
+	have_empty_line = has_line_ended = true;
 }
 
 inline void Window::register_line_end()
@@ -145,6 +146,7 @@ inline void Window::clear(Color color)
 {
 	wbkgd(wnd, color_map.get_attrs(color));
 	werase(wnd);
+	have_empty_line = has_line_ended = true;
 }
 
 inline void Window::clear_line_end()
