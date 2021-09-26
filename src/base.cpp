@@ -32,6 +32,7 @@ bool RoomConnections::set(Command direction, RoomID room)
 			return true;
 
 		connections.erase(existing_target);
+		return true;
 	}
 
 	connections[direction] = room;
