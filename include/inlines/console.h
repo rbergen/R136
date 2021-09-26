@@ -145,8 +145,7 @@ inline void Window::register_line_end()
 inline void Window::clear(Color color)
 {
 	wbkgd(wnd, color_map.get_attrs(color));
-	werase(wnd);
-	have_empty_line = has_line_ended = true;
+	clear();
 }
 
 inline void Window::clear_line_end()
