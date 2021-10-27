@@ -31,3 +31,5 @@ Due to the fact that a CMake build configuration is included, you should be able
 * a version of (n/PD)curses with wide-character support
 
 On Windows, I recommend using the PDCurses version provided by vcpkg. Installation instructions for vcpkg can be found [on Microsoft's website](https://docs.microsoft.com/en-us/cpp/build/vcpkg).
+
+_- Rutger van Bergen - [github.com/rbergen](https://github.com/rbergen)_
