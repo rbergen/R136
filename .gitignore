@@ -341,3 +341,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+CMakefiles/
+CMakeCache.txt
+out/
+r136data*
