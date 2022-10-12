@@ -8,7 +8,7 @@ namespace commands
 	bool finish(CoreData& core)
 	{
 		console.main().print(select("Weet je zeker dat je de aarde laat vergaan? ", "Are you sure you want to leave the earth to die? "));
-		if (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) == select('j', 'y'))
+		if (get_y_or_n())
 			return false;
 		console.main().empty_line();
 		console.main().print(select("Mooi zo!", "Good!"));

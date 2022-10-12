@@ -54,7 +54,7 @@ bool Sword::use(CoreData& core)
 
 		console.main().print(select("Je kunt nog een slag uitdelen. Wil je dat? ", "You can strike again. Do you want to? "));
 
-		if (tolower(console.main().get_char_input(select("jJnN", "yYnN")) != select('j', 'y')))
+		if (get_y_or_n())
 		{
 			console.main().empty_line();
 			break;

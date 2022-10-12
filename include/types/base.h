@@ -7,6 +7,8 @@
 #include <memory>
 #include <string>
 
+#define get_y_or_n() tolower(console.main().get_char_input(select("jJnN", "yYnN"))) == select((int)'j', (int)'y')
+
 using std::string;
 using std::wstring;
 

@@ -181,7 +181,7 @@ namespace game_data
 		console.main().empty_line();
 		console.main().print(select("Wil je je huidige status opslaan? ", "Do you want to save your current status? "));
 
-		if (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) != select('j', 'y'))
+		if (get_y_or_n())
 		{
 			console.main().end_line();
 			return true;
@@ -196,7 +196,7 @@ namespace game_data
 				"Couldn't open the save file for writing. Would you like to try again? "
 			));
 
-			if (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) != select('j','y'))
+			if (get_y_or_n())
 			{
 				console.main().empty_line();
 				console.main().print(select("Status niet opgeslagen!", "Status hasn't been saved!"));
