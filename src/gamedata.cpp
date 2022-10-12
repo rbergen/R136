@@ -77,9 +77,9 @@ namespace game_data
 
 		bool handle_load_fail(CoreData& core, std::ifstream& file)
 		{
-			console.main().print_centered("Fout bij lezen status.");
+			console.main().print_centered(select("Fout bij lezen status.", "Error while reading status."));
 			console.main().empty_line();
-			console.main().print_centered("Je start een nieuw spel.");
+			console.main().print_centered(select("Je start een nieuw spel.", "You'll start a new game."));
 			console.main().empty_line();
 
 			file.close();
@@ -92,11 +92,11 @@ namespace game_data
 			return false;
 		}
 
-		bool handle_save_fail(std::ofstream& file)
+		bool handle_save_fail(CoreData& core, std::ofstream& file)
 		{
-			console.main().print_centered("Fout bij wegschrijven status.");
+			console.main().print_centered(select("Fout bij wegschrijven status.", "Error while saving status."));
 			console.main().empty_line();
-			console.main().print_centered("Status niet opgeslagen!");
+			console.main().print_centered(select("Status niet opgeslagen!", "Status hasn't been saved!"));
 			console.main().empty_line();
 
 			file.close();
@@ -114,13 +114,13 @@ namespace game_data
 
 		if (!file.good())
 		{
-			console.main().print_centered("Druk op een toets om te beginnen");
+			console.main().print_centered(select("Druk op een toets om te beginnen", "Press a key to start"));
 
 			console.main().wait_for_key();
 			return false;
 		}
 
-		console.main().print_centered("Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ");
+		console.main().print_centered(select("Toets 1 voor een nieuw spel, 2 voor een gesaved spel: ", "Press 1 for a new game, 2 for a saved game: "));
 
 		if (console.main().get_char_input("12") != '2')
 		{
@@ -166,7 +166,7 @@ namespace game_data
 			core.animates[static_cast<AnimateID>(i)].load(animate);
 		}
 
-		if (!load(file, core.status) || !load(file, core.flashlight()))
+		if (!load(file, core.status) || !load(file, core.flashlight()) || !load(file, core.language))
 			return handle_load_fail(core, file);
 
 		file.close();
@@ -179,9 +179,9 @@ namespace game_data
 		std::ofstream file;
 
 		console.main().empty_line();
-		console.main().print("Wil je je huidige status opslaan? ");
+		console.main().print(select("Wil je je huidige status opslaan? ", "Do you want to save your current status? "));
 
-		if (tolower(console.main().get_char_input("jJnN")) != 'j')
+		if (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) != select('j', 'y'))
 		{
 			console.main().end_line();
 			return true;
@@ -190,12 +190,16 @@ namespace game_data
 		while (file.open(saved_status_path, std::ios::out | std::ios::binary | std::ios::trunc), !file.good())
 		{
 			console.main().empty_line();
-			console.main().print("Kon het save-bestand niet openen voor schrijven. Nogmaals proberen? ");
+			console.main().print(select(
+				"Kon het save-bestand niet openen voor schrijven. Nogmaals proberen? "
+			,
+				"Couldn't open the save file for writing. Would you like to try again? "
+			));
 
-			if (tolower(console.main().get_char_input("jJnN")) != 'j')
+			if (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) != select('j','y'))
 			{
 				console.main().empty_line();
-				console.main().print("Status niet opgeslagen!");
+				console.main().print(select("Status niet opgeslagen!", "Status hasn't been saved!"));
 				console.main().end_line();
 				return false;
 			}
@@ -205,7 +209,7 @@ namespace game_data
 
 		for (int i = 0; i < to_value(ItemID::COUNT); i++)
 			if (!save(file, core.items[static_cast<ItemID>(i)].room))
-				return handle_save_fail(file);
+				return handle_save_fail(core, file);
 
 		RoomID room;
 
@@ -214,15 +218,15 @@ namespace game_data
 			{
 				room = core.rooms[static_cast<RoomID>(i)].connections[static_cast<Command>(j)];
 				if (!save(file, room))
-					return handle_save_fail(file);
+					return handle_save_fail(core, file);
 			}
 
 		for (int i = 0; i < to_value(AnimateID::COUNT); i++)
 			if (!save(file, core.animates[static_cast<AnimateID>(i)]))
-				return handle_save_fail(file);
+				return handle_save_fail(core, file);
 
-		if (!save(file, core.status) || !save(file, core.flashlight()))
-			return handle_save_fail(file);
+		if (!save(file, core.status) || !save(file, core.flashlight()) || !save(file, core.language))
+			return handle_save_fail(core, file);
 
 		file.close();
 

@@ -183,6 +183,14 @@ enum class AnimateStatus : char
 	undefined = -1
 };
 
+enum class Language : int
+{
+	Dutch = 0,
+	English,
+
+	COUNT
+};
+
 class RoomConnections
 {
 	std::map<Command, RoomID> connections;
@@ -207,38 +215,38 @@ struct Entity
 
 struct Room : Entity<RoomID>
 {
-	const wstring name;
-	const wstring description;
+	const std::vector<const wstring> names;
+	const std::vector<const wstring> descriptions;
 	RoomType type;
 	RoomConnections connections;
 
 protected:
-	Room(const wstring name, const wstring description, RoomType type) : name(name), description(description), type(type) {}
-	Room(const wstring name, RoomType type) : name(name), description(L""), type(type) {}
+	Room(const std::vector<const wstring> names, const std::vector<const wstring> descriptions, RoomType type) : names(names), descriptions(descriptions), type(type) {}
+	Room(const std::vector<const wstring> names, RoomType type) : names(names), descriptions(), type(type) {}
 };
 
 struct Forest : public Room
 {
-	Forest(const wstring name, const wstring description) : Room(name, description, RoomType::forest) {}
-	Forest(const wstring name) : Room(name, RoomType::forest) {}
+	Forest(const std::vector<const wstring> names, const std::vector<const wstring> descriptions) : Room(names, descriptions, RoomType::forest) {}
+	Forest(const std::vector<const wstring> names) : Room(names, RoomType::forest) {}
 };
 
 struct Outdoor : public Room
 {
-	Outdoor(const wstring name, const wstring description) : Room(name, description, RoomType::outdoor) {}
-	Outdoor(const wstring name) : Room(name, RoomType::outdoor) {}
+	Outdoor(const std::vector<const wstring> names, const std::vector<const wstring> descriptions) : Room(names, descriptions, RoomType::outdoor) {}
+	Outdoor(const std::vector<const wstring> names) : Room(names, RoomType::outdoor) {}
 };
 
 struct Indoor : public Room
 {
-	Indoor(const wstring name, const wstring description) : Room(name, description, RoomType::indoor) {}
-	Indoor(const wstring name) : Room(name, RoomType::indoor) {}
+	Indoor(const std::vector<const wstring> names, const std::vector<const wstring> descriptions) : Room(names, descriptions, RoomType::indoor) {}
+	Indoor(const std::vector<const wstring> names) : Room(names, RoomType::indoor) {}
 };
 
 struct Cave : public Room
 {
-	Cave(const wstring name, const wstring description) : Room(name, description, RoomType::cave) {}
-	Cave(const wstring name) : Room(name, RoomType::cave) {}
+	Cave(const std::vector<const wstring> names, const std::vector<const wstring> descriptions) : Room(names, descriptions, RoomType::cave) {}
+	Cave(const std::vector<const wstring> names) : Room(names, RoomType::cave) {}
 };
 
 struct CoreData;
@@ -259,20 +267,20 @@ struct Animate : Entity<AnimateID>
 
 struct Item : Entity<ItemID>
 {
-	const string name;
-	const wstring description;
+	const std::vector<const string> names;
+	const std::vector<const wstring> descriptions;
 	RoomID room;
 	AnimateID usable_on;
 
-	Item(const string name, const wstring description, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined);
-	Item(const string name, const wstring description, RoomID room)
-		: Item(name, description, room, AnimateID::undefined) {}
+	Item(const std::vector <const string> names, const std::vector <const wstring> descriptions, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined);
+	Item(const std::vector <const string> names, const std::vector <const wstring> descriptions, RoomID room)
+		: Item(names, descriptions, room, AnimateID::undefined) {}
 
-	Item(const string name, const wstring description, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined)
-		: Item(name, description, RoomID::undefined, usable_on, sets_target_to_status) {}
+	Item(const std::vector <const string> names, const std::vector <const wstring> descriptions, AnimateID usable_on, AnimateStatus sets_target_to_status = AnimateStatus::undefined)
+		: Item(names, descriptions, RoomID::undefined, usable_on, sets_target_to_status) {}
 
-	Item(const string name, const wstring description)
-		: Item(name, description, RoomID::undefined, AnimateID::undefined) {}
+	Item(const std::vector <const string> names, const std::vector <const wstring> descriptions)
+		: Item(names, descriptions, RoomID::undefined, AnimateID::undefined) {}
 
 	void inspect(CoreData& core);
 	virtual bool use(CoreData& core);
@@ -349,6 +357,7 @@ struct CoreData
 	Flashlight& flashlight();
 	std::vector<RoomID> paperroute;
 	Status status{};
+	Language language;
 
 	CoreData();
 

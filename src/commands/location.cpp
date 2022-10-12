@@ -64,7 +64,7 @@ namespace commands
 
 		if (!core.rooms[status.current_room].connections.is_open(direction))
 		{
-			console.main().print("Daar kun je niet heen.\n");
+			console.main().print(select("Daar kun je niet heen.\n", "You can't go there.\n"));
 			return;
 		}
 

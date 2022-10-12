@@ -24,13 +24,13 @@ bool Sword::use(CoreData& core)
 
 	while (true)
 	{
-		console.main().print("Je haalt uit met je zwaard");
+		console.main().print(select("Je haalt uit met je zwaard", "You strike with your sword"));
 
 		if (randomizer::get_number(100) > 70)
-			console.main().print(", maar het monster ontwijkt.");
+			console.main().print(select(", maar het monster ontwijkt.", ", but the monster dodges it."));
 		else
 		{
-			console.main().print(" en je raakt het monster hard.");
+			console.main().print(select(" en je raakt het monster hard.", " and you hit the monster hard."));
 			monster.strikes_left--;
 		}
 
@@ -38,7 +38,11 @@ bool Sword::use(CoreData& core)
 
 		if (monster.strikes_left == 1) 
 		{
-			console.main().print("Het monster is zwaar gewond en je baadt in zijn bloed.");
+			console.main().print(select(
+				"Het monster is zwaar gewond en je baadt in zijn bloed."
+			,
+				"The monster is badly injured and you're soaked with its blood."
+			));
 			console.main().empty_line();
 		}
 
@@ -48,9 +52,9 @@ bool Sword::use(CoreData& core)
 			break;
 		}
 
-		console.main().print("Je kunt nog een slag uitdelen. Wil je dat? ");
+		console.main().print(select("Je kunt nog een slag uitdelen. Wil je dat? ", "You can strike again. Do you want to? "));
 
-		if (tolower(console.main().get_char_input("jJnN")) != 'j')
+		if (tolower(console.main().get_char_input(select("jJnN", "yYnN")) != select('j', 'y'))
 		{
 			console.main().empty_line();
 			break;
