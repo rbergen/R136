@@ -142,7 +142,7 @@ template<class TChar>
 const std::basic_string<TChar> &select_language_param(Language language, const std::vector<std::basic_string<TChar>>& texts)
 {
 	auto language_value = to_value(language);
-	return texts.size() > language_value ? texts[language_value] : empty_string<TChar>;
+	return (int)texts.size() > language_value ? texts[language_value] : empty_string<TChar>;
 }
 
 template<class TArrayType>
