@@ -112,14 +112,14 @@
       <Filter>Header Files\inlines</Filter>
     </ClInclude>
     <ClInclude Include="include\templates\items.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\templates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\init.cpp">
+    <ClCompile Include="src\startup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gamedata.cpp">

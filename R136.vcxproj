@@ -213,7 +213,7 @@
     <ClCompile Include="src\commands\simple.cpp" />
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\general.cpp" />
-    <ClCompile Include="src\init.cpp" />
+    <ClCompile Include="src\startup.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\items\bandage.cpp" />
     <ClCompile Include="src\items\flashlight.cpp" />

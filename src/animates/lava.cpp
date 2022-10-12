@@ -28,7 +28,7 @@ bool Lava::progress_status(CoreData& core)
 		));
 		console.main().empty_line();
 
-		general::force_exit();
+		general::force_exit(core.language);
 	}
 
 	if (!core.inventory.contains(ItemID::thermal_suit))

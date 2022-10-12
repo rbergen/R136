@@ -323,3 +323,8 @@ inline InputWindow& Console::input()
 {
 	return *input_window;
 }
+
+inline void Console::set_language(Language language)
+{
+	setup_windows(language);
+}

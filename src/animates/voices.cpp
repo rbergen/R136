@@ -22,7 +22,11 @@ bool Voices::progress_status(CoreData& core)
 		break;
 
 	case AnimateStatus::status_1:
-		console.main().print(select("Vanuit de verte hoor je zachte, lachende stemmetjes.", "From the distance you hear soft, laughing voices."));
+		console.main().print(select(
+			"Vanuit de verte hoor je zachte, lachende stemmetjes."
+		, 
+			"From the distance you hear soft, laughing voices."
+		));
 
 		break;
 

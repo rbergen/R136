@@ -9,8 +9,9 @@ struct ParseData
 };
 
 class Parser {
-	static const std::vector<const string> dont_own_item_format_string;
-	static const std::vector<const string> commands[];
+	static const std::vector<string> dont_own_item_format_string;
+	static const std::vector<string> commands[];
+	static const std::vector<string> interjections[];
 
 	ParseData parse_data;
 

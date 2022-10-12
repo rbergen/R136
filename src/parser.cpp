@@ -5,20 +5,33 @@
 
 void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, const string& param_string)
 {
-	if (param_string.find(" en ") == string::npos && param_string.find(" met ") == string::npos)
+	size_t position = string::npos;
+	size_t interjection_length;
+	const std::vector<string>& my_interjections = select(interjections);
+
+	for (auto& interjection : my_interjections)
 	{
-		console.input().print_error("syntax: combineer <voorwerp> en/met <voorwerp>", "syntax: {command} <object> and/with <object>");
+		position = param_string.find(interjection);
+
+		if (position != string::npos) 
+		{
+			interjection_length = interjection.length();
+
+			break;
+		}
+	}
+
+	if (position == string::npos)
+	{
+		console.input().print_error(select(
+			"syntax: combineer <voorwerp> en/met <voorwerp>"
+		, 
+			"syntax: {command} <object> and/with <object>"
+		));
 		parse_data.parse_error = true;
 
 		return;
 	}
-
-	size_t position;
-	int interjection_length;
-
-	// first item ends with interjection word
-	if ((interjection_length = 4, (position = param_string.find(" en "))) == string::npos)
-		interjection_length = 5, position = param_string.find(" met ");
 
 	string item_name = param_string.substr(0, position);
 
@@ -37,7 +50,11 @@ void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, con
 
 	if (parse_data.item1 == parse_data.item2)
 	{
-		console.input().print_error(select("je kunt een voorwerp niet met zichzelf combineren", "you can't combine an object with itself"));
+		console.input().print_error(select(
+			"je kunt een voorwerp niet met zichzelf combineren"
+		, 
+			"you can't combine an object with itself"
+		));
 		parse_data.parse_error = true;
 	}
 }
@@ -70,7 +87,12 @@ bool Parser::check_found_item(CoreData& core, ParseData& parse_data, ItemID item
 
 	case ItemID::ambiguous:
 
-		console.input().print_error(select("de afkorting \"{0}\" is dubbelzinnig", "the abbreviation \"{0}\" is ambiguous"), item_name);
+		console.input().print_error(select(
+			"de afkorting \"{0}\" is dubbelzinnig"
+		, 
+			"the abbreviation \"{0}\" is ambiguous"
+		), item_name);
+
 		parse_data.parse_error = true;
 
 		return false;
@@ -215,9 +237,10 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	return parse_data;
 }
 
-const std::vector<const string> Parser::dont_own_item_format_string = { "je hebt geen \"{0}\"", "you don't have any \"{0}\"" };
+const std::vector<string> Parser::dont_own_item_format_string = { "je hebt geen \"{0}\"", "you don't have any \"{0}\"" };
 
-const std::vector<const string> Parser::commands[] = {
+// note: one command per line, one comma-separated entry per language
+const std::vector<string> Parser::commands[] = {
 	{ "oost", "east" },
 	{ "west", "west" },
 	{ "noord", "north" },
@@ -232,5 +255,12 @@ const std::vector<const string> Parser::commands[] = {
 	{ "afwachten", "bide" },
 	{ "einde", "finish" },
 	{ "status", "report" },
-	{ "help", "help" }
+	{ "help", "help" },
+	{ "taal", "todutch" }
+};
+
+// note: one language per line, comma-separated interjections 
+const std::vector<string> Parser::interjections[] = { 
+	{ " en ", " met " }, 
+	{ " and ", " with " } 
 };

@@ -10,6 +10,8 @@ namespace commands
 
 	void show_status(CoreData& core);
 
+	void switch_language(CoreData& core);
+
 	void show_help(CoreData& core);
 
 	void use(CoreData& core, ItemID item_id);

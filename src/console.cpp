@@ -260,13 +260,13 @@ void Window::print(int y, int x, Color color, const wstring& text)
 	unset_color(color);
 }
 
-void Window::wait_for_key(bool prompt)
+void Window::wait_for_key(bool prompt, Language language)
 {
 	if (prompt)
 	{
 		empty_line();
 		set_color(Color::bold);
-		print("[Druk op een toets]");
+		print(select_language_param(language, "[Druk op een toets]", "[Press any key]"));
 		unset_color(Color::bold);
 	}
 
@@ -343,9 +343,13 @@ void InputWindow::get_string_input(string& input)
 	unset_color(standard_color);
 }
 
-void Console::setup_windows()
+void Console::setup_windows(Language language)
 {
+	static Language set_language = static_cast<Language>(0);
 	int height, width;
+
+	if (language != Language::undefined)
+		set_language = language;
 
 	if (!fullscreen_window)
 	{
@@ -371,7 +375,7 @@ void Console::setup_windows()
 		input_window = new InputWindow(subwin(stdscr, 1, width, height - 1, 0));
 
 	banner_window->set_position(0, 0);
-	banner_window->print_centered("Missiecode: R136");
+	banner_window->print_centered(select_language_param(set_language, "Missiecode: R136", "Mission code: R136"));
 
 	main_window->set_scrollable(true);
 
@@ -380,7 +384,7 @@ void Console::setup_windows()
 	input_window->refresh();
 }
 
-void Console::initialize()
+void Console::initialize(Language language)
 {
 	setlocale(LC_ALL, "");
 
@@ -389,7 +393,7 @@ void Console::initialize()
 
 	color_map.initialize();
 
-	setup_windows();
+	setup_windows(language);
 	set_cursor(CursorType::normal);
 }
 

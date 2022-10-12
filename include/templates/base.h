@@ -126,7 +126,7 @@ constexpr TParam select_language_param(Language language, TParam first_param...)
 	std::va_list params;
 	TParam selected_param = TParam();
 
-	va_start(params, language_count);
+	va_start(params, first_param);
 	for (int i = 1; i <= param_index && i < language_count; i++)
 		selected_param = va_arg(params, TParam);
 
@@ -136,11 +136,17 @@ constexpr TParam select_language_param(Language language, TParam first_param...)
 }
 
 template<class TChar>
-const std::basic_string<TChar> empty_string = basic_string<TChar>();
+const std::basic_string<TChar> empty_string = std::basic_string<TChar>();
 
 template<class TChar>
-const std::basic_string<TChar> &select_language_param(Language language, const std::vector<const std::basic_string<TChar>>& texts)
+const std::basic_string<TChar> &select_language_param(Language language, const std::vector<std::basic_string<TChar>>& texts)
 {
 	auto language_value = to_value(language);
 	return texts.size() > language_value ? texts[language_value] : empty_string<TChar>;
+}
+
+template<class TArrayType>
+const TArrayType& select_language_param(Language language, const TArrayType* values)
+{
+	return values[to_value(language)];
 }

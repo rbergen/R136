@@ -48,7 +48,7 @@ namespace actions
 			));
 
 			console.main().empty_line();
-			general::force_exit();
+			general::force_exit(core.language);
 		}
 
 		core.flashlight().decrease_battery_level(core);
@@ -118,6 +118,10 @@ namespace actions
 				commands::show_status(core);
 				break;
 
+			case Command::language:
+				commands::switch_language(core);
+				break;
+
 			case Command::help:
 				commands::show_help(core);
 				break;
@@ -128,7 +132,12 @@ namespace actions
 
 			console.main().empty_line();
 		} 	
-		while (parse_data.command == Command::status || parse_data.command == Command::help || parse_data.command == Command::finish);
+		while (
+			parse_data.command == Command::status || 
+			parse_data.command == Command::help || 
+			parse_data.command == Command::finish || 
+			parse_data.command == Command::language
+		);
 
 		return true;
 	}

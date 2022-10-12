@@ -11,7 +11,7 @@ bool Barbecue::progress_status(CoreData& core)
 	case AnimateStatus::initial_burn:
 		console.main().print(select(
 			"Op deze open plek staat een barbecue gezellig te branden."
-			,
+		,
 			"In this open space, a barbecue is burning nicely."
 		));
 
@@ -20,7 +20,7 @@ bool Barbecue::progress_status(CoreData& core)
 	case AnimateStatus::hashis_on_fire:
 		console.main().print(select(
 			"Als je de hasj op de barbecue gooit verschiet de vlam van kleur. Verder gebeurt er niets."
-			,
+		,
 			"When you throw the hashis on the barbecue, the flame changes colour. Beyond that, nothing happens."
 		));
 

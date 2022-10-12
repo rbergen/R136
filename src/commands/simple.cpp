@@ -49,7 +49,7 @@ namespace commands
 		console.main().print(select("--- STATUSRAPPORT ---", "--- STATUS REPORT ---"));
 		console.main().empty_line();
 		console.main().print(
-			select("Je hebt nog {0} levenspunten.\n", "You have {0} life points left.")
+			select("Je hebt nog {0} levenspunten.\n", "You have {0} life points left.\n")
 		, 
 			std::to_string(status.life_points)
 		);
@@ -74,6 +74,31 @@ namespace commands
 			console.main().print("* {0}\n", select(core.items[item].names));
 	}
 
+	void switch_language(CoreData& core)
+	{
+		switch (core.language)
+		{
+		case Language::Dutch:
+			core.language = Language::English;
+			break;
+
+		case Language::English:
+			core.language = Language::Dutch;
+			break;
+
+		default:
+			break;
+		}
+
+		console.set_language(core.language);
+
+		console.main().print(select(
+			"Ok, we gaan in het Nederlands verder. Type h voor help."
+		,
+			"Okay, we'll continue in English. Type h for help."
+		));
+	}
+
 	void show_help(CoreData& core)
 	{
 		console.main().print("--- HELP ---");
@@ -95,9 +120,29 @@ namespace commands
 			"* einde\n"
 			"* status\n"
 			"* help\n"
+			"* taal\n"
+			"\n"
+			"Type taal to switch to English.\n"
 		,
 			"Commands:\n"
-
+			"* east\n"
+			"* west\n"
+			"* north\n"
+			"* south\n"
+			"* ascend\n"
+			"* descend\n"
+			"* use <object>\n"
+			"* combine <object> and/with <object>\n"
+			"* pickup <object>\n"
+			"* lay <object>\n"
+			"* inspect <object>\n"
+			"* bide\n"
+			"* finish\n"
+			"* report\n"
+			"* help\n"
+			"* todutch\n"
+			"\n"
+			"Type todutch om over te schakelen naar Nederlands.\n"
 		));
 	}
 }

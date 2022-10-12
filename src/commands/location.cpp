@@ -52,7 +52,7 @@ namespace commands
 
 					actions::progress_animates(core);
 
-					console.main().wait_for_key(true);
+					console.main().wait_for_key(true, core.language);
 				}
 			}
 		}

@@ -48,13 +48,13 @@ bool Sword::use(CoreData& core)
 
 		if (!monster.strikes_left || randomizer::get_number(100) > 30)
 		{
-			console.main().wait_for_key(true);
+			console.main().wait_for_key(true, core.language);
 			break;
 		}
 
 		console.main().print(select("Je kunt nog een slag uitdelen. Wil je dat? ", "You can strike again. Do you want to? "));
 
-		if (tolower(console.main().get_char_input(select("jJnN", "yYnN")) != select('j', 'y'))
+		if (tolower(console.main().get_char_input(select("jJnN", "yYnN")) != select('j', 'y')))
 		{
 			console.main().empty_line();
 			break;

@@ -24,6 +24,6 @@ bool Bandage::use(CoreData& core)
 
 	core.inventory.remove(*this);
 
-	console.main().wait_for_key(true);
+	console.main().wait_for_key(true, core.language);
 	return true;
 }
