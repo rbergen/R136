@@ -4,6 +4,7 @@
 
 namespace general
 {
-	void force_exit(void);
+	void force_exit(Language language);
+	void show_arguments();
 	void sleep_ms(int count);
 }

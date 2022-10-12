@@ -52,9 +52,9 @@ inline bool RoomConnections::is_open(Command direction) const
 	return (*this)[direction] != RoomID::undefined;
 }
 
-inline Item::Item(const string name, const wstring description, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status) :
-	name(name),
-	description(description),
+inline Item::Item(const std::vector <string> names, const std::vector <wstring> descriptions, RoomID room, AnimateID usable_on, AnimateStatus sets_target_to_status) :
+	names(names),
+	descriptions(descriptions),
 	room(room),
 	usable_on(usable_on),
 	sets_target_to_status(sets_target_to_status)

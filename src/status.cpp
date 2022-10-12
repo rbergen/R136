@@ -18,7 +18,7 @@ namespace status
 			if (!count)
 				return;
 
-			console.main().print("Hier lig{0} ", count > 1 ? "gen" : "t");
+			console.main().print(select((count > 1 ? "Hier liggen " : "Hier ligt "), "You see "));
 
 			for (auto& element : core.items)
 			{
@@ -27,14 +27,14 @@ namespace status
 				if (item.room != core.status.current_room)
 					continue;
 
-				console.main().print(item.name);
+				console.main().print(select(item.names));
 
 				switch (--count)
 				{
 				case 0:
 					break;
 				case 1:
-					console.main().print(" en ");
+					console.main().print(select(" en ", " and "));
 					break;
 				default:
 					console.main().print(", ");
@@ -45,36 +45,36 @@ namespace status
 			console.main().print(".");
 		}
 
-		void show_open_directions(RoomConnections& connections)
+		void show_open_directions(CoreData& core, RoomConnections& connections)
 		{
 			size_t count = connections.count();
 
 			if (!count)
 				return;
 
-			console.main().print("Je kunt naar ");
+			console.main().print(select("Je kunt naar ", "You can go "));
 
 			for (auto& element : connections)
 			{
 				switch (element.first)
 				{
 				case Command::east:
-					console.main().print("het oosten");
+					console.main().print(select("het oosten", "east"));
 					break;
 				case Command::west:
-					console.main().print("het westen");
+					console.main().print(select("het westen", "west"));
 					break;
 				case Command::north:
-					console.main().print("het noorden");
+					console.main().print(select("het noorden", "north"));
 					break;
 				case Command::south:
-					console.main().print("het zuiden");
+					console.main().print(select("het zuiden", "south"));
 					break;
 				case Command::up:
-					console.main().print("boven");
+					console.main().print(select("boven", "up"));
 					break;
 				case Command::down:
-					console.main().print("beneden");
+					console.main().print(select("beneden", "down"));
 					break;
 
 				default:
@@ -86,7 +86,7 @@ namespace status
 				case 0:
 					break;
 				case 1:
-					console.main().print(" en ");
+					console.main().print(select(" en ", " and "));
 					break;
 				default:
 					console.main().print(", ");
@@ -107,26 +107,34 @@ namespace status
 
 	void show_room_status(CoreData& core)
 	{
-		static const wstring smoldering_forest_description = L"Om je heen zie je de smeulende resten van wat eens bos was.";
+		static const wstring smoldering_forest_description = select(
+			L"Om je heen zie je de smeulende resten van wat eens bos was."
+		,
+			L"Around you, you see the smoldering remains of what used to be a forest."
+		);
 
 		auto current_room_id = core.status.current_room;
 		auto& current_room = core.rooms[current_room_id];
 
-		console.main().print(L"Je bevindt je {0}.\n", current_room.name);
+		console.main().print(select(L"Je bevindt je {0}.\n", L"You are {0}.\n"), select(current_room.names));
 		console.main().end_line();
 
 		if (!is_room_lit(core))
 		{
-			console.main().print("Het is stekedonker en je ziet geen hand voor ogen.");
+			console.main().print(select(
+				"Het is stekedonker en je ziet geen hand voor ogen."
+			,
+				"It's pitch black and you can't see your hand in front of your face."
+			));
 			console.main().end_line();
 		}
 		else
 		{
 			const wstring& description = core.status.has_tree_burned && current_room.type == RoomType::forest
 				? smoldering_forest_description
-				: current_room.description;
+				: select(current_room.descriptions);
 
-			if (description.size() > 0)
+			if (!description.empty())
 			{
 				console.main().print(description);
 				console.main().end_line();
@@ -136,7 +144,7 @@ namespace status
 			console.main().end_line();
 		}
 
-		show_open_directions(current_room.connections);
+		show_open_directions(core, current_room.connections);
 		console.main().empty_line();
 	}
 }

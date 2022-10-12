@@ -50,10 +50,14 @@ void Item::inspect(CoreData& core)
 {
 	if (!status::is_room_lit(core))
 	{
-		console.main().print("Het is veel te donker om wat dan ook te bekijken.\n");
+		console.main().print(select(
+			"Het is veel te donker om wat dan ook te bekijken.\n"
+		, 
+			"It's way too dark to look at anything.\n"
+		));
 		return;
 	}
 
-	console.main().print(core.items[id].description);
+	console.main().print(select(core.items[id].descriptions));
 	console.main().print("\n");
 }

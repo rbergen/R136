@@ -4,13 +4,15 @@
 
 namespace commands
 {
-	bool finish();
+	bool finish(CoreData& core);
 
-	void wait(void);
+	void wait(CoreData& core);
 
 	void show_status(CoreData& core);
 
-	void show_help(void);
+	void switch_language(CoreData& core);
+
+	void show_help(CoreData& core);
 
 	void use(CoreData& core, ItemID item_id);
 

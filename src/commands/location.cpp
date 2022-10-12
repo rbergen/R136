@@ -52,7 +52,7 @@ namespace commands
 
 					actions::progress_animates(core);
 
-					console.main().wait_for_key(true);
+					console.main().wait_for_key(true, core.language);
 				}
 			}
 		}
@@ -64,7 +64,7 @@ namespace commands
 
 		if (!core.rooms[status.current_room].connections.is_open(direction))
 		{
-			console.main().print("Daar kun je niet heen.\n");
+			console.main().print(select("Daar kun je niet heen.\n", "You can't go there.\n"));
 			return;
 		}
 
