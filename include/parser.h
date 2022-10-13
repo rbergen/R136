@@ -1,4 +1,4 @@
-#include "types/base.h"
+﻿#include "types/base.h"
 
 struct ParseData
 {

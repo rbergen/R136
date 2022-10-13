@@ -1,4 +1,4 @@
-#include "base.h"
+﻿#include "base.h"
 #include "types/animates.h"
 
 std::unique_ptr<Animate> animates[]{ // { room, strike }

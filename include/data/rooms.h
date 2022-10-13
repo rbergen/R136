@@ -1,4 +1,4 @@
-#include "base.h"
+ï»¿#include "base.h"
 
 #define in_the_forest std::vector<wstring>{ L"in het bos", L"in the forest" }
 #define in_the_swamp std::vector<wstring>{ L"in het moeras", L"in the swamp" }
@@ -130,9 +130,9 @@ std::unique_ptr<Room> rooms[]{ // { names, descriptions }
 	),
 	std::make_unique<Outdoor>(in_the_swamp,	smelly_surface),
 	std::make_unique<Indoor>(
-		std::vector<wstring>{ L"in de ruïne", L"in the ruins" },
+		std::vector<wstring>{ L"in de ruÃ¯ne", L"in the ruins" },
 		std::vector<wstring>{
-			L"De ruïne is een spookachtige bouwval. Er is hier een wankele trap die naar beneden leidt."
+			L"De ruÃ¯ne is een spookachtige bouwval. Er is hier een wankele trap die naar beneden leidt."
 		,
 			L"The ruins are a spooky rubble. There is a shaky staircase that leads downwards."
 		}
@@ -182,9 +182,9 @@ std::unique_ptr<Room> rooms[]{ // { names, descriptions }
 		}
 	),
 	std::make_unique<Cave>(
-		std::vector<wstring>{ L"in de hiërogliefengrot", L"in the hieroglyphs cave" },
+		std::vector<wstring>{ L"in de hiÃ«rogliefengrot", L"in the hieroglyphs cave" },
 		std::vector<wstring>{
-			L"Op de wanden staan hiërogliefen waar je geen wijs uit wordt."
+			L"Op de wanden staan hiÃ«rogliefen waar je geen wijs uit wordt."
 		,
 			L"There are symbols on the walls that you can not make sense of."
 		}
@@ -261,7 +261,7 @@ std::unique_ptr<Room> rooms[]{ // { names, descriptions }
 	std::make_unique<Cave>(
 		std::vector<wstring>{ L"in de echogrot", L"in the echo cave" },
 		std::vector<wstring>{
-			L"Hier worden alle geluiden die je maakt tegen de wanden geëcho'd."
+			L"Hier worden alle geluiden die je maakt tegen de wanden geÃ«cho'd."
 		,
 			L"All sounds you make echo back from the walls."
 		}
