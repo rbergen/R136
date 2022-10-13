@@ -1,4 +1,4 @@
-target_sources(
+﻿target_sources(
 	${PROJECT_NAME} 
 	PRIVATE 
 	barbecue.cpp

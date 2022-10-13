@@ -164,6 +164,10 @@
     <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\console.h" />
     <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\data\animates.h" />
+    <ClInclude Include="include\data\connections.h" />
+    <ClInclude Include="include\data\items.h" />
+    <ClInclude Include="include\data\rooms.h" />
     <ClInclude Include="include\gamedata.h" />
     <ClInclude Include="include\general.h" />
     <ClInclude Include="include\inlines\console.h" />
