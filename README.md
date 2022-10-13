@@ -20,7 +20,7 @@ After that, for non-Windows platforms, I've added a CMake build configuration. W
 * WSL (Ubuntu) using GCC and ncurses
 * MacOS using (MacOS native) Clang and ncurses
 
-Oh, yeah, the game is in Dutch, although the source code itself is now fully in English. I guess international awareness & orientation is something that developed in me over the past couple of decades...
+The game was originally only available in the Dutch language, but has now been translated to English as a second language. The source code itself is now fully in English, also. I guess international awareness & orientation took a couple of decades to develop in me, but here we are. (Note: getting R136 to start in English requires the `-e` command line argument to be passed to it; Dutch is still the default.)
 
 ## Credits
 

@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 //templates/base.h
 
 #include "types/base.h"
+#include <cstdarg>
 #include <stdexcept>
 
 template<class TEntity>
@@ -112,4 +113,40 @@ template<class TKey, class TValue>
 void EntityMap<TKey, TValue>::clear()
 {
 	map.clear();
+}
+
+template<class TParam>
+constexpr TParam select_language_param(Language language, TParam first_param...)
+{
+	auto param_index = to_value(language);
+	if (param_index == 0)
+		return first_param;
+
+	constexpr auto language_count = to_value(Language::COUNT);
+	std::va_list params;
+	TParam selected_param = TParam();
+
+	va_start(params, first_param);
+	for (int i = 1; i <= param_index && i < language_count; i++)
+		selected_param = va_arg(params, TParam);
+
+	va_end(params);
+
+	return selected_param;
+}
+
+template<class TChar>
+const std::basic_string<TChar> empty_string = std::basic_string<TChar>();
+
+template<class TChar>
+const std::basic_string<TChar> &select_language_param(Language language, const std::vector<std::basic_string<TChar>>& texts)
+{
+	auto language_value = to_value(language);
+	return (int)texts.size() > language_value ? texts[language_value] : empty_string<TChar>;
+}
+
+template<class TArrayType>
+const TArrayType& select_language_param(Language language, const TArrayType* values)
+{
+	return values[to_value(language)];
 }

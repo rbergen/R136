@@ -1,4 +1,4 @@
-#include "base.h"
+﻿#include "base.h"
 #include "console.h"
 #include "general.h"
 #include "parser.h"
@@ -35,12 +35,20 @@ namespace actions
 
 		if (core.status.life_points <= 0)
 		{
-			console.main().print("Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op de grond met moeite naar adem snakt, "
+			console.main().print(select(
+				"Badend in je eigen bloed bezwijk je aan je verwondingen. Terwijl je liggend op de grond met moeite naar adem snakt, "
 				"hoor je in de verte een luid gelach.\n"
 				"Dan zakken je ogen dicht en stopt je hart met kloppen.\n"
-				"Op hetzelfde moment ontploft de bom en sterft de aarde met jou.");
+				"Op hetzelfde moment ontploft de bom en sterft de aarde met jou."
+			,
+				"Bathing in your own blood, you succumb to your injuries. While you're gasping for air on the ground, "
+				"you hear loud laughter from a distance.\n"
+				"Then your eyes close and your heart stops beating.\n"
+				"At the same time, the bomb explodes and the earth dies with you."
+			));
+
 			console.main().empty_line();
-			general::force_exit();
+			general::force_exit(core.language);
 		}
 
 		core.flashlight().decrease_battery_level(core);
@@ -97,11 +105,11 @@ namespace actions
 				break;
 
 			case Command::wait:
-				commands::wait();
+				commands::wait(core);
 				break;
 
 			case Command::finish:
-				if (!commands::finish())
+				if (!commands::finish(core))
 					return false;
 
 				break;
@@ -110,8 +118,12 @@ namespace actions
 				commands::show_status(core);
 				break;
 
+			case Command::language:
+				commands::switch_language(core);
+				break;
+
 			case Command::help:
-				commands::show_help();
+				commands::show_help(core);
 				break;
 
 			default:
@@ -120,7 +132,12 @@ namespace actions
 
 			console.main().empty_line();
 		} 	
-		while (parse_data.command == Command::status || parse_data.command == Command::help || parse_data.command == Command::finish);
+		while (
+			parse_data.command == Command::status || 
+			parse_data.command == Command::help || 
+			parse_data.command == Command::finish || 
+			parse_data.command == Command::language
+		);
 
 		return true;
 	}

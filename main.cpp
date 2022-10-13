@@ -5,20 +5,24 @@
 #include "actions.h"
 #include "startup.h"
 
-int main()
+int main(int argc, char* argv[])
 {
 	CoreData core;
 
-	console.initialize();
+	startup::parse_arguments(core, argc, argv);
+
+	console.initialize(core.language);
 
 	startup::run_intro();
 
 	startup::initialize(core);
 
-	startup::show_splashscreen();
+	startup::show_splashscreen(core);
 
-	if (!game_data::load(core))
-		startup::show_start_message();
+	if (game_data::load(core))
+		console.set_language(core.language);
+	else
+		startup::show_start_message(core);
 
 	while (true)
 	{
@@ -29,7 +33,7 @@ int main()
 
 	game_data::save(core);
 
-	console.main().wait_for_key(true);
+	console.main().wait_for_key(true, core.language);
 	console.main().clear();
 
 	console.release();

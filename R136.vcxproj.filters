@@ -27,9 +27,13 @@
     <Filter Include="Source Files\commands">
       <UniqueIdentifier>{6ee72562-7192-43fe-9f16-9638044da1e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data">
+      <UniqueIdentifier>{cf38056a-d53a-437d-b222-9b266661aada}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base.h">
@@ -111,14 +115,26 @@
       <Filter>Header Files\inlines</Filter>
     </ClInclude>
     <ClInclude Include="include\templates\items.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\rooms.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\connections.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\animates.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\items.h">
+      <Filter>Header Files\data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\init.cpp">
+    <ClCompile Include="src\startup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gamedata.cpp">

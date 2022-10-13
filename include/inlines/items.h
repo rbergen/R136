@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // inlines/items.h
 
@@ -49,15 +49,15 @@ inline bool ThermalSuit::use(CoreData& core)
 	return false;
 }
 
-inline CombinableItem::CombinableItem(string name, const wstring description, RoomID room, ItemID combines_with)
-	: Item(name, description, room, item::combines_with(combines_with)) {}
+inline CombinableItem::CombinableItem(const std::vector<string> names, const std::vector<wstring> descriptions, RoomID room, ItemID combines_with)
+	: Item(names, descriptions, room, item::combines_with(combines_with)) {}
 
 inline bool CombinableItem::combines_with(ItemID item)
 {
 	return item::combines_with(usable_on) == item;
 }
 
-inline Flashlight::Flashlight(string name, const wstring description, RoomID room) : CombinableItem(name, description, room, ItemID::batteries)
+inline Flashlight::Flashlight(const std::vector<string> names, const std::vector <wstring> descriptions, RoomID room) : CombinableItem(names, descriptions, room, ItemID::batteries)
 {
 	is_on = false;
 	has_bunny_batteries = false;

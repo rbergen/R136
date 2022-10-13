@@ -1,30 +1,43 @@
-#include "base.h"
+﻿#include "base.h"
 #include "console.h"
 #include "status.h"
 #include "parser.h"
 
 void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, const string& param_string)
 {
-	if (param_string.find(" en ") == string::npos && param_string.find(" met ") == string::npos)
+	size_t position = string::npos;
+	size_t interjection_length;
+	const std::vector<string>& my_interjections = select(interjections);
+
+	for (auto& interjection : my_interjections)
 	{
-		console.input().print_error("syntax: combineer <voorwerp> en/met <voorwerp>");
+		position = param_string.find(interjection);
+
+		if (position != string::npos) 
+		{
+			interjection_length = interjection.length();
+
+			break;
+		}
+	}
+
+	if (position == string::npos)
+	{
+		console.input().print_error(select(
+			"syntax: combineer <voorwerp> en/met <voorwerp>"
+		, 
+			"syntax: {command} <object> and/with <object>"
+		));
 		parse_data.parse_error = true;
 
 		return;
 	}
 
-	size_t position;
-	int interjection_length;
-
-	// first item ends with interjection word
-	if ((interjection_length = 4, (position = param_string.find(" en "))) == string::npos)
-		interjection_length = 5, position = param_string.find(" met ");
-
 	string item_name = param_string.substr(0, position);
 
 	parse_data.item1 = find_owned_item(core, item_name);
 
-	if (!check_found_item(parse_data, parse_data.item1, item_name, dont_own_item_format_string))
+	if (!check_found_item(core, parse_data, parse_data.item1, item_name, select(dont_own_item_format_string)))
 		return;
 
 	// second item starts just after interjection word
@@ -32,12 +45,16 @@ void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, con
 
 	parse_data.item2 = find_owned_item(core, item_name);
 
-	if (!check_found_item(parse_data, parse_data.item2, item_name, dont_own_item_format_string))
+	if (!check_found_item(core, parse_data, parse_data.item2, item_name, select(dont_own_item_format_string)))
 		return;
 
 	if (parse_data.item1 == parse_data.item2)
 	{
-		console.input().print_error("je kunt een voorwerp niet met zichzelf combineren");
+		console.input().print_error(select(
+			"je kunt een voorwerp niet met zichzelf combineren"
+		, 
+			"you can't combine an object with itself"
+		));
 		parse_data.parse_error = true;
 	}
 }
@@ -46,7 +63,7 @@ bool Parser::parse_owned_item_command_param(CoreData& core, ParseData& parse_dat
 {
 	if (parse_string.size() == 0)
 	{
-		console.input().print_error("syntax: {0} <voorwerp>", command);
+		console.input().print_error(select("syntax: {0} <voorwerp>", "syntax: {0} <object>"), command);
 		parse_data.parse_error = true;
 
 		return false;
@@ -54,10 +71,10 @@ bool Parser::parse_owned_item_command_param(CoreData& core, ParseData& parse_dat
 
 	parse_data.item1 = find_owned_item(core, parse_string);
 
-	return check_found_item(parse_data, parse_data.item1, parse_string, dont_own_item_format_string);
+	return check_found_item(core, parse_data, parse_data.item1, parse_string, select(dont_own_item_format_string));
 }
 
-bool Parser::check_found_item(ParseData& parse_data, ItemID item, const string& item_name, const string undefined_item_format_string)
+bool Parser::check_found_item(CoreData& core, ParseData& parse_data, ItemID item, const string& item_name, const string undefined_item_format_string)
 {
 	switch (item)
 	{
@@ -70,7 +87,12 @@ bool Parser::check_found_item(ParseData& parse_data, ItemID item, const string& 
 
 	case ItemID::ambiguous:
 
-		console.input().print_error("de afkorting \"{0}\" is dubbelzinnig", item_name);
+		console.input().print_error(select(
+			"de afkorting \"{0}\" is dubbelzinnig"
+		, 
+			"the abbreviation \"{0}\" is ambiguous"
+		), item_name);
+
 		parse_data.parse_error = true;
 
 		return false;
@@ -89,7 +111,7 @@ ItemID Parser::find_owned_item(CoreData& core, const string& item_name)
 	// this search finds the occurrance of the name entered by the user in any part of the item names, and signals multiple matches
 	for (auto& inventory_item : core.inventory)
 	{
-		if (core.items[inventory_item].name.find(item_name) == string::npos)
+		if (select(core.items[inventory_item].names).find(item_name) == string::npos)
 			continue;
 
 		if (item_id != ItemID::undefined)
@@ -115,7 +137,7 @@ ItemID Parser::find_laying_item(CoreData& core, string& item_name)
 	for (auto& element : core.items)
 	{
 		auto& item = *element.second;
-		if (item.room != core.status.current_room || item.name.find(item_name) == string::npos)
+		if (item.room != core.status.current_room || select(item.names).find(item_name) == string::npos)
 			continue;
 
 		if (item_id != ItemID::undefined)
@@ -154,7 +176,11 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	// 9 is the length of the longest commands
 	if (command.size() == 0 || command.size() > 9)
 	{
-		console.input().print_error(command.size() == 0 ? "geen commando gegeven" : "ongeldig commando gegeven");
+		console.input().print_error(command.size() == 0 ? 
+			select("geen commando gegeven", "no command entered") 
+		: 
+			select("ongeldig commando gegeven", "invalid command entered")
+		);
 		parse_data.parse_error = true;
 		return parse_data;
 	}
@@ -165,21 +191,21 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	{
 		// this search assumes that the commands each start with a different letter
 		// it finds the first command that starts with whatever is the command (abbreviation) entered by the user 
-		if (commands[i].find(command) == 0)
+		if (select(commands[i]).find(command) == 0)
 			parse_data.command = static_cast<Command>(i);
 	}
 
 	switch (parse_data.command)
 	{
 	case Command::undefined:
-		console.input().print_error("ongeldig commando gegeven");
+		console.input().print_error(select("ongeldig commando gegeven", "invalid command entered"));
 		parse_data.parse_error = true;
 		break;
 
 	case Command::use:
 	case Command::lay_down:
 	case Command::inspect:
-		parse_owned_item_command_param(core, parse_data, commands[to_value(parse_data.command)], input_string);
+		parse_owned_item_command_param(core, parse_data, select(commands[to_value(parse_data.command)]), input_string);
 		break;
 
 	case Command::combine:
@@ -189,14 +215,18 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	case Command::pickup:
 		if (input_string.size() == 0)
 		{
-			console.input().print_error("syntax: pak <voorwerp>");
+			console.input().print_error(select("syntax: pak <voorwerp>", "syntax: pickup <object>"));
 			parse_data.parse_error = true;
 
 			break;
 		}
 
 		parse_data.item1 = find_laying_item(core, input_string);
-		check_found_item(parse_data, parse_data.item1, input_string, "je ziet hier geen \"{0}\" die je kunt meenemen");
+		check_found_item(core, parse_data, parse_data.item1, input_string, select(
+			"je ziet hier geen \"{0}\" die je kunt meenemen"
+		,
+			"you don't see any \"{0}\" that you can pick up"
+		));
 
 		break;
 
@@ -207,6 +237,30 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 	return parse_data;
 }
 
-string Parser::dont_own_item_format_string = "je hebt geen \"{0}\"";
+const std::vector<string> Parser::dont_own_item_format_string = { "je hebt geen \"{0}\"", "you don't have any \"{0}\"" };
 
-string Parser::commands[] = { "oost", "west", "noord", "zuid", "klim", "daal", "gebruik", "combineer", "pak", "leg", "bekijk", "afwachten", "einde", "status", "help" };
+// note: one command per line, one comma-separated entry per language
+const std::vector<string> Parser::commands[] = {
+	{ "oost", "east" },
+	{ "west", "west" },
+	{ "noord", "north" },
+	{ "zuid", "south" },
+	{ "klim", "ascend" },
+	{ "daal", "descend" },
+	{ "gebruik", "use" },
+	{ "combineer", "combine" },
+	{ "pak", "pickup" },
+	{ "leg", "lay" },
+	{ "bekijk", "inspect" },
+	{ "afwachten", "bide" },
+	{ "einde", "finish" },
+	{ "status", "report" },
+	{ "help", "help" },
+	{ "taal", "todutch" }
+};
+
+// note: one language per line, comma-separated interjections 
+const std::vector<string> Parser::interjections[] = { 
+	{ " en ", " met " }, 
+	{ " and ", " with " } 
+};

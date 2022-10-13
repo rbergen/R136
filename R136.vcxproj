@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +164,10 @@
     <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\console.h" />
     <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\data\animates.h" />
+    <ClInclude Include="include\data\connections.h" />
+    <ClInclude Include="include\data\items.h" />
+    <ClInclude Include="include\data\rooms.h" />
     <ClInclude Include="include\gamedata.h" />
     <ClInclude Include="include\general.h" />
     <ClInclude Include="include\inlines\console.h" />
@@ -212,7 +217,7 @@
     <ClCompile Include="src\commands\simple.cpp" />
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\general.cpp" />
-    <ClCompile Include="src\init.cpp" />
+    <ClCompile Include="src\startup.cpp" />
     <ClCompile Include="src\intro.cpp" />
     <ClCompile Include="src\items\bandage.cpp" />
     <ClCompile Include="src\items\flashlight.cpp" />

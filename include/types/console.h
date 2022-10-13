@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // types/console.h
 
@@ -130,7 +130,7 @@ public:
 	bool end_line();
 	bool empty_line();
 
-	void wait_for_key(bool prompt = false);
+	void wait_for_key(bool prompt = false, Language language = static_cast<Language>(0));
 	int get_char_input(const string& allowed);
 };
 
@@ -165,7 +165,7 @@ class Console
 
 	Window& banner();
 
-	void setup_windows();
+	void setup_windows(Language language = Language::undefined);
 
 public:
 	Console();
@@ -176,7 +176,8 @@ public:
 	InputWindow& input();
 
 	void process_resize();
-	void initialize();
+	void initialize(Language language);
+	void set_language(Language language);
 	void release();
 	CursorType get_cursor();
 	void set_cursor(CursorType type);
