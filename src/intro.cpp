@@ -324,7 +324,7 @@ namespace startup
 		console.main().empty_line();
 
 		console.main().set_attribute(A_BOLD);
-		console.main().print_centered(select("Versie 3.4.0, (C) 1998, 2022 R.I.P.", "Version 3.4.0, (C) 1998, 2022 R.I.P."));
+		console.main().print_centered(select("Versie 3.4.1, (C) 1998, 2022 R.I.P.", "Version 3.4.1, (C) 1998, 2022 R.I.P."));
 		console.main().unset_attribute(A_BOLD);
 		console.main().empty_line();
 	}
