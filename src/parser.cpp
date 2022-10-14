@@ -26,7 +26,7 @@ void Parser::parse_combine_parameters(CoreData& core, ParseData& parse_data, con
 		console.input().print_error(select(
 			"syntax: combineer <voorwerp> en/met <voorwerp>"
 		, 
-			"syntax: {command} <object> and/with <object>"
+			"syntax: combine <object> and/with <object>"
 		));
 		parse_data.parse_error = true;
 

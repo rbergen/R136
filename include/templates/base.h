@@ -145,8 +145,8 @@ const std::basic_string<TChar> &select_language_param(Language language, const s
 	return (int)texts.size() > language_value ? texts[language_value] : empty_string<TChar>;
 }
 
-template<class TArrayType>
-const TArrayType& select_language_param(Language language, const TArrayType* values)
+template<class TArrayElement>
+const TArrayElement& select_language_param(Language language, const TArrayElement* values)
 {
 	return values[to_value(language)];
 }
