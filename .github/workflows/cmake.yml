@@ -18,7 +18,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install ncurses on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
