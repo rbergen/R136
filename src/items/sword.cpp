@@ -16,7 +16,7 @@ bool Sword::use(CoreData& core)
 		monsterID = AnimateID::plant;
 	else
 	{
-		report_pointless_use();
+		report_pointless_use(core);
 		return false;
 	}
 
