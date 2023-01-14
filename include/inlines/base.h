@@ -75,9 +75,9 @@ inline AnimateStatus& Item::target_status(CoreData& core)
 	return core.animates[usable_on].status;
 }
 
-inline void Item::report_pointless_use()
+inline void Item::report_pointless_use(CoreData &core)
 {
-	console.main().print("Dat heeft geen zin.\n");
+	console.main().print(select("Dat heeft geen zin.\n", "That serves no use.\n"));
 }
 
 inline bool Item::use_to_status(CoreData& core, AnimateStatus to_status)
@@ -99,7 +99,7 @@ inline bool Item::use(CoreData& core)
 	if (is_target_present(core))
 		return use_with_target_present(core);
 
-	report_pointless_use();
+	report_pointless_use(core);
 	return true;
 }
 

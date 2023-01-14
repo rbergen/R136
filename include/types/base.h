@@ -17,6 +17,10 @@ constexpr auto to_value(E e) noexcept
 	return static_cast<std::underlying_type_t<E>>(e);
 }
 
+// included here because they are used in some headers that directly include this types/base.h
+#define select(...)	select_language_param(core.language, __VA_ARGS__)
+#define get_y_or_n() (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) == select((int)'j', (int)'y'))
+
 enum class RoomType : char
 {
 	forest,
@@ -291,7 +295,7 @@ protected:
 	AnimateStatus sets_target_to_status;
 	bool is_target_present(CoreData& core);
 	AnimateStatus& target_status(CoreData& core);
-	void report_pointless_use();
+	void report_pointless_use(CoreData& core);
 
 	virtual bool use_with_target_present(CoreData& core);
 	virtual bool use_to_status(CoreData& core, AnimateStatus to_status = AnimateStatus::undefined);

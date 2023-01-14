@@ -31,20 +31,20 @@ inline bool Nightcap::use_with_target_present(CoreData& core)
 	if (target_status(core) == AnimateStatus::sleeping_lightly)
 		return use_to_status(core);
 
-	report_pointless_use();
+	report_pointless_use(core);
 	return false;
 }
 
 inline bool Gasmask::use(CoreData& core)
 {
-	console.main().print("Je hebt het gasmasker al op.");
+	console.main().print(select("Je hebt het gasmasker al op.", "You're already wearing the gas mask."));
 	console.main().empty_line();
 	return false;
 }
 
 inline bool ThermalSuit::use(CoreData& core)
 {
-	console.main().print("Je hebt het hittepak al aan.");
+	console.main().print(select("Je hebt het hittepak al aan.", "You're already wearing the thermal suit."));
 	console.main().empty_line();
 	return false;
 }
