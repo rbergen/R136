@@ -1,6 +1,6 @@
 name: MSBuild
 
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -26,10 +26,10 @@ jobs:
     - name: Install PDCurses vcpkg
       working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
       run: vcpkg install pdcurses:${{env.BUILD_PLATFORM}}-windows
-      
+
     - name: Enable vcpkg integration
       working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
-      run: vcpkg integrate install    
+      run: vcpkg integrate install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
