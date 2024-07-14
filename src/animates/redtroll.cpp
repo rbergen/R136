@@ -74,7 +74,7 @@ bool RedTroll::progress_status(CoreData& core)
 		console.main().print(select(
 			"Overal in de grot liggen stukken van de verscheurde trol verspreid. Het slijm zuigt aan je schoenen, en een vieze stank dringt in je neus."
 		,
-			"Peaces of the torn-up troll are spread throughout the cave. Slime pulls at your shoes, and a filthy stench creeps up your nose."
+			"Pieces of the torn-up troll are spread throughout the cave. Slime pulls at your shoes, and a filthy stench creeps up your nose."
 		));
 
 		break;
