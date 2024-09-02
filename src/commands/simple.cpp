@@ -33,7 +33,7 @@ namespace commands
 			break;
 
 		case 3:
-			console.main().print(select("Je trekt je broek even op.", "You pull up your pants."));
+			console.main().print(select("Je trekt je broek even op.", "You hitch up your pants."));
 			break;
 
 		case 4:
@@ -68,7 +68,7 @@ namespace commands
 			return;
 		}
 
-		console.main().print(select("Je hebt in je bezit:\n", "You have in your posession:\n"));
+		console.main().print(select("Je hebt in je bezit:\n", "You have in your possession:\n"));
 
 		for (auto& item : core.inventory)
 			console.main().print("* {0}\n", select(core.items[item].names));

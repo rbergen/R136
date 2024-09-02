@@ -186,7 +186,7 @@ std::unique_ptr<Room> rooms[]{ // { names, descriptions }
 		std::vector<wstring>{
 			L"Op de wanden staan hiërogliefen waar je geen wijs uit wordt."
 		,
-			L"There are symbols on the walls that you can not make sense of."
+			L"There are symbols on the walls that you can't make sense of."
 		}
 	),
 	std::make_unique<Cave>(

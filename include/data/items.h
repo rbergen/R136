@@ -80,11 +80,11 @@ std::unique_ptr<Item> items[]{ // { name, description, room, useable_on }
 		RoomID::straitjacket_cave
 	),
 	std::make_unique<Bomb>(
-		std::vector<string>{ "de noekietronenbom", "the nookytron bomb" },
+		std::vector<string>{ "de positronenbom", "the positron bomb" },
 		std::vector<wstring>{
 			L"De bom bestaat uit een aantal dunne buizen in een cilinder. Daaromheen zitten een aantal slangetjes. Er klinkt een vreemd gebrom dat uit een rooster komt. Er zit een bordje op: -5° - 105°, Codenaam: R136."
 		,
-			L"The bomb consists of a number of thin tubes in a cilinder. Around it, there are some tubes. A strange hum emerges from a grate. There's a sign on it that says: -5° - 105°, Code name: R136."
+			L"The bomb consists of a number of thin tubes in a cylinder. Around it, there are some tubes. A strange hum emerges from a grate. There's a sign on it that says: -5° - 105°, Code name: R136."
 		},
 		RoomID::main_cave
 	),
@@ -111,7 +111,7 @@ std::unique_ptr<Item> items[]{ // { name, description, room, useable_on }
 		std::vector<wstring>{
 			L"De vlammenwerper bestaat uit een pijp, een zuur- en een brandstoffles en een activatieknop. Uit de pijp komt een klein waakvlammetje."
 		,
-			L"The flamethrower consists of a pipe, oxigen and fuel containers and an activation button. A small pilot light comes out of the end of the pipe."
+			L"The flamethrower consists of a pipe, oxygen and fuel containers and an activation button. A small pilot light comes out of the end of the pipe."
 		},
 		RoomID::garbage_cave
 	),

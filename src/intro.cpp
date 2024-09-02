@@ -355,7 +355,7 @@ namespace startup
 			"kon een wereldramp voorkomen worden door het heldhaftig optreden van één van je collega's.\n"
 		,
 			L"The result was as interesting as it was threatening: a new radiation occurred, being positron radiation. This radiation dissolves electrons, "
-			"due to which matter it comes in contact with completely dissolves into nothing. Part of the reacor dissolved into thin air, and a global "
+			"due to which matter it comes in contact with completely dissolves into nothing. Part of the reactor dissolved into thin air, and a global "
 			"catastrophy could just be avoided by the heroic intervention of one of your colleagues.\n"
 		));
 		console.main().print(select(
@@ -369,7 +369,7 @@ namespace startup
 			"De wetenschapper die aan de straling was blootgesteld hield zich niet aan de afspraak en stal wat van de agressieve stof. "
 			"Hij bouwde een bom, de positronenbom genaamd."
 		,
-			"Shocked by what happened, it was decided to keep everything a secretand end the project.\n"
+			"Shocked by what happened, it was decided to keep everything a secret and end the project.\n"
 			"The scientist who was exposed to the radiation did not stick to the agreement, and stole some of the aggressive matter. "
 			"He built a new kind of bomb, a positron bomb."
 		));
@@ -388,7 +388,7 @@ namespace startup
 		console.main().print(select(
 			L"Eén van de wetenschappers rook onraad en wilde de zaak gaan onderzoeken.\n"
 		,
-			L"One of the scientists suspected maliceand wanted to investigate the matter.\n"
+			L"One of the scientists suspected malice and wanted to investigate the matter.\n"
 		));
 		console.main().print(select(
 			"Drie dagen later werd hij met een vleesmes in zijn rug op de stoep van zijn huis gevonden.\n"

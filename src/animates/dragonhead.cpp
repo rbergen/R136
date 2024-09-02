@@ -58,7 +58,7 @@ bool DragonHead::progress_status(CoreData& core)
 			"Daarna zwaait de deur langzaam met veel gepiep open."
 		,
 			"You put the last crystal in the mouth. The mouth closes once more, and now it remains shut. The glow from the eyes keeps intensifying. "
-			"At some point, the glow converges into a very bright beam of light that shoots past you and gets reflected by a mirror just begind you. "
+			"At some point, the glow converges into a very bright beam of light that shoots past you and gets reflected by a mirror just behind you. "
 			"With grisly precision, the mirror reflects the light onto the heavy lock, which evaporates due to the enormous heat.\n"
 			"Then, the door slowly opens while squeaking loudly."
 		));

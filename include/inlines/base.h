@@ -77,7 +77,7 @@ inline AnimateStatus& Item::target_status(CoreData& core)
 
 inline void Item::report_pointless_use(CoreData &core)
 {
-	console.main().print(select("Dat heeft geen zin.\n", "That serves no use.\n"));
+	console.main().print(select("Dat heeft geen zin.\n", "There's no use.\n"));
 }
 
 inline bool Item::use_to_status(CoreData& core, AnimateStatus to_status)

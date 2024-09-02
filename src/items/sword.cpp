@@ -41,7 +41,7 @@ bool Sword::use(CoreData& core)
 			console.main().print(select(
 				"Het monster is zwaar gewond en je baadt in zijn bloed."
 			,
-				"The monster is badly injured and you're soaked with its blood."
+				"The monster is badly injured and you're soaked in its blood."
 			));
 			console.main().empty_line();
 		}

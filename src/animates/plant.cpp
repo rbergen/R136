@@ -15,7 +15,7 @@ bool Plant::progress_status(CoreData& core)
 			"Hij heeft je gezien en beweegt zijn opengesperde bek in je richting. Voordat je een stap hebt kunnen zetten zit je verstrengd in het monster, "
 			"en zet de plant zijn tanden in je nek."
 		,
-			"This cave houses a flesh-eating plant. Its thick green stemp runs up to a horrifying head, with gruesome teeth. "
+			"This cave houses a flesh-eating plant. Its thick green stem runs up to a horrifying head, with gruesome teeth. "
 			"It noticed you and it moves its wide-open mouth in your direction. Before you've been able to make a move, you're tangled up in the monster. "
 			"The plant puts its teeth in your neck."
 		));
@@ -31,7 +31,7 @@ bool Plant::progress_status(CoreData& core)
 			"en hij maakt aanstalten zijn tanden opnieuw in je nek te zetten."
 		,
 			"With its little scavy tongue, the plant licks your blood of its mouth. It looks at you again with its geen eyes, "
-			"and prepares to sink its teeth in you neck again."
+			"and prepares to sink its teeth in your neck again."
 		));
 
 		core.animates[AnimateID::plant].status++;

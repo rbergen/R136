@@ -47,7 +47,7 @@ bool RedTroll::progress_status(CoreData& core)
 		console.main().print(select(
 			"Het schuim loopt uit de trol z'n bek. Hij heft opnieuw zijn zweep."
 		,
-			"Foam runs from the troll's mouth. He rises his sword again."
+			"Foam runs from the troll's mouth. He rises his whip again."
 		));
 
 		core.animates[AnimateID::red_troll].status = randomizer::get_status(AnimateStatus::status_2, AnimateStatus::status_3);

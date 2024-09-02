@@ -14,7 +14,7 @@ bool Bandage::use(CoreData& core)
 	console.main().print(select(
 		"Je pakt het verband en de pleisters en plaatst ze over je wonden. Je bijt even op je lippen van de pijn als het verband je nog bloedende wonden raakt."
 		,
-		"You take the bandages and band-aids and puts them over your wounds. You bite your lips when you feel the pain of the bandages touchting your wounds that are still bleeding."
+		"You take the bandages and band-aids and puts them over your wounds. You bite your lips when you feel the pain of the bandages touching your wounds that are still bleeding."
 	));
 	console.main().empty_line();
 	console.main().print(select("Je bent weer zo goed als nieuw.", "You're as good as new."));

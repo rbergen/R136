@@ -49,7 +49,7 @@ bool Tree::progress_status(CoreData& core)
 		console.main().print(select(
 			"Uit de grond steken nog een paar wortels, en er naast ligt een verkoold stuk bord met daarop \"R   n e  op n v u  ver  d n\"."
 		,
-			"Some roots still stick from the grounds. Next to them lies a charred part of a sign that reads \"Sm   ng a   na  d fl     pro    t d\"."
+			"Some roots still stick from the ground. Next to them lies a charred part of a sign that reads \"Sm   ng a   na  d fl     pro    t d\"."
 		));
 
 		break;
