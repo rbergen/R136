@@ -43,5 +43,6 @@ Also available are:
 
 * A version of R136 developed in C#.NET, that includes both a console and a WebAssembly in-browser web application version. You can find that in the [R136.NET](https://github.com/rbergen/R136.NET) repository.
 * An _updated_ version of the original 1998 procedural C++ version that requires Borland C++ 5.02 to build, and using that can be compiled to work on the original Intel 8086 CPU. That can be found in the [R136-8086](https://github.com/rbergen/R136-8086) repo.
+* A port of the procedural C++ version to K&R C, as available on 2.11BSD, as it runs on the PDP-11. Somewhat predictably, it can be found in the [R136-PDP11](https://github.com/rbergen/R136-PDP11) repo.
 
 _- Rutger van Bergen - [github.com/rbergen](https://github.com/rbergen)_
