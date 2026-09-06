@@ -170,7 +170,7 @@ ParseData& Parser::parse_input(CoreData& core, string& input_string)
 
 	auto space_position = input_string.find(' ');
 
-	auto &command = (const string&)(space_position == string::npos ? input_string : input_string.substr(0, space_position));
+	const string command = space_position == string::npos ? input_string : input_string.substr(0, space_position);
 	input_string = (space_position == string::npos) ? "" : input_string.substr(space_position + 1);
 
 	// 9 is the length of the longest commands
