@@ -7,25 +7,27 @@ env:
   SOLUTION_FILE_PATH: R136.sln
 
   # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
-  BUILD_PLATFORM: x86
 
 jobs:
   build:
     runs-on: windows-2022
 
+    strategy:
+      matrix:
+        platform: [x86, x64]
+      fail-fast: false
+
     steps:
-    - uses: actions/checkout@v3
-    - uses: ilammy/msvc-dev-cmd@v1.10.0
+    - uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Install PDCurses vcpkg
       working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
-      run: vcpkg install pdcurses:${{env.BUILD_PLATFORM}}-windows
+      run: vcpkg install pdcurses:${{ matrix.platform }}-windows
 
     - name: Enable vcpkg integration
       working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
@@ -33,8 +35,6 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # Add additional options to the MSBuild command line here (like verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
-
-
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{ matrix.platform }} ${{env.SOLUTION_FILE_PATH}}

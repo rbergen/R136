@@ -12,7 +12,7 @@ add_compile_definitions(_XOPEN_SOURCE_EXTENDED CURSES_WIDE)
 find_package(Curses)
 
 if (NOT CURSES_FOUND)
-  find_path(PDC_INCLUDES curses.h)
+  find_path(PDC_INCLUDES curses.h REQUIRED)
   find_library(PDC_LIBS pdcurses REQUIRED)
   add_compile_definitions(PDC_WIDE)
 elseif (CURSES_HAVE_NCURSES_H)
