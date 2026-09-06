@@ -11,13 +11,16 @@ subdirectories, with a single flat "entry point" header per module at the top of
 
 ## The aspect layers
 
-| Location          | Contains                                                        | Depends on            |
-|-------------------|----------------------------------------------------------------|-----------------------|
-| `types/X.h`       | Declarations only: `struct`/`class`/`enum`, method signatures  | other `types/*.h`     |
-| `templates/X.h`   | Template function / method **definitions**                     | `types/*.h`           |
-| `inlines/X.h`     | `inline` function / method **definitions**                     | `types/*.h`, `templates/*.h` |
-| `data/X.h`        | Data-table definitions, `#include`d **inside a function body**  | an umbrella header    |
-| `X.h` (flat)      | The module entry point (see two kinds below)                   | its own aspect files  |
+- **`types/X.h`** — declarations only (`struct`/`class`/`enum`, method
+  signatures). Depends on other `types/*.h`.
+- **`templates/X.h`** — template function / method **definitions**. Depends on
+  `types/*.h`.
+- **`inlines/X.h`** — `inline` function / method **definitions**. Depends on
+  `types/*.h` and `templates/*.h`.
+- **`data/X.h`** — data-table definitions, `#include`d **inside a function
+  body**. Depends on an umbrella header.
+- **`X.h` (flat)** — the module entry point (see two kinds below). Depends on
+  its own aspect files.
 
 Not every module has all four aspects. A module with no inline or template code
 (e.g. `animates`) has only `types/animates.h` behind its umbrella; that is
