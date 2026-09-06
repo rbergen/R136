@@ -172,7 +172,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 				result = to_value(Key::escape);
 			else
 			{
-				input.assign(' ', input_length);
+				input.assign(input_length, ' ');
 				set_position(input_y, input_x);
 				print(input);
 				input_pos = 0;

@@ -15,7 +15,7 @@ bool Dragon::progress_status(CoreData& core)
 			"Opeens komt uit een van de bekken een rommelend geluid. Met moeite versta je \"Ben jij een koekie?\""
 		,
 			"A large dragon resides in this cave. It has multiple heads, each of which watch you with yellow eyes. "
-			"It's entire skin is covered in mold, and from its mouths hang long, brown tongues, from which a biting acid drips. ",
+			"It's entire skin is covered in mold, and from its mouths hang long, brown tongues, from which a biting acid drips. "
 			"Suddenly, a rumbling noise comes from one of the mouths. With difficulty you make out \"Are you a cookie?\""
 		));
 

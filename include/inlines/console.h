@@ -44,7 +44,7 @@ inline void ColorMap::add(std::unique_ptr<ColorSet> set)
 	if (element == color_sets.end())
 		color_sets.insert(std::make_pair(set->get_color(), std::move(set)));
 	else
-		element->second.reset(set.get());
+		element->second = std::move(set);
 }
 
 inline chtype ColorMap::get_attrs(Color color)

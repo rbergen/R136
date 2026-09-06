@@ -78,7 +78,7 @@ void EntityMap<TKey, TValue>::add_or_set(std::unique_ptr<TValue> value)
 	if (element == map.end())
 		map.insert(std::make_pair(key, std::move(value)));
 	else
-		element->second.reset(value.get());
+		element->second = std::move(value);
 }
 
 template<class TKey, class TValue>
