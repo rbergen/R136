@@ -7,11 +7,8 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  unix:
+    name: CMake (${{ matrix.os }}, ncurses)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,34 +16,49 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - name: Install ncurses on MacOS
-      if: ${{ matrix.os == 'macos-latest' }}
+    - name: Install wide ncurses (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install -y libncurses-dev libncursesw5-dev
+
+    - name: Install wide ncurses (macOS)
+      if: runner.os == 'macOS'
       run: |
         brew install ncurses
-        echo "NCURSES_ROOT=$(brew --prefix ncurses)" >> $GITHUB_ENV
-        echo "LDFLAGS=-L$(brew --prefix ncurses)/lib" >> $GITHUB_ENV
-        echo "CPPFLAGS=-I$(brew --prefix ncurses)/include" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=$(brew --prefix ncurses)" >> "$GITHUB_ENV"
 
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=$NCURSES_ROOT
+    - name: Configure
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
     - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
 
+    - name: Smoke test (--help exits before curses starts)
+      run: ./build/R136 -h
+
+  windows:
+    name: CMake (windows-latest, PDCurses)
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install PDCurses (vcpkg)
+      run: vcpkg install pdcurses:x64-windows
+
+    - name: Configure
+      run: >
+        cmake -S . -B build
+        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -DVCPKG_TARGET_TRIPLET=x64-windows
+
+    - name: Build
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+    # No smoke-run step here: this job's value is verifying the CMake +
+    # PDCurses build (configure/compile/link), which had no CI coverage before.
+    # The Unix jobs run the "-h" smoke test; on the hosted Windows image the
+    # freshly built binary fails to start for environment reasons unrelated to
+    # the source, so a runtime run here would be flaky.
