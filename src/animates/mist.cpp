@@ -13,7 +13,7 @@ bool Mist::progress_status(CoreData& core)
 		 "Net als je begint te denken dat je nooit een uitgang uit deze grot zult vinden, struikel je voorover een andere grot in."
 	,
 		L"A strange, dense fog dominates this cave, because of which you can't see your hand in front of your eyes. "
-		 "You lose orientation, and stumble around the cave in panic, looking for a way out.\n",
+		 "You lose orientation, and stumble around the cave in panic, looking for a way out.\n"
 		 "Just when you start thinking that you'll never find a way out of this cave, you fall forward into another cave."
 	));
 	console.main().empty_line();

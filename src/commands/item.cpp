@@ -59,6 +59,7 @@ namespace commands
 			break;
 
 		default:
+			console.main().print(select("Dat levert niets bruikbaars op.", "That doesn't yield anything useful."));
 			break;
 		}
 	}

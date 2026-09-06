@@ -172,7 +172,7 @@ int Window::get_string_input(const string& allowed_characters, string& input, in
 				result = to_value(Key::escape);
 			else
 			{
-				input.assign(' ', input_length);
+				input.assign(input_length, ' ');
 				set_position(input_y, input_x);
 				print(input);
 				input_pos = 0;
@@ -400,15 +400,32 @@ void Console::initialize(Language language)
 void Console::release()
 {
 	if (input_window)
+	{
 		delwin(input_window->wnd);
+		delete input_window;
+		input_window = nullptr;
+	}
 
 	if (main_window)
+	{
 		delwin(main_window->wnd);
+		delete main_window;
+		main_window = nullptr;
+	}
 
 	if (banner_window)
+	{
 		delwin(banner_window->wnd);
+		delete banner_window;
+		banner_window = nullptr;
+	}
 
 	endwin();
+
+	// fullscreen_window wraps stdscr, which endwin() tears down, so only the
+	// wrapper object needs freeing.
+	delete fullscreen_window;
+	fullscreen_window = nullptr;
 
 	is_released = true;
 }

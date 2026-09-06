@@ -20,6 +20,15 @@ namespace startup
 		#include "data/animates.h"
 		#include "data/items.h"
 
+		// The data tables are numbered by array index in fill_map, so each
+		// must have exactly as many entries as its enum has members.
+		static_assert(sizeof(rooms) / sizeof(rooms[0]) == static_cast<size_t>(to_value(RoomID::COUNT)),
+			"rooms[] in data/rooms.h must have exactly RoomID::COUNT entries");
+		static_assert(sizeof(animates) / sizeof(animates[0]) == static_cast<size_t>(to_value(AnimateID::COUNT)),
+			"animates[] in data/animates.h must have exactly AnimateID::COUNT entries");
+		static_assert(sizeof(items) / sizeof(items[0]) == static_cast<size_t>(to_value(ItemID::COUNT)),
+			"items[] in data/items.h must have exactly ItemID::COUNT entries");
+
 		template <typename TKey, class TValue>
 		void fill_map(EntityMap<TKey, TValue>& map, std::unique_ptr<TValue> values[], int count)
 		{

@@ -142,9 +142,12 @@ namespace game_data
 
 			item_id = static_cast<ItemID>(i);
 
-			core.items[static_cast<ItemID>(i)].room = room_id;
-			if (room_id == RoomID::in_posession)
-				core.inventory.add(item_id);
+			core.items[item_id].room = room_id;
+			// If a (corrupt/over-capacity) save carries more items than the
+			// inventory holds, don't leave the item flagged as carried but
+			// absent from the inventory - drop it to undefined instead.
+			if (room_id == RoomID::in_posession && !core.inventory.add(item_id))
+				core.items[item_id].room = RoomID::undefined;
 		}
 
 		for (int i = 0; i < to_value(RoomID::COUNT); i++)
