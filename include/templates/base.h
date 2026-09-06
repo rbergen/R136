@@ -3,7 +3,6 @@
 //templates/base.h
 
 #include "types/base.h"
-#include <cstdarg>
 #include <stdexcept>
 
 template<class TEntity>
@@ -115,24 +114,24 @@ void EntityMap<TKey, TValue>::clear()
 	map.clear();
 }
 
-template<class TParam>
-constexpr TParam select_language_param(Language language, TParam first_param...)
+// One text argument per language, in Language order (Dutch, English, ...).
+// Type-safe replacement for the former C-varargs version: all arguments share
+// the deduced type TParam, so no default-argument-promotion pitfalls and no need
+// for the (int) casts previous callers used. An out-of-range/undefined language
+// falls back to the default (first) language.
+template<class TParam, class... TRest>
+constexpr TParam select_language_param(Language language, TParam first_param, TRest... rest_params)
 {
-	auto param_index = to_value(language);
-	if (param_index == 0)
-		return first_param;
+	const TParam params[] = { first_param, rest_params... };
+	constexpr int count = 1 + static_cast<int>(sizeof...(rest_params));
 
-	constexpr auto language_count = to_value(Language::COUNT);
-	std::va_list params;
-	TParam selected_param = TParam();
+	int index = to_value(language);
+	if (index < 0)
+		index = 0;
+	else if (index >= count)
+		index = count - 1;
 
-	va_start(params, first_param);
-	for (int i = 1; i <= param_index && i < language_count; i++)
-		selected_param = va_arg(params, TParam);
-
-	va_end(params);
-
-	return selected_param;
+	return params[index];
 }
 
 template<class TChar>

@@ -400,15 +400,32 @@ void Console::initialize(Language language)
 void Console::release()
 {
 	if (input_window)
+	{
 		delwin(input_window->wnd);
+		delete input_window;
+		input_window = nullptr;
+	}
 
 	if (main_window)
+	{
 		delwin(main_window->wnd);
+		delete main_window;
+		main_window = nullptr;
+	}
 
 	if (banner_window)
+	{
 		delwin(banner_window->wnd);
+		delete banner_window;
+		banner_window = nullptr;
+	}
 
 	endwin();
+
+	// fullscreen_window wraps stdscr, which endwin() tears down, so only the
+	// wrapper object needs freeing.
+	delete fullscreen_window;
+	fullscreen_window = nullptr;
 
 	is_released = true;
 }

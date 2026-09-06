@@ -19,7 +19,7 @@ constexpr auto to_value(E e) noexcept
 
 // included here because they are used in some headers that directly include this types/base.h
 #define select(...)	select_language_param(core.language, __VA_ARGS__)
-#define get_y_or_n() (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) == select((int)'j', (int)'y'))
+#define get_y_or_n() (tolower(console.main().get_char_input(select("jJnN", "yYnN"))) == select('j', 'y'))
 
 enum class RoomType : char
 {
@@ -151,6 +151,15 @@ enum class ItemID : char
 	COUNT, undefined = -1, ambiguous = -2
 };
 
+// AnimateStatus packs every animate's little state machine onto one shared
+// 0..6 integer axis, so the generic status++, next_status() and
+// randomizer::get_status() can advance an animate without knowing which one it
+// is. The many named constants below are per-animate labels for those shared
+// values (e.g. door_open, tree_on_fire and bomb_dropped are all == 1); each
+// animate only ever uses its own labels. The numeric values are therefore
+// load-bearing: the static_asserts after the enum pin the axis so an accidental
+// reordering or renumbering fails to compile instead of silently corrupting
+// every animate's transitions.
 enum class AnimateStatus : char
 {
 	initial = 0,
@@ -187,6 +196,17 @@ enum class AnimateStatus : char
 
 	undefined = -1
 };
+
+// Pin the shared progression axis (see the comment above AnimateStatus).
+static_assert(to_value(AnimateStatus::initial) == 0, "AnimateStatus axis must start at 0");
+static_assert(to_value(AnimateStatus::status_1) == 1, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::status_2) == 2, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::status_3) == 3, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::status_4) == 4, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::status_5) == 5, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::status_6) == 6, "AnimateStatus axis must be contiguous");
+static_assert(to_value(AnimateStatus::dead) == to_value(AnimateStatus::status_3), "dead must share status_3");
+static_assert(to_value(AnimateStatus::undefined) == -1, "AnimateStatus::undefined must stay -1");
 
 enum class Language : int
 {
