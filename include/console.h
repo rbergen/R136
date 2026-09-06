@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// console.h - family aggregator: re-exports the console types, templates and inlines
+
 #include "types/console.h"
 
 /* Value that determines the settings for Insert for all functions.

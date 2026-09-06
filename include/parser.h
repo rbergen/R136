@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// parser.h - service interface: public API of src/parser.cpp
+
 #include "types/base.h"
 
 struct ParseData

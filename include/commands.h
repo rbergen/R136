@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// commands.h - service interface: public API of src/commands/*.cpp
+
 #include "base.h"
 
 namespace commands
