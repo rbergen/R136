@@ -2,6 +2,7 @@
 #include "console.h"
 #include "items.h"
 #include "actions.h"
+#include <cassert>
 
 namespace commands
 {
@@ -59,7 +60,9 @@ namespace commands
 			break;
 
 		default:
-			console.main().print(select("Dat levert niets bruikbaars op.", "That doesn't yield anything useful."));
+			// Any item1 that passes the combines_with guard above is one of the
+			// handled combinable items; a new combinable pair needs a case here.
+			assert(false && "combine(): item passed the guard but has no case");
 			break;
 		}
 	}
