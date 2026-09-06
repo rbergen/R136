@@ -351,7 +351,10 @@ public:
 	bool remove(Item& item);
 };
 
-#include "types/items.h"
+// Flashlight is only referred to by pointer/reference here, so a forward
+// declaration suffices and avoids a types/base.h <-> types/items.h include cycle.
+// The full item type definitions are pulled in by the base.h umbrella header.
+struct Flashlight;
 
 struct CoreData
 {

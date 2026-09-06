@@ -1,4 +1,6 @@
-﻿#include "types/base.h"
+﻿#pragma once
+
+#include "types/base.h"
 
 struct ParseData
 {
