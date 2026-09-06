@@ -1,4 +1,6 @@
-﻿#include "types/console.h"
+﻿#pragma once
+
+#include "types/console.h"
 
 // templates/console.h
 

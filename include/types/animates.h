@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-// types/animate.h
+// types/animates.h
 
 #include "types/base.h"
 

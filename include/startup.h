@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// startup.h - service interface: public API of src/startup.cpp and src/intro.cpp
+
 #include "types/base.h"
 
 namespace startup

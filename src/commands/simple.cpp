@@ -2,6 +2,7 @@
 #include "console.h"
 #include "random.h"
 #include "actions.h"
+#include "items.h"
 
 namespace commands
 {
